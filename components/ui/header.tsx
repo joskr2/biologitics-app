@@ -24,12 +24,12 @@ function Header({ className }: React.ComponentProps<"header">) {
 	const isDark = theme === "dark";
 	const { cta } = siteContent.header;
 
-	const toggleMobileMenu = () => {
-		setIsMobileMenuOpen(!isMobileMenuOpen);
-	};
-
 	const handleNavClick = () => {
 		setIsMobileMenuOpen(false);
+	};
+
+	const handleToggleMenu = () => {
+		setIsMobileMenuOpen((prev) => !prev);
 	};
 
 	useEffect(() => {
@@ -40,6 +40,17 @@ function Header({ className }: React.ComponentProps<"header">) {
 		};
 		globalThis.addEventListener("keydown", handleKeyDown);
 		return () => globalThis.removeEventListener("keydown", handleKeyDown);
+	}, [isMobileMenuOpen]);
+
+	useEffect(() => {
+		if (isMobileMenuOpen) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "";
+		}
+		return () => {
+			document.body.style.overflow = "";
+		};
 	}, [isMobileMenuOpen]);
 
 	return (
@@ -54,20 +65,21 @@ function Header({ className }: React.ComponentProps<"header">) {
 			<header
 				className={cn(
 					"sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60",
-					className,
+					className
 				)}
 			>
 				<div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 					<Link
 						href="/"
-						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg"
+						onClick={handleNavClick}
+						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg relative z-50"
 					>
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
+						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
 							B
 						</div>
-						<div className="hidden sm:flex flex-col">
+						<div className="flex flex-col">
 							<span className="font-semibold text-sm">Biologistics</span>
-							<span className="text-xs text-muted-foreground">
+							<span className="text-xs text-muted-foreground hidden xs:block">
 								Venta de Equipos Científicos
 							</span>
 						</div>
@@ -89,7 +101,7 @@ function Header({ className }: React.ComponentProps<"header">) {
 						))}
 					</nav>
 
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-2 relative z-50">
 						<button
 							onClick={() => setTheme(isDark ? "light" : "dark")}
 							className="flex h-10 w-10 items-center justify-center rounded-lg border bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/80 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -105,7 +117,7 @@ function Header({ className }: React.ComponentProps<"header">) {
 
 						<Button
 							variant="ghost"
-							onClick={toggleMobileMenu}
+							onClick={handleToggleMenu}
 							className="flex h-10 w-10 items-center justify-center rounded-lg border bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/80 hover:text-primary md:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 							aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
 							aria-expanded={isMobileMenuOpen}
@@ -120,7 +132,7 @@ function Header({ className }: React.ComponentProps<"header">) {
 						</Button>
 
 						<div className="hidden lg:block">
-							<Button variant="default" size="sm">
+							<Button variant="default" size="sm" >
 								<Link href={cta.href}>{cta.label}</Link>
 							</Button>
 						</div>
@@ -128,49 +140,47 @@ function Header({ className }: React.ComponentProps<"header">) {
 				</div>
 			</header>
 
-			<dialog
+			<div
 				id="mobile-menu"
 				className={cn(
-					"fixed inset-x-0 top-16 bottom-0 z-40 bg-background md:hidden",
-					"transform transition-transform duration-300 ease-in-out",
-					isMobileMenuOpen ? "translate-x-0" : "translate-x-full",
+					"fixed inset-0 z-40 bg-background md:hidden transition-transform duration-300 ease-in-out flex flex-col",
+					isMobileMenuOpen ? "translate-y-0" : "translate-y-full"
 				)}
-				aria-modal="true"
-				aria-label="Menú de navegación"
 				aria-hidden={!isMobileMenuOpen}
 			>
-				<nav
-					className="flex flex-col gap-1 p-4"
-					aria-label="Navegación principal móvil"
-				>
-					{navItems.map((item) => (
-						<a
-							key={item.href}
-							href={item.href}
-							className="rounded-lg px-4 py-3 text-lg font-medium text-foreground transition-colors hover:bg-accent hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-							title={item.title}
+				<div className="flex flex-col h-full overflow-y-auto pt-20 pb-6 px-4">
+					<nav
+						className="flex flex-col gap-2"
+						aria-label="Navegación principal móvil"
+					>
+						{navItems.map((item) => (
+							<Link
+								key={item.href}
+								href={item.href}
+								onClick={handleNavClick}
+								className="group flex items-center justify-between rounded-lg px-4 py-4 text-lg font-medium text-foreground hover:bg-accent transition-colors border-b border-border/40 last:border-0"
+								title={item.title}
+							>
+								{item.label}
+								<span className="text-muted-foreground group-hover:translate-x-1 transition-transform">
+									→
+								</span>
+							</Link>
+						))}
+					</nav>
+
+					<div className="mt-auto pt-8">
+						<Button
+							variant="default"
+							size="lg"
+							className="w-full text-lg"
 							onClick={handleNavClick}
 						>
-							{item.label}
-						</a>
-					))}
-				</nav>
-				<div className="border-t p-4">
-					<Button variant="default" className="w-full">
-						<Link href={cta.href} onClick={handleNavClick}>
-							{cta.label}
-						</Link>
-					</Button>
+							<Link href={cta.href}>{cta.label}</Link>
+						</Button>
+					</div>
 				</div>
-			</dialog>
-
-			{isMobileMenuOpen && (
-				<div
-					className="fixed inset-0 top-16 z-30 bg-black/50 md:hidden"
-					onClick={handleNavClick}
-					aria-hidden="true"
-				/>
-			)}
+			</div>
 		</>
 	);
 }
