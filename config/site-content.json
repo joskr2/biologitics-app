@@ -1,0 +1,218 @@
+{
+	"header": {
+		"logo": {
+			"src": "/logo.svg",
+			"alt": "Biologistics Logo"
+		},
+		"navigation": [
+			{ "label": "Productos", "href": "/productos" },
+			{ "label": "Marcas", "href": "/marcas" },
+			{ "label": "Nosotros", "href": "/nosotros" },
+			{ "label": "Contacto", "href": "/contacto" }
+		],
+		"cta": {
+			"label": "Solicitar Cotización",
+			"href": "/cotizacion"
+		}
+	},
+	"hero": {
+		"slides": [
+			{
+				"id": "slide-1",
+				"type": "video",
+				"src": "/banner.mp4",
+				"title": "Equipamiento Científico de Alta Precisión",
+				"subtitle": "Distribuidores oficiales de las marcas líderes mundiales en tecnología para laboratorios e investigación",
+				"cta": {
+					"label": "Ver Productos",
+					"href": "/productos"
+				},
+				"secondaryCta": {
+					"label": "Nuestras Marcas",
+					"href": "/marcas"
+				}
+			},
+			{
+				"id": "slide-2",
+				"type": "image",
+				"src": "https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=2070&auto=format&fit=crop",
+				"title": "Soluciones Integrales para Laboratorios",
+				"subtitle": "Desde equipamiento básico hasta sistemas avanzados de análisis para investigación científica",
+				"cta": {
+					"label": "Solicitar Información",
+					"href": "/contacto"
+				}
+			}
+		],
+		"socialProof": [
+			{ "value": "500+", "label": "Clientes satisfechos" },
+			{ "value": "15+", "label": "Años de experiencia" },
+			{ "value": "50+", "label": "Marcas representadas" },
+			{ "value": "24/7", "label": "Soporte técnico" }
+		]
+	},
+	"featuredProducts": {
+		"title": "Nuestros Productos Destacados",
+		"subtitle": "Equipamiento científico de las mejores marcas internacionales para laboratorios e instituciones de investigación",
+		"buttonText": "Ver todos los productos",
+		"buttonHref": "/productos",
+		"items": [
+			{
+				"id": "microscopio-digital",
+				"title": "Microscopio Digital Pro",
+				"description": "Microscopio de alta resolución con cámara digital integrada para captura de imágenes y video.",
+				"image": "https://images.unsplash.com/photo-1582719471384-894fbb16e074?w=600&h=400&fit=crop&auto=format&q=75",
+				"features": [
+					"Zoom 40x-1600x",
+					"Cámara 12MP integrada",
+					"Pantalla LCD 7\"",
+					"Software de análisis"
+				]
+			},
+			{
+				"id": "centrifuga-clinica",
+				"title": "Centrífuga de Laboratorio",
+				"description": "Centrífuga de alta velocidad para análisis clínicos e investigación biomédica.",
+				"image": "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=600&h=400&fit=crop&auto=format&q=75",
+				"features": [
+					"Velocidad 15,000 RPM",
+					"Capacidad 6 x 50ml",
+					"Control digital",
+					"Sistema de seguridad"
+				]
+			},
+			{
+				"id": "espectrofotometro",
+				"title": "Espectrofotómetro UV-Vis",
+				"description": "Equipo de análisis espectrofotométrico para determinación de concentración de muestras.",
+				"image": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=600&h=400&fit=crop&auto=format&q=75",
+				"features": [
+					"Rango 190-1100nm",
+					"Ancho de banda 2nm",
+					"Pantalla táctil",
+					"Conectividad USB"
+				]
+			},
+			{
+				"id": "incubadora",
+				"title": "Incubadora de Cultivos",
+				"description": "Incubadora con control preciso de temperatura y humedad para cultivos celulares.",
+				"image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&h=400&fit=crop&auto=format&q=75",
+				"features": [
+					"Temp. 20°C-60°C",
+					"Humedad controlada",
+					"Capacidad 150L",
+					"Puerta interior de vidrio"
+				]
+			},
+			{
+				"id": "autoclave",
+				"title": "Autoclave de Mesa",
+				"description": "Esterilizador por vapor de alta presión para laboratorios y consultorios.",
+				"image": "https://images.unsplash.com/photo-1581093458791-9d42e3c7c3a8?w=600&h=400&fit=crop&auto=format&q=75",
+				"features": [
+					"Capacidad 24L",
+					"Ciclo rápido 45min",
+					"Sistema de seguridad",
+					"Impresora opcional"
+				]
+			}
+		]
+	},
+	"featuredBrands": {
+		"title": "Marcas Representadas",
+		"subtitle": "Representamos a las marcas más reconocidas del mundo en equipamiento científico",
+		"buttonText": "Ver todas las marcas",
+		"buttonHref": "/marcas",
+		"items": [
+			{
+				"id": "zeiss",
+				"name": "Zeiss",
+				"logo": "zeiss.svg",
+				"description": "Líder mundial en óptica de precisión, ofreciendo soluciones innovadoras para microscopía, fotografía y tecnología de medición.",
+				"bestSellers": [
+					{ "name": "Microscopios Compound", "category": "Laboratorio" },
+					{ "name": "Lentes Objetivo", "category": "Óptica" },
+					{ "name": "Sistemas de Imagen", "category": "Digital" }
+				],
+				"href": "/marcas/zeiss"
+			},
+			{
+				"id": "thermo-fisher",
+				"name": "Thermo Fisher",
+				"logo": "thermo-fisher.svg",
+				"description": "Proveedor líder de equipamiento científico y servicios de laboratorio para investigación y producción farmacéutica.",
+				"bestSellers": [
+					{ "name": "Centrífugas", "category": "Procesamiento" },
+					{ "name": "Congeladores Ultra", "category": "Refrigeración" },
+					{ "name": "Incubadoras", "category": "Cultivos" }
+				],
+				"href": "/marcas/thermo-fisher"
+			},
+			{
+				"id": "eppendorf",
+				"name": "Eppendorf",
+				"logo": "eppendorf.svg",
+				"description": "Especialistas en equipamiento de laboratorio para pipeteo, separación, mezcla y procesamiento de muestras.",
+				"bestSellers": [
+					{ "name": "Pipetas Automáticas", "category": "Liquid Handling" },
+					{ "name": "Microcentrífugas", "category": "Procesamiento" },
+					{ "name": "Termocicladores", "category": "PCR" }
+				],
+				"href": "/marcas/eppendorf"
+			},
+			{
+				"id": "olympus",
+				"name": "Olympus",
+				"logo": "olympus.svg",
+				"description": "Pioneros en tecnología de microscopía y endoscopía con más de 100 años de experiencia en innovación óptica.",
+				"bestSellers": [
+					{ "name": "Microscopios Inversos", "category": "Cultura Celular" },
+					{ "name": "Sistemas de Fluoroscencia", "category": "Imagen" },
+					{ "name": "Cámaras Digitales", "category": "Documentación" }
+				],
+				"href": "/marcas/olympus"
+			}
+		]
+	},
+	"footer": {
+		"company": {
+			"name": "Biologistics",
+			"description": "Venta de equipos científicos de alta calidad para laboratorios, investigación y educación.",
+			"email": "info@biologistics.com",
+			"phone": "+51 901631307",
+			"address": "Lima, Perú",
+			"whatsapp": "51901631307"
+		},
+		"socialLinks": [
+			{ "name": "Facebook", "icon": "/facebook.svg", "href": "#" },
+			{ "name": "Instagram", "icon": "/instagram.svg", "href": "#" },
+			{ "name": "WhatsApp", "icon": "/whatsapp.svg", "href": "https://wa.me/51901631307" }
+		],
+		"columns": [
+			{
+				"title": "Nuestros productos destacados",
+				"links": [
+					{ "label": "Microscopios", "href": "/productos" },
+					{ "label": "Centrífugas", "href": "/productos" },
+					{ "label": "Equipos de Análisis", "href": "/productos" },
+					{ "label": "Refrigeración", "href": "/productos" }
+				]
+			},
+			{
+				"title": "Empresa",
+				"links": [
+					{ "label": "Nosotros", "href": "/nosotros" },
+					{ "label": "Marcas", "href": "/marcas" },
+					{ "label": "Blog", "href": "/blog" },
+					{ "label": "Contacto", "href": "/contacto" }
+				]
+			}
+		],
+		"legalLinks": [
+			{ "label": "Términos y Condiciones", "href": "/terminos" },
+			{ "label": "Política de Privacidad", "href": "/privacidad" },
+			{ "label": "Política de Cookies", "href": "/cookies" }
+		]
+	}
+}
