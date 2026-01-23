@@ -14,8 +14,9 @@ import Image from "next/image";
 type SlideLayout = "left" | "center" | "right";
 
 interface HeroSlide {
-	image: string;
-	imageAlt: string;
+	image?: string;
+	video?: string;
+	imageAlt?: string;
 	title: string;
 	highlight: string;
 	description: string;
@@ -31,8 +32,7 @@ interface SocialProofItem {
 
 const heroSlides: HeroSlide[] = [
 	{
-		image: "https://images.unsplash.com/photo-1581093588401-fbb62a02f138?q=80&w=2070&auto=format&fit=crop",
-		imageAlt: "Laboratorio científico moderno",
+		video: "/banner.mp4",
 		title: "Equipamiento de Laboratorio",
 		highlight: "de Alta Precisión",
 		description:
@@ -80,20 +80,35 @@ const overlayStyles: Record<SlideLayout, string> = {
 function HeroSlideContent({ slide }: Readonly<{ slide: HeroSlide }>) {
 	return (
 		<div className="relative h-[85vh] min-h-125 max-h-200 flex items-center">
-			{/* Background Image */}
 			<div className="absolute inset-0 z-0">
-				<Image
-					src={slide.image}
-					alt={slide.imageAlt}
-					fill
-					sizes="100vw"
-					className="object-cover"
-					priority
-				/>
+				{(() => {
+					if (slide.video) {
+						return (
+							<video
+								src={slide.video}
+								autoPlay
+								loop
+								muted
+								playsInline
+								className="w-full h-full object-cover"
+							/>
+						);
+					} else if (slide.image) {
+						return (
+							<Image
+								src={slide.image}
+								alt={slide.imageAlt || ""}
+								fill
+								sizes="100vw"
+								className="object-cover"
+							/>
+						);
+					}
+					return null;
+				})()}
 				<div className={`absolute inset-0 ${overlayStyles[slide.layout]}`} />
 			</div>
 
-			{/* Content */}
 			<div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 pt-16 pb-24 max-w-7xl mx-auto">
 				<div
 					className={`
@@ -162,9 +177,9 @@ function HeroIndicators() {
 
 	return (
 		<div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-3">
-			{heroSlides.map((_, index) => (
+			{heroSlides.map((slide, index) => (
 				<button
-					key={index}
+					key={`${slide.title}-${index}`}
 					type="button"
 					className={`w-3 h-3 rounded-full border-2 border-white/60 transition-all ${
 						index === selectedIndex
@@ -205,8 +220,12 @@ function Hero() {
 								key={index}
 								className="text-center px-4 py-3 rounded-lg bg-background/50 sm:bg-transparent"
 							>
-								<div className="text-2xl sm:text-3xl font-bold text-primary">{item.value}</div>
-								<div className="text-xs sm:text-sm text-muted-foreground">{item.label}</div>
+								<div className="text-2xl sm:text-3xl font-bold text-primary">
+									{item.value}
+								</div>
+								<div className="text-xs sm:text-sm text-muted-foreground">
+									{item.label}
+								</div>
 							</div>
 						))}
 					</div>
