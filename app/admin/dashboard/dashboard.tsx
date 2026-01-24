@@ -44,12 +44,17 @@ export default function Dashboard({ initialData }: DashboardProps) {
 		},
 	);
 
-	// Reload page after successful save to refresh data
+	// Show success message after save (no reload needed)
+	const [showSuccess, setShowSuccess] = useState(false);
+
 	useEffect(() => {
 		if (saveState.success) {
-			window.location.reload();
+			setShowSuccess(true);
+			// Hide success message after 3 seconds
+			const timer = setTimeout(() => setShowSuccess(false), 3000);
+			return () => clearTimeout(timer);
 		}
-	}, [saveState]);
+	}, [saveState.success]);
 
 	const updateSection = (
 		sectionKey: keyof SiteContent,
@@ -125,9 +130,9 @@ export default function Dashboard({ initialData }: DashboardProps) {
 				</header>
 
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50/50 relative z-0">
-					{saveState.message && (
+					{showSuccess && (
 						<div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-							{saveState.message}
+							¡Cambios guardados exitosamente! La página principal se actualizará.
 						</div>
 					)}
 					{saveState.error && (
