@@ -11,12 +11,12 @@ import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuSub,
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
 	title: string;
@@ -40,33 +40,54 @@ export function NavMain({
 	activeSection,
 	onSectionChange,
 }: NavMainProps) {
+	// Map nav titles to section keys
+	const getSectionKey = (title: string): string => {
+		const keyMap: Record<string, string> = {
+			Header: "header",
+			Hero: "hero",
+			Productos: "featuredProducts",
+			Marcas: "featuredBrands",
+			Clientes: "featuredClients",
+			Equipo: "featuredTeam",
+			Footer: "footer",
+		};
+		return keyMap[title] || title.toLowerCase().replace(/\s+/g, "");
+	};
+
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Secciones</SidebarGroupLabel>
 			<SidebarMenu>
-				{items.map((item: NavItem) => (
-					<Collapsible
-						key={item.title}
-						defaultOpen={item.isActive}
-						className="group/collapsible"
-					>
-						<SidebarMenuItem>
-							<CollapsibleTrigger>
-								<SidebarMenuButton tooltip={item.title}>
-									{item.icon && <item.icon />}
-									<span>{item.title}</span>
-									<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-								</SidebarMenuButton>
-							</CollapsibleTrigger>
-							<CollapsibleContent>
-								<SidebarMenuSub>
-									{item.items?.map((subItem) => {
-										const sectionKey = item.title
-											.toLowerCase()
-											.replace(/\s+/g, "");
-										const isActive = activeSection === sectionKey;
+				{items.map((item: NavItem) => {
+					const sectionKey = getSectionKey(item.title);
+					const isActive = activeSection === sectionKey;
 
-										return (
+					return (
+						<Collapsible
+							key={item.title}
+							open={Boolean(isActive)}
+							className="group/collapsible"
+						>
+							<SidebarMenuItem>
+								<CollapsibleTrigger>
+									<div
+										className={cn(
+											"flex w-full items-center gap-2 rounded-md p-2 text-left text-sm",
+											"h-8 ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+											"active:bg-sidebar-accent active:text-sidebar-accent-foreground",
+											"focus-visible:outline-hidden focus-visible:ring-2",
+											"cursor-pointer select-none [&_svg]:size-4 [&_svg]:shrink-0",
+											isActive ? "bg-accent" : "",
+										)}
+									>
+										{item.icon && <item.icon />}
+										<span>{item.title}</span>
+										<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+									</div>
+								</CollapsibleTrigger>
+								<CollapsibleContent>
+									<SidebarMenuSub>
+										{item.items?.map((subItem) => (
 											<SidebarMenuSubItem key={subItem.title}>
 												<SidebarMenuSubButton
 													className={isActive ? "bg-accent" : ""}
@@ -76,13 +97,13 @@ export function NavMain({
 													<span>{subItem.title}</span>
 												</SidebarMenuSubButton>
 											</SidebarMenuSubItem>
-										);
-									})}
-								</SidebarMenuSub>
-							</CollapsibleContent>
-						</SidebarMenuItem>
-					</Collapsible>
-				))}
+										))}
+									</SidebarMenuSub>
+								</CollapsibleContent>
+							</SidebarMenuItem>
+						</Collapsible>
+					);
+				})}
 			</SidebarMenu>
 		</SidebarGroup>
 	);

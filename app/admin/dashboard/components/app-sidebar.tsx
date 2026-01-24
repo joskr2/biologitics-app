@@ -84,7 +84,16 @@ const data = {
 	],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+	activeSection?: string;
+	onSectionChange?: (section: string) => void;
+}
+
+export function AppSidebar({
+	activeSection,
+	onSectionChange,
+	...props
+}: AppSidebarProps) {
 	const handleLogout = async () => {
 		await logoutAction();
 		window.location.reload();
@@ -96,7 +105,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<TeamSwitcher teams={data.teams} />
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={navMain} />
+				<NavMain
+					items={navMain}
+					activeSection={activeSection}
+					onSectionChange={onSectionChange}
+				/>
 			</SidebarContent>
 			<SidebarFooter>
 				<div className="px-3 py-2">

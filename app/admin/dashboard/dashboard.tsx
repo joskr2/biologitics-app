@@ -59,9 +59,12 @@ export default function Dashboard({ initialData }: DashboardProps) {
 
 	return (
 		<SidebarProvider>
-			<AppSidebar />
-			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white">
+			<AppSidebar
+				activeSection={activeSection}
+				onSectionChange={_setActiveSection}
+			/>
+			<SidebarInset className="z-0">
+				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white relative z-10">
 					<div className="flex items-center gap-2 px-4">
 						<SidebarTrigger className="-ml-1" />
 						<Separator
@@ -106,7 +109,7 @@ export default function Dashboard({ initialData }: DashboardProps) {
 					</div>
 				</header>
 
-				<div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50/50">
+				<div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50/50 relative z-0">
 					{saveState.message && (
 						<div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
 							{saveState.message}
@@ -211,64 +214,76 @@ function HeaderForm({
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<div className="grid grid-cols-2 gap-4">
-					<div>
+					<div className="space-y-2">
 						<Label>Logo SRC</Label>
 						<Input
 							value={data.logo.src}
 							onChange={(e) => updateLogo("src", e.target.value)}
+							className="h-10"
 						/>
 					</div>
-					<div>
+					<div className="space-y-2">
 						<Label>Logo ALT</Label>
 						<Input
 							value={data.logo.alt}
 							onChange={(e) => updateLogo("alt", e.target.value)}
+							className="h-10"
 						/>
 					</div>
 				</div>
 
 				<div className="grid grid-cols-2 gap-4">
-					<div>
+					<div className="space-y-2">
 						<Label>Botón CTA Texto</Label>
 						<Input
 							value={data.cta.label}
 							onChange={(e) => updateCta("label", e.target.value)}
+							className="h-10"
 						/>
 					</div>
-					<div>
+					<div className="space-y-2">
 						<Label>Botón CTA Enlace</Label>
 						<Input
 							value={data.cta.href}
 							onChange={(e) => updateCta("href", e.target.value)}
+							className="h-10"
 						/>
 					</div>
 				</div>
 
-				<div>
+				<div className="space-y-3">
 					<Label>Navegación</Label>
-					<div className="space-y-2 mt-2">
+					<div className="space-y-2">
 						{data.navigation.map((item, i) => (
-							<div key={item.label} className="flex gap-2 items-center">
+							<div key={item.href} className="flex gap-2 items-center">
 								<Input
 									placeholder="Label"
 									value={item.label}
 									onChange={(e) => updateNav(i, "label", e.target.value)}
+									className="h-10 flex-1"
 								/>
 								<Input
 									placeholder="Enlace"
 									value={item.href}
 									onChange={(e) => updateNav(i, "href", e.target.value)}
+									className="h-10 flex-1"
 								/>
 								<Button
 									variant="outline"
-									size="sm"
+									size="icon"
 									onClick={() => removeNavItem(i)}
+									className="h-10 w-10"
 								>
 									×
 								</Button>
 							</div>
 						))}
-						<Button variant="outline" size="sm" onClick={addNavItem}>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={addNavItem}
+							className="mt-2"
+						>
 							+ Añadir Enlace
 						</Button>
 					</div>
