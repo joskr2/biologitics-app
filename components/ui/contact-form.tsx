@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-
+import { useActionState } from "react";
+import { submitContactForm, type FormState } from "@/app/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,72 +13,28 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { SectionContent } from "@/components/ui/section-content";
-import {
-	Field,
-	FieldLabel,
-	FieldError,
-	FieldContent,
-} from "@/components/ui/field";
+import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 
-const formSchema = z.object({
-	nombre: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
-	email: z.email("Ingresa un correo electrónico válido"),
-	empresa: z.string().optional(),
-	telefono: z.string().optional(),
-	producto: z.string().optional(),
-	mensaje: z.string().min(10, "El mensaje debe tener al menos 10 caracteres"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
-
-function zodResolver(schema: typeof formSchema) {
-	return async (values: Record<string, unknown>) => {
-		const result = await schema.safeParseAsync(values);
-		if (result.success) {
-			return { values: result.data, errors: {} };
-		}
-		const errors: Record<string, { message?: string }> = {};
-		for (const issue of result.error.issues) {
-			const path = issue.path.join(".");
-			if (path) {
-				errors[path] = { message: issue.message };
-			}
-		}
-		return { values: {}, errors };
-	};
-}
+const initialState: FormState = {
+	success: false,
+	message: "",
+	errors: {},
+	inputs: {},
+};
 
 export function ContactForm({
 	title = "Solicita Información",
-	subtitle = "Completa el formulario y nuestro equipo te contactará en menos de 24 horas",
-}: {
-	title?: string;
-	subtitle?: string;
-} = {}) {
-	const [isSubmitted, setIsSubmitted] = useState(false);
+	subtitle = "Completa el formulario y nuestro equipo te contactará",
+}) {
+	const [state, action, isPending] = useActionState(
+		submitContactForm,
+		initialState,
+	);
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
-		defaultValues: {
-			nombre: "",
-			email: "",
-			empresa: "",
-			telefono: "",
-			producto: "",
-			mensaje: "",
-		},
-	});
-
-	const onSubmit = async (data: FormValues) => {
-		await new Promise((resolve) => setTimeout(resolve, 1000));
-		console.log(data);
-		setIsSubmitted(true);
-	};
-
-	if (isSubmitted) {
+	if (state.success) {
 		return (
 			<SectionContent id="contacto" title={title} subtitle={subtitle}>
-				<div className="max-w-2xl mx-auto text-center py-12">
+				<div className="max-w-2xl mx-auto text-center py-12 animate-in fade-in zoom-in duration-300">
 					<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
 						<svg
 							className="w-8 h-8"
@@ -98,10 +52,9 @@ export function ContactForm({
 					</div>
 					<h3 className="text-2xl font-semibold mb-4">¡Mensaje Enviado!</h3>
 					<p className="text-muted-foreground mb-8">
-						Gracias por tu interés. Nuestro equipo revisará tu solicitud y te
-						contactará en menos de 24 horas.
+						{state.message || "Gracias por contactarnos."}
 					</p>
-					<Button variant="outline" onClick={() => setIsSubmitted(false)}>
+					<Button variant="outline" onClick={() => window.location.reload()}>
 						Enviar otra consulta
 					</Button>
 				</div>
@@ -112,111 +65,115 @@ export function ContactForm({
 	return (
 		<SectionContent id="contacto" title={title} subtitle={subtitle}>
 			<div className="max-w-2xl mx-auto">
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+				<form action={action} className="space-y-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<Controller
-							control={form.control}
-							name="nombre"
-							render={({ field, fieldState }) => (
-								<Field data-invalid={!!fieldState.error}>
-									<FieldLabel htmlFor={field.name}>Nombre completo *</FieldLabel>
-									<Input {...field} id={field.name} aria-invalid={!!fieldState.error} />
-									{fieldState.error && <FieldError errors={[fieldState.error]} />}
-								</Field>
+						<Field data-invalid={!!state.errors?.nombre}>
+							<FieldLabel htmlFor="nombre">Nombre completo *</FieldLabel>
+							<Input
+								id="nombre"
+								name="nombre"
+								defaultValue={state.inputs?.nombre ?? ""}
+								required
+							/>
+							{state.errors?.nombre && (
+								<FieldError>{state.errors.nombre[0]}</FieldError>
 							)}
-						/>
-						<Controller
-							control={form.control}
-							name="email"
-							render={({ field, fieldState }) => (
-								<Field data-invalid={!!fieldState.error}>
-									<FieldLabel htmlFor={field.name}>Correo electrónico *</FieldLabel>
-									<Input
-										{...field}
-										id={field.name}
-										type="email"
-										aria-invalid={!!fieldState.error}
-									/>
-									{fieldState.error && <FieldError errors={[fieldState.error]} />}
-								</Field>
+						</Field>
+
+						<Field data-invalid={!!state.errors?.email}>
+							<FieldLabel htmlFor="email">Correo electrónico *</FieldLabel>
+							<Input
+								id="email"
+								name="email"
+								type="email"
+								defaultValue={state.inputs?.email ?? ""}
+								required
+							/>
+							{state.errors?.email && (
+								<FieldError>{state.errors.email[0]}</FieldError>
 							)}
-						/>
+						</Field>
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						<Controller
-							control={form.control}
-							name="empresa"
-							render={({ field, fieldState }) => (
-								<Field data-invalid={!!fieldState.error}>
-									<FieldLabel htmlFor={field.name}>Empresa / Institución</FieldLabel>
-									<Input {...field} id={field.name} />
-									{fieldState.error && <FieldError errors={[fieldState.error]} />}
-								</Field>
+						<Field data-invalid={!!state.errors?.empresa}>
+							<FieldLabel htmlFor="empresa">Empresa / Institución</FieldLabel>
+							<Input
+								id="empresa"
+								name="empresa"
+								defaultValue={state.inputs?.empresa ?? ""}
+							/>
+							{state.errors?.empresa && (
+								<FieldError>{state.errors.empresa[0]}</FieldError>
 							)}
-						/>
-						<Controller
-							control={form.control}
-							name="telefono"
-							render={({ field, fieldState }) => (
-								<Field data-invalid={!!fieldState.error}>
-									<FieldLabel htmlFor={field.name}>Teléfono</FieldLabel>
-									<Input {...field} id={field.name} type="tel" />
-									{fieldState.error && <FieldError errors={[fieldState.error]} />}
-								</Field>
+						</Field>
+
+						<Field data-invalid={!!state.errors?.telefono}>
+							<FieldLabel htmlFor="telefono">Teléfono</FieldLabel>
+							<Input
+								id="telefono"
+								name="telefono"
+								type="tel"
+								defaultValue={state.inputs?.telefono ?? ""}
+							/>
+							{state.errors?.telefono && (
+								<FieldError>{state.errors.telefono[0]}</FieldError>
 							)}
-						/>
+						</Field>
 					</div>
 
-					<Controller
-						control={form.control}
-						name="producto"
-						render={({ field, fieldState }) => (
-							<Field orientation="responsive" data-invalid={!!fieldState.error}>
-								<FieldContent>
-									<FieldLabel htmlFor={field.name}>Producto de interés</FieldLabel>
-									{fieldState.error && <FieldError errors={[fieldState.error]} />}
-								</FieldContent>
-								<Select
-									name={field.name}
-									value={field.value}
-									onValueChange={field.onChange}
-								>
-									<SelectTrigger id={field.name} aria-invalid={!!fieldState.error}>
-										<SelectValue placeholder="Selecciona un producto..." />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value="microscopio">Microscopio Digital Pro</SelectItem>
-										<SelectItem value="centrifuga">Centrífuga de Laboratorio</SelectItem>
-										<SelectItem value="espectrofotometro">Espectrofotómetro UV-Vis</SelectItem>
-										<SelectItem value="incubadora">Incubadora de Cultivos</SelectItem>
-										<SelectItem value="autoclave">Autoclave de Mesa</SelectItem>
-										<SelectItem value="otro">Otro / Cotización General</SelectItem>
-									</SelectContent>
-								</Select>
-							</Field>
+					<Field data-invalid={!!state.errors?.producto}>
+						<FieldLabel>Producto de interés</FieldLabel>
+						<Select
+							name="producto"
+							defaultValue={state.inputs?.producto ?? ""}
+						>
+							<SelectTrigger aria-invalid={!!state.errors?.producto}>
+								<SelectValue placeholder="Selecciona un producto..." />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="microscopio">
+									Microscopio Digital Pro
+								</SelectItem>
+								<SelectItem value="centrifuga">
+									Centrífuga de Laboratorio
+								</SelectItem>
+								<SelectItem value="espectrofotometro">
+									Espectrofotómetro UV-Vis
+								</SelectItem>
+								<SelectItem value="incubadora">
+									Incubadora de Cultivos
+								</SelectItem>
+								<SelectItem value="autoclave">Autoclave de Mesa</SelectItem>
+								<SelectItem value="otro">Otro / Cotización General</SelectItem>
+							</SelectContent>
+						</Select>
+						{state.errors?.producto && (
+							<FieldError>{state.errors.producto[0]}</FieldError>
 						)}
-					/>
+					</Field>
 
-					<Controller
-						control={form.control}
-						name="mensaje"
-						render={({ field, fieldState }) => (
-							<Field data-invalid={!!fieldState.error}>
-								<FieldLabel htmlFor={field.name}>Mensaje *</FieldLabel>
-								<Textarea
-									{...field}
-									id={field.name}
-									aria-invalid={!!fieldState.error}
-									className="min-h-30"
-								/>
-								{fieldState.error && <FieldError errors={[fieldState.error]} />}
-							</Field>
+					<Field data-invalid={!!state.errors?.mensaje}>
+						<FieldLabel htmlFor="mensaje">Mensaje *</FieldLabel>
+						<Textarea
+							id="mensaje"
+							name="mensaje"
+							className="min-h-32"
+							defaultValue={state.inputs?.mensaje ?? ""}
+							required
+						/>
+						{state.errors?.mensaje && (
+							<FieldError>{state.errors.mensaje[0]}</FieldError>
 						)}
-					/>
+					</Field>
 
-					<Button type="submit" size="lg" className="w-full">
-						Enviar Solicitud
+					<Button
+						type="submit"
+						size="lg"
+						className="w-full"
+						disabled={isPending}
+					>
+						{isPending ? "Enviando solicitud..." : "Enviar Solicitud"}
 					</Button>
 				</form>
 			</div>
