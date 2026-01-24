@@ -3,8 +3,6 @@ import { getLandingData } from "@/app/lib/db";
 import { LoginForm } from "./components/login-form";
 import Dashboard from "./dashboard/dashboard";
 
-export const runtime = "edge";
-
 export default async function AdminPage() {
 	const cookieStore = await cookies();
 	const isLoggedIn = cookieStore.get("admin_session")?.value === "true";

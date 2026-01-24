@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
 		},
 	},
 
+	// React Compiler deshabilitado temporalmente - requiere babel-plugin-react-compiler
 	reactCompiler: true,
 
 	images: {

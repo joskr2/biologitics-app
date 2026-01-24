@@ -6,8 +6,6 @@ import { cookies } from "next/headers";
 import { saveLandingData } from "@/app/lib/db";
 import type { SiteContent } from "@/config/site-content";
 
-export const runtime = "edge";
-
 // --- LOGIN ---
 export async function loginAction(
 	_prevState: { success: boolean; error?: string },

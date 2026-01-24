@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
@@ -112,16 +113,18 @@ export default function RootLayout({
 			<body
 				className={`${roboto.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<Header />
-					{children}
-					<Footer />
-				</ThemeProvider>
+				<Suspense fallback={null}>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+						disableTransitionOnChange
+					>
+						<Header />
+						{children}
+						<Footer />
+					</ThemeProvider>
+				</Suspense>
 			</body>
 		</html>
 	);
