@@ -35,14 +35,15 @@ interface DashboardProps {
 export default function Dashboard({ initialData }: DashboardProps) {
 	const [data, setData] = useState<SiteContent>(initialData);
 	const [activeSection, _setActiveSection] = useState("header");
-	const [saveState, saveAction, isSaving] = useActionState(
-		saveDashboardData,
-		{ success: false, message: undefined, error: undefined } as {
-			success: boolean;
-			message?: string;
-			error?: string;
-		},
-	);
+	const [saveState, saveAction, isSaving] = useActionState(saveDashboardData, {
+		success: false,
+		message: undefined,
+		error: undefined,
+	} as {
+		success: boolean;
+		message?: string;
+		error?: string;
+	});
 
 	// Show success message after save (no reload needed)
 	const [showSuccess, setShowSuccess] = useState(false);
@@ -132,7 +133,8 @@ export default function Dashboard({ initialData }: DashboardProps) {
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50/50 relative z-0">
 					{showSuccess && (
 						<div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-							¡Cambios guardados exitosamente! La página principal se actualizará.
+							¡Cambios guardados exitosamente! La página principal se
+							actualizará.
 						</div>
 					)}
 					{saveState.error && (

@@ -82,9 +82,7 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 										key={feat}
 										placeholder="Característica"
 										value={feat}
-										onChange={(e) =>
-											updateFeatures(i, f, e.target.value)
-										}
+										onChange={(e) => updateFeatures(i, f, e.target.value)}
 									/>
 								))}
 							</div>
