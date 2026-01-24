@@ -1,12 +1,7 @@
 "use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import {
 	SidebarGroup,
 	SidebarGroupLabel,
@@ -16,7 +11,6 @@ import {
 	SidebarMenuSubButton,
 	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 interface NavItem {
 	title: string;
@@ -40,7 +34,6 @@ export function NavMain({
 	activeSection,
 	onSectionChange,
 }: NavMainProps) {
-	// Map nav titles to section keys
 	const getSectionKey = (title: string): string => {
 		const keyMap: Record<string, string> = {
 			Header: "header",
@@ -63,45 +56,20 @@ export function NavMain({
 					const isActive = activeSection === sectionKey;
 
 					return (
-						<Collapsible
-							key={item.title}
-							open={Boolean(isActive)}
-							className="group/collapsible"
-						>
-							<SidebarMenuItem>
-								<CollapsibleTrigger>
-									<div
-										className={cn(
-											"flex w-full items-center gap-2 rounded-md p-2 text-left text-sm",
-											"h-8 ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-											"active:bg-sidebar-accent active:text-sidebar-accent-foreground",
-											"focus-visible:outline-hidden focus-visible:ring-2",
-											"cursor-pointer select-none [&_svg]:size-4 [&_svg]:shrink-0",
-											isActive ? "bg-accent" : "",
-										)}
+						<SidebarMenuItem key={item.title}>
+							<SidebarMenuSub>
+								<SidebarMenuSubItem key={item.title}>
+									<SidebarMenuSubButton
+										className={isActive ? "bg-accent" : ""}
+										onClick={() => onSectionChange?.(sectionKey)}
+										style={{ cursor: "pointer" }}
 									>
-										{item.icon && <item.icon />}
+										{item.icon && <item.icon className="mr-2 h-4 w-4" />}
 										<span>{item.title}</span>
-										<ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-									</div>
-								</CollapsibleTrigger>
-								<CollapsibleContent>
-									<SidebarMenuSub>
-										{item.items?.map((subItem) => (
-											<SidebarMenuSubItem key={subItem.title}>
-												<SidebarMenuSubButton
-													className={isActive ? "bg-accent" : ""}
-													onClick={() => onSectionChange?.(sectionKey)}
-													style={{ cursor: "pointer" }}
-												>
-													<span>{subItem.title}</span>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-										))}
-									</SidebarMenuSub>
-								</CollapsibleContent>
-							</SidebarMenuItem>
-						</Collapsible>
+									</SidebarMenuSubButton>
+								</SidebarMenuSubItem>
+							</SidebarMenuSub>
+						</SidebarMenuItem>
 					);
 				})}
 			</SidebarMenu>
