@@ -25,3 +25,26 @@ export async function GET() {
 		return NextResponse.json(defaultData as SiteContent);
 	}
 }
+
+export async function POST(request: Request) {
+	try {
+		const { env } = await getCloudflareContext({ async: true }).catch(() => ({
+			env: null,
+		}));
+
+		if (env && (env as CloudflareEnv).BIOLOGISTICS) {
+			const kv = (env as CloudflareEnv).BIOLOGISTICS;
+			const data = await request.json() as SiteContent;
+			await kv.put("site-content", JSON.stringify(data));
+			return NextResponse.json({ success: true, data });
+		}
+
+		// In development without KV, save to a simple file-based approach
+		// For now, just return the submitted data so client can update
+		const data = await request.json() as SiteContent;
+		return NextResponse.json({ success: true, data, warning: "KV not available, data not persisted" });
+	} catch (error) {
+		console.error("Error saving:", error);
+		return NextResponse.json({ success: false, error: "Failed to save" }, { status: 500 });
+	}
+}

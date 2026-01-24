@@ -1,0 +1,125 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { SiteContent } from "@/config/site-content";
+
+interface HeaderFormProps {
+	data: SiteContent["header"];
+	onChange: (d: unknown) => void;
+}
+
+export function HeaderForm({ data, onChange }: HeaderFormProps) {
+	const updateLogo = (field: string, value: string) => {
+		onChange({ ...data, logo: { ...data.logo, [field]: value } });
+	};
+
+	const updateCta = (field: string, value: string) => {
+		onChange({ ...data, cta: { ...data.cta, [field]: value } });
+	};
+
+	const updateNav = (index: number, field: string, value: string) => {
+		const newNav = [...data.navigation];
+		newNav[index] = { ...newNav[index], [field]: value };
+		onChange({ ...data, navigation: newNav });
+	};
+
+	const addNavItem = () => {
+		onChange({
+			...data,
+			navigation: [...data.navigation, { label: "", href: "/" }],
+		});
+	};
+
+	const removeNavItem = (index: number) => {
+		const newNav = data.navigation.filter((_, i) => i !== index);
+		onChange({ ...data, navigation: newNav });
+	};
+
+	return (
+		<Card>
+			<CardHeader>
+				<CardTitle>Configuración del Header</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-6">
+				<div className="grid grid-cols-2 gap-4">
+					<div className="space-y-2">
+						<Label>Logo SRC</Label>
+						<Input
+							value={data.logo.src}
+							onChange={(e) => updateLogo("src", e.target.value)}
+							className="h-10"
+						/>
+					</div>
+					<div className="space-y-2">
+						<Label>Logo ALT</Label>
+						<Input
+							value={data.logo.alt}
+							onChange={(e) => updateLogo("alt", e.target.value)}
+							className="h-10"
+						/>
+					</div>
+				</div>
+
+				<div className="grid grid-cols-2 gap-4">
+					<div className="space-y-2">
+						<Label>Botón CTA Texto</Label>
+						<Input
+							value={data.cta.label}
+							onChange={(e) => updateCta("label", e.target.value)}
+							className="h-10"
+						/>
+					</div>
+					<div className="space-y-2">
+						<Label>Botón CTA Enlace</Label>
+						<Input
+							value={data.cta.href}
+							onChange={(e) => updateCta("href", e.target.value)}
+							className="h-10"
+						/>
+					</div>
+				</div>
+
+				<div className="space-y-3">
+					<Label>Navegación</Label>
+					<div className="space-y-2">
+						{data.navigation.map((item, i) => (
+							<div key={item.href} className="flex gap-2 items-center">
+								<Input
+									placeholder="Label"
+									value={item.label}
+									onChange={(e) => updateNav(i, "label", e.target.value)}
+									className="h-10 flex-1"
+								/>
+								<Input
+									placeholder="Enlace"
+									value={item.href}
+									onChange={(e) => updateNav(i, "href", e.target.value)}
+									className="h-10 flex-1"
+								/>
+								<Button
+									variant="outline"
+									size="icon"
+									onClick={() => removeNavItem(i)}
+									className="h-10 w-10"
+								>
+									×
+								</Button>
+							</div>
+						))}
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={addNavItem}
+							className="mt-2"
+						>
+							+ Añadir Enlace
+						</Button>
+					</div>
+				</div>
+			</CardContent>
+		</Card>
+	);
+}

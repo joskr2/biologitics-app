@@ -5,37 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
 
-interface ProductsFormProps {
-	data: SiteContent["featuredProducts"];
+interface BrandsFormProps {
+	data: SiteContent["featuredBrands"];
 	onChange: (d: unknown) => void;
 }
 
-export function ProductsForm({ data, onChange }: ProductsFormProps) {
-	const updateItem = (
-		index: number,
-		field: string,
-		value: string | string[],
-	) => {
+export function BrandsForm({ data, onChange }: BrandsFormProps) {
+	const updateItem = (index: number, field: string, value: string) => {
 		const newItems = [...data.items];
 		newItems[index] = { ...newItems[index], [field]: value };
 		onChange({ ...data, items: newItems });
 	};
 
-	const updateFeatures = (
-		itemIndex: number,
-		featureIndex: number,
-		value: string,
-	) => {
-		const item = data.items[itemIndex];
-		const newFeatures = [...item.features];
-		newFeatures[featureIndex] = value;
-		updateItem(itemIndex, "features", newFeatures);
-	};
-
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Productos Destacados</CardTitle>
+				<CardTitle>Marcas Representadas</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<div className="grid grid-cols-2 gap-4">
@@ -59,14 +44,14 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 					<div key={item.id} className="border p-4 rounded-lg space-y-3">
 						<div className="grid grid-cols-2 gap-3">
 							<Input
-								placeholder="Nombre del producto"
-								value={item.title}
-								onChange={(e) => updateItem(i, "title", e.target.value)}
+								placeholder="Nombre de la marca"
+								value={item.name}
+								onChange={(e) => updateItem(i, "name", e.target.value)}
 							/>
 							<Input
-								placeholder="URL de imagen"
-								value={item.image}
-								onChange={(e) => updateItem(i, "image", e.target.value)}
+								placeholder="Logo (ruta)"
+								value={item.logo}
+								onChange={(e) => updateItem(i, "logo", e.target.value)}
 							/>
 						</div>
 						<Input
@@ -74,21 +59,11 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 							value={item.description}
 							onChange={(e) => updateItem(i, "description", e.target.value)}
 						/>
-						<div>
-							<Label className="text-xs">Características</Label>
-							<div className="grid grid-cols-2 gap-2 mt-1">
-								{item.features.map((feat, f) => (
-									<Input
-										key={feat}
-										placeholder="Característica"
-										value={feat}
-										onChange={(e) =>
-											updateFeatures(i, f, e.target.value)
-										}
-									/>
-								))}
-							</div>
-						</div>
+						<Input
+							placeholder="Enlace"
+							value={item.href}
+							onChange={(e) => updateItem(i, "href", e.target.value)}
+						/>
 					</div>
 				))}
 			</CardContent>

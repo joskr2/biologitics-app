@@ -1,10 +1,9 @@
-// app/actions/admin.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { saveLandingData } from "@/app/lib/db";
 import type { SiteContent } from "@/config/site-content";
+import { saveLandingData } from "@/app/lib/db";
 
 // --- LOGIN ---
 export async function loginAction(
@@ -58,7 +57,7 @@ export async function saveDashboardData(
 			return { success: true, message: "¡Cambios guardados exitosamente!" };
 		}
 
-		return { success: false, error: result.error };
+		return { success: false, error: result.error || "Error al guardar" };
 	} catch (error) {
 		console.error("Parse error:", error);
 		return { success: false, error: "Error al procesar los datos" };
