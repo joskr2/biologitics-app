@@ -21,6 +21,7 @@ function TeamCard({
 					src={member.photo}
 					alt={`Foto de ${member.name}`}
 					fill
+					sizes="(max-width: 768px) 50vw, 20vw"
 					className="object-cover rounded-full ring-4 ring-muted/30 group-hover:ring-primary/20 transition-all"
 				/>
 			</div>

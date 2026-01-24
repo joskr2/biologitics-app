@@ -57,7 +57,7 @@ export function CardContent({
 							imageType === "logo" ? "h-16 w-40" : "h-full w-full"
 						}`}
 					>
-						<Image src={image} alt={imageAlt} fill className={imageClassName} />
+						<Image src={image} alt={imageAlt} fill sizes="(max-width: 768px) 50vw, 20vw" className={imageClassName} />
 					</div>
 					<div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-primary/50 via-primary to-primary/50 transform scale-x-0 transition-transform duration-500 group-hover:scale-x-100" />
 				</div>

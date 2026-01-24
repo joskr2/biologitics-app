@@ -21,6 +21,7 @@ function ClientCard({
 					src={client.logo}
 					alt={`Logo de ${client.name}`}
 					fill
+					sizes="(max-width: 768px) 50vw, 20vw"
 					className="object-contain grayscale opacity-70 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100"
 				/>
 			</div>
