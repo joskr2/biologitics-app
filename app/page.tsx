@@ -1,3 +1,4 @@
+import { ContactForm } from "@/components/ui/contact-form";
 import { FeaturedBrands } from "@/components/ui/featured-brands";
 import { FeaturedClients } from "@/components/ui/featured-clients";
 import { FeaturedProducts } from "@/components/ui/featured-products";
@@ -12,6 +13,7 @@ export default function Page() {
 			<FeaturedBrands />
 			<FeaturedClients />
 			<FeaturedTeam />
+			<ContactForm />
 		</>
 	);
 }
