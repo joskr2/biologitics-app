@@ -6,13 +6,18 @@ import { MailIcon, PhoneIcon } from "lucide-react";
 import { SectionContent } from "@/components/ui/section-content";
 import siteContent from "@/config/site-content.json";
 import Link from "next/link";
+import type { FeaturedTeamContent } from "@/config/site-content";
 
-const { items, title, subtitle } = siteContent.featuredTeam;
+const defaultData = siteContent.featuredTeam;
+
+interface FeaturedTeamProps {
+	data?: FeaturedTeamContent;
+}
 
 function TeamCard({
 	member,
 }: Readonly<{
-	member: typeof items[0];
+	member: (typeof defaultData.items)[0];
 }>) {
 	return (
 		<div className="group flex flex-col items-center p-6 bg-card rounded-xl border transition-all hover:shadow-md">
@@ -48,12 +53,15 @@ function TeamCard({
 }
 
 export function FeaturedTeam({
+	data,
 	title: propTitle,
 	subtitle: propSubtitle,
-}: {
+}: FeaturedTeamProps & {
 	title?: string;
 	subtitle?: string;
 } = {}) {
+	const { items, title, subtitle } = { ...defaultData, ...data };
+
 	return (
 		<SectionContent
 			id="equipo"

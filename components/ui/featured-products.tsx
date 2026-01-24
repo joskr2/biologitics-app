@@ -11,13 +11,18 @@ import { Button } from "@/components/ui/button";
 import { CardContent, CardListItem } from "@/components/ui/card-content";
 import { SectionContent } from "@/components/ui/section-content";
 import siteContent from "@/config/site-content.json";
+import type { FeaturedProductsContent } from "@/config/site-content";
 
-const { items, title, subtitle, buttonText, buttonHref } = siteContent.featuredProducts;
+const defaultData = siteContent.featuredProducts;
+
+interface FeaturedProductsProps {
+	data?: FeaturedProductsContent;
+}
 
 function ProductCard({
 	product,
 }: Readonly<{
-	product: typeof items[0];
+	product: (typeof defaultData.items)[0];
 }>) {
 	const itemsList: CardListItem[] = product.features.map((feature) => ({
 		label: feature,
@@ -47,7 +52,7 @@ function ProductCard({
 	);
 }
 
-function FeaturedProductsCarousel() {
+function FeaturedProductsCarousel({ items }: { items: (typeof defaultData.items) }) {
 	return (
 		<div className="relative">
 			<Carousel
@@ -72,7 +77,7 @@ function FeaturedProductsCarousel() {
 	);
 }
 
-function FeaturedProductsGrid() {
+function FeaturedProductsGrid({ items }: { items: (typeof defaultData.items) }) {
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
 			{items.map((product) => (
@@ -83,32 +88,44 @@ function FeaturedProductsGrid() {
 }
 
 export function FeaturedProducts({
+	data,
 	title: propTitle,
 	subtitle: propSubtitle,
 	buttonText: propButtonText,
 	buttonHref: propButtonHref,
-}: {
+}: FeaturedProductsProps & {
 	title?: string;
 	subtitle?: string;
 	buttonText?: string;
 	buttonHref?: string;
 } = {}) {
+	const { items, title, subtitle, buttonText, buttonHref } = {
+		...defaultData,
+		...data,
+	};
+
 	return (
-		<SectionContent id="productos" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle}>
+		<SectionContent
+			id="productos"
+			title={propTitle ?? title}
+			subtitle={propSubtitle ?? subtitle}
+		>
 			{/* Featured Products Carousel (Mobile/Tablet) */}
 			<div className="block lg:hidden">
-				<FeaturedProductsCarousel />
+				<FeaturedProductsCarousel items={items} />
 			</div>
 
 			{/* Featured Products Grid (Desktop) */}
 			<div className="hidden lg:block">
-				<FeaturedProductsGrid />
+				<FeaturedProductsGrid items={items} />
 			</div>
 
 			{/* Footer with Link */}
 			<div className="mt-10 text-center">
 				<Button variant="default" size="lg">
-					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
+					<Link href={propButtonHref ?? buttonHref}>
+						{propButtonText ?? buttonText}
+					</Link>
 				</Button>
 			</div>
 		</SectionContent>

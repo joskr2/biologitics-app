@@ -6,13 +6,18 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SectionContent } from "@/components/ui/section-content";
 import siteContent from "@/config/site-content.json";
+import type { FeaturedClientsContent } from "@/config/site-content";
 
-const { items, title, subtitle, buttonText, buttonHref } = siteContent.featuredClients;
+const defaultData = siteContent.featuredClients;
+
+interface FeaturedClientsProps {
+	data?: FeaturedClientsContent;
+}
 
 function ClientCard({
 	client,
 }: Readonly<{
-	client: typeof items[0];
+	client: (typeof defaultData.items)[0];
 }>) {
 	return (
 		<div className="group flex flex-col items-center justify-center p-6 bg-card rounded-xl border transition-all hover:shadow-md">
@@ -33,16 +38,22 @@ function ClientCard({
 }
 
 export function FeaturedClients({
+	data,
 	title: propTitle,
 	subtitle: propSubtitle,
 	buttonText: propButtonText,
 	buttonHref: propButtonHref,
-}: {
+}: FeaturedClientsProps & {
 	title?: string;
 	subtitle?: string;
 	buttonText?: string;
 	buttonHref?: string;
 } = {}) {
+	const { items, title, subtitle, buttonText, buttonHref } = {
+		...defaultData,
+		...data,
+	};
+
 	return (
 		<SectionContent
 			id="clientes"
@@ -58,7 +69,9 @@ export function FeaturedClients({
 
 			<div className="mt-10 text-center">
 				<Button variant="default" size="lg">
-					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
+					<Link href={propButtonHref ?? buttonHref}>
+						{propButtonText ?? buttonText}
+					</Link>
 				</Button>
 			</div>
 		</SectionContent>

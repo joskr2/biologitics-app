@@ -12,10 +12,23 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import siteContent from "@/config/site-content.json";
+import type { HeroContent } from "@/config/site-content";
 
-const { slides, socialProof } = siteContent.hero;
+const defaultData = siteContent.hero;
 
-function HeroSlideContent(slide: typeof slides[0]) {
+interface HeroProps {
+	data?: HeroContent;
+}
+
+function HeroSlideContent({
+	slide,
+	cta,
+	secondaryCta,
+}: {
+	slide: (typeof defaultData.slides)[0];
+	cta: (typeof defaultData.slides)[0]["cta"];
+	secondaryCta?: (typeof defaultData.slides)[0]["secondaryCta"];
+}) {
 	return (
 		<div className="relative h-[85vh] min-h-125 max-h-200 flex items-center">
 			<div className="absolute inset-0 z-0">
@@ -54,15 +67,15 @@ function HeroSlideContent(slide: typeof slides[0]) {
 							size="lg"
 							className="shadow-lg hover:shadow-xl transition-shadow"
 						>
-							<Link href={slide.cta.href}>{slide.cta.label}</Link>
+							<Link href={cta.href}>{cta.label}</Link>
 						</Button>
-						{slide.secondaryCta && (
+						{secondaryCta && (
 							<Button
 								variant="outline"
 								size="lg"
 								className="border-white/50 bg-white/10 text-white hover:bg-white/20"
 							>
-								<Link href={slide.secondaryCta.href}>{slide.secondaryCta.label}</Link>
+								<Link href={secondaryCta.href}>{secondaryCta.label}</Link>
 							</Button>
 						)}
 					</div>
@@ -72,7 +85,7 @@ function HeroSlideContent(slide: typeof slides[0]) {
 	);
 }
 
-function HeroIndicators() {
+function HeroIndicators({ slides }: { slides: (typeof defaultData.slides)[0][] }) {
 	const { api } = useCarousel();
 	const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -110,7 +123,9 @@ function HeroIndicators() {
 	);
 }
 
-function Hero() {
+function Hero({ data }: HeroProps) {
+	const { slides, socialProof } = { ...defaultData, ...data };
+
 	return (
 		<section id="hero" className="relative bg-background">
 			<Carousel
@@ -120,11 +135,15 @@ function Hero() {
 				<CarouselContent className="h-full ml-0">
 					{slides.map((slide) => (
 						<CarouselItem key={slide.id} className="pl-0 h-full">
-							<HeroSlideContent {...slide} />
+							<HeroSlideContent
+								slide={slide}
+								cta={slide.cta}
+								secondaryCta={slide.secondaryCta}
+							/>
 						</CarouselItem>
 					))}
 				</CarouselContent>
-				<HeroIndicators />
+				<HeroIndicators slides={slides} />
 			</Carousel>
 
 			{/* Social Proof Stats */}
