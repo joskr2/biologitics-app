@@ -1,175 +1,116 @@
-"use client"
+"use client";
 
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  // biome-ignore lint/suspicious/noShadowRestrictedNames: >
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react"
-
+	Footprints,
+	GalleryVerticalEnd,
+	Image,
+	LayoutDashboard,
+	LogOut,
+	Package,
+	Tags,
+	UserCog,
+	Users,
+} from "lucide-react";
+import { logoutAction } from "@/app/actions/admin";
+import { Button } from "@/components/ui/button";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar"
-import { NavMain } from "./nav-main"
-import { NavProjects } from "./nav-projects"
-import { NavUser } from "./nav-user"
-import { TeamSwitcher } from "./team-switcher"
+	Sidebar,
+	SidebarContent,
+	SidebarFooter,
+	SidebarHeader,
+	SidebarRail,
+} from "@/components/ui/sidebar";
+import { NavMain } from "./nav-main";
+import { TeamSwitcher } from "./team-switcher";
 
-// This is sample data.
+// Navigation items for admin
+const navMain = [
+	{
+		title: "Header",
+		url: "#",
+		icon: LayoutDashboard,
+		items: [{ title: "Logo y Navegación", url: "#header" }],
+	},
+	{
+		title: "Hero",
+		url: "#",
+		icon: Image,
+		items: [{ title: "Banners Principales", url: "#hero" }],
+	},
+	{
+		title: "Productos",
+		url: "#",
+		icon: Package,
+		items: [{ title: "Productos Destacados", url: "#products" }],
+	},
+	{
+		title: "Marcas",
+		url: "#",
+		icon: Tags,
+		items: [{ title: "Marcas Representadas", url: "#brands" }],
+	},
+	{
+		title: "Clientes",
+		url: "#",
+		icon: Users,
+		items: [{ title: "Clientes y Colaboradores", url: "#clients" }],
+	},
+	{
+		title: "Equipo",
+		url: "#",
+		icon: UserCog,
+		items: [{ title: "Equipo de Ventas", url: "#team" }],
+	},
+	{
+		title: "Footer",
+		url: "#",
+		icon: Footprints,
+		items: [{ title: "Información de Pie", url: "#footer" }],
+	},
+];
+
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
+	user: {
+		name: "Administrador",
+		email: "admin@biologistics.com",
+		avatar: "",
+	},
+	teams: [
+		{
+			name: "Biologistics",
+			logo: GalleryVerticalEnd,
+			plan: "Admin",
+		},
+	],
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
-  )
+	const handleLogout = async () => {
+		await logoutAction();
+		window.location.reload();
+	};
+
+	return (
+		<Sidebar collapsible="icon" {...props}>
+			<SidebarHeader>
+				<TeamSwitcher teams={data.teams} />
+			</SidebarHeader>
+			<SidebarContent>
+				<NavMain items={navMain} />
+			</SidebarContent>
+			<SidebarFooter>
+				<div className="px-3 py-2">
+					<Button
+						variant="ghost"
+						className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+						onClick={handleLogout}
+					>
+						<LogOut className="h-4 w-4" />
+						Cerrar Sesión
+					</Button>
+				</div>
+			</SidebarFooter>
+			<SidebarRail />
+		</Sidebar>
+	);
 }

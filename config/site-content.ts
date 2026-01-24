@@ -148,5 +148,6 @@ export interface SiteContent {
 	featuredProducts: FeaturedProductsContent;
 	featuredBrands: FeaturedBrandsContent;
 	featuredClients: FeaturedClientsContent;
+	featuredTeam: FeaturedTeamContent;
 	footer: FooterContent;
 }

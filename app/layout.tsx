@@ -24,7 +24,6 @@ const geistMono = Geist_Mono({
 	display: "swap",
 });
 
-
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
@@ -37,13 +36,13 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
 	// Reemplaza esto con tu dominio real cuando lo tengas (ej: https://biologistics.pe)
 	// Si no lo pones, las imágenes de compartir en redes sociales fallarán.
-	metadataBase: new URL("http://localhost:3000"), 
+	metadataBase: new URL("http://localhost:3000"),
 
 	title: {
 		default: "Biologistics - Venta de Equipos Científicos en Perú",
 		template: "%s | Biologistics", // Permite títulos dinámicos en otras páginas
 	},
-	
+
 	description:
 		"Importación y venta de equipos científicos de alta gama para laboratorios en Perú. Microscopios, centrífugas, incubadoras y equipamiento médico certificado.",
 
@@ -81,7 +80,8 @@ export const metadata: Metadata = {
 		locale: "es_PE",
 		url: "https://www.biologistics.pe", // Tu URL real
 		title: "Biologistics - Tecnología para tu Laboratorio",
-		description: "Venta e importación de equipos científicos garantizados en Perú.",
+		description:
+			"Venta e importación de equipos científicos garantizados en Perú.",
 		siteName: "Biologistics",
 		images: [
 			{
