@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { SectionContent } from "@/components/ui/section-content";
-import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 
 const { items, title, subtitle, buttonText, buttonHref } = siteContent.featuredClients;

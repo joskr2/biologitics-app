@@ -95,6 +95,21 @@ export interface FeaturedClientsContent {
 	items: ClientItem[];
 }
 
+export interface TeamMember {
+	id: string;
+	name: string;
+	role: string;
+	photo: string;
+	email: string;
+	phone: string;
+}
+
+export interface FeaturedTeamContent {
+	title: string;
+	subtitle: string;
+	items: TeamMember[];
+}
+
 export interface FooterCompany {
 	name: string;
 	description: string;

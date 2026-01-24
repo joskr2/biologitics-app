@@ -219,6 +219,44 @@
 			}
 		]
 	},
+	"featuredTeam": {
+		"title": "Nuestro Equipo de Ventas",
+		"subtitle": "Expertos listos para atender tus necesidades de equipamiento científico",
+		"items": [
+			{
+				"id": "jose-garcia",
+				"name": "José García",
+				"role": "Ejecutivo de Ventas",
+				"photo": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&auto=format&q=75",
+				"email": "jose.garcia@biologistics.com",
+				"phone": "+51 901 631 307"
+			},
+			{
+				"id": "maria-rodriguez",
+				"name": "María Rodríguez",
+				"role": "Ejecutiva de Ventas",
+				"photo": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&auto=format&q=75",
+				"email": "maria.rodriguez@biologistics.com",
+				"phone": "+51 901 631 307"
+			},
+			{
+				"id": "carlos-mendoza",
+				"name": "Carlos Mendoza",
+				"role": "Asesor Técnico",
+				"photo": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&auto=format&q=75",
+				"email": "carlos.mendoza@biologistics.com",
+				"phone": "+51 901 631 307"
+			},
+			{
+				"id": "ana-castro",
+				"name": "Ana Castro",
+				"role": "Coordinadora de Ventas",
+				"photo": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&auto=format&q=75",
+				"email": "ana.castro@biologistics.com",
+				"phone": "+51 901 631 307"
+			}
+		]
+	},
 	"footer": {
 		"company": {
 			"name": "Biologistics",
