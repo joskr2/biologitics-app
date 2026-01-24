@@ -80,6 +80,21 @@ export interface FeaturedBrandsContent {
 	items: BrandItem[];
 }
 
+export interface ClientItem {
+	id: string;
+	name: string;
+	logo: string;
+	type: string;
+}
+
+export interface FeaturedClientsContent {
+	title: string;
+	subtitle: string;
+	buttonText: string;
+	buttonHref: string;
+	items: ClientItem[];
+}
+
 export interface FooterCompany {
 	name: string;
 	description: string;
@@ -117,5 +132,6 @@ export interface SiteContent {
 	hero: HeroContent;
 	featuredProducts: FeaturedProductsContent;
 	featuredBrands: FeaturedBrandsContent;
+	featuredClients: FeaturedClientsContent;
 	footer: FooterContent;
 }

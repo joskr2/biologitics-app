@@ -175,6 +175,50 @@
 			}
 		]
 	},
+	"featuredClients": {
+		"title": "Clientes y Colaboradores",
+		"subtitle": "Trabajamos con las instituciones más reconocidas del sector científico y académico",
+		"buttonText": "Ver casos de éxito",
+		"buttonHref": "/casos-exito",
+		"items": [
+			{
+				"id": "universidad-san-marcos",
+				"name": "Universidad Nacional Mayor de San Marcos",
+				"logo": "san-marcos.svg",
+				"type": "Universidad"
+			},
+			{
+				"id": "universidad-catolica",
+				"name": "Pontificia Universidad Católica del Perú",
+				"logo": "pucp.svg",
+				"type": "Universidad"
+			},
+			{
+				"id": "hospital-general",
+				"name": "Hospital Nacional Edgardo Rebagliati Martins",
+				"logo": "hospital-rebagliati.svg",
+				"type": "Hospital"
+			},
+			{
+				"id": "instituto-nutricional",
+				"name": "Instituto Nacional de Salud",
+				"logo": "ins.svg",
+				"type": "Instituto Nacional"
+			},
+			{
+				"id": "upch",
+				"name": "Universidad Peruana Cayetano Heredia",
+				"logo": "upch.svg",
+				"type": "Universidad"
+			},
+			{
+				"id": "universidad-san-marcos2",
+				"name": "Universidad Nacional Mayor de San Marcos",
+				"logo": "san-marcos.svg",
+				"type": "Universidad"
+			}
+		]
+	},
 	"footer": {
 		"company": {
 			"name": "Biologistics",
