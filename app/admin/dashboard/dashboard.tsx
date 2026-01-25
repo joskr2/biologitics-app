@@ -36,7 +36,7 @@ interface DashboardProps {
 
 export default function Dashboard({ initialData }: DashboardProps) {
 	const [data, setData] = useState<SiteContent>(initialData);
-	const [activeSection, _setActiveSection] = useState("header");
+	const [activeSection, setActiveSection] = useState("header");
 	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [heroValid, setHeroValid] = useState(true);
 	const [saveState, saveAction, isSaving] = useActionState(saveDashboardData, {
@@ -91,7 +91,7 @@ export default function Dashboard({ initialData }: DashboardProps) {
 		<SidebarProvider defaultOpen={!isCollapsed}>
 			<AppSidebar
 				activeSection={activeSection}
-				onSectionChange={_setActiveSection}
+				onSectionChange={setActiveSection}
 				onCollapse={setIsCollapsed}
 			/>
 			<SidebarInset className="z-0">

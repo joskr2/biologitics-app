@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
 	SidebarMenu,
-	SidebarMenuButton,
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
@@ -42,19 +41,16 @@ export function TeamSwitcher({
 			<SidebarMenuItem>
 				<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 					<DropdownMenuTrigger>
-						<SidebarMenuButton
-							size="lg"
-							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-						>
-							<div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+						<div className="flex h-12 w-full items-center gap-2 rounded-md bg-sidebar-primary p-2 text-sidebar-primary-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer">
+							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary-foreground/10">
 								<activeTeam.logo className="size-4" />
 							</div>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-medium">{activeTeam.name}</span>
 								<span className="truncate text-xs">{activeTeam.plan}</span>
 							</div>
-							<ChevronsUpDown className="ml-auto" />
-						</SidebarMenuButton>
+							<ChevronsUpDown className="ml-auto opacity-70" />
+						</div>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"

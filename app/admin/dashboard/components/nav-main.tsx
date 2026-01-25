@@ -42,7 +42,9 @@ export function NavMain({
 			Marcas: "featuredBrands",
 			Clientes: "featuredClients",
 			Equipo: "featuredTeam",
+			Respuestas: "responses",
 			Footer: "footer",
+			SEO: "seo",
 		};
 		return keyMap[title] || title.toLowerCase().replace(/\s+/g, "");
 	};
