@@ -6,11 +6,12 @@ const teamRepository = createRepository<TeamMember>({
 	sectionKey: "featuredTeam",
 	defaultItems: [],
 	idGenerator: (data) => {
-		const name = String(data.name || "");
-		return name
+		const name = String(data.name || "nuevo-miembro");
+		const baseId = name
 			.toLowerCase()
 			.replace(/\s+/g, "-")
 			.replace(/[^a-z0-9-]/g, "");
+		return `${baseId}-${Date.now().toString(36)}`;
 	},
 	validateOnCreate: (data) => {
 		if (!data.name || !data.role || !data.email) {

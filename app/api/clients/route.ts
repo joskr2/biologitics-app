@@ -6,11 +6,12 @@ const clientsRepository = createRepository<ClientItem>({
 	sectionKey: "featuredClients",
 	defaultItems: [],
 	idGenerator: (data) => {
-		const name = String(data.name || "");
-		return name
+		const name = String(data.name || "nuevo-cliente");
+		const baseId = name
 			.toLowerCase()
 			.replace(/\s+/g, "-")
 			.replace(/[^a-z0-9-]/g, "");
+		return `${baseId}-${Date.now().toString(36)}`;
 	},
 	validateOnCreate: (data) => {
 		if (!data.name || !data.logo) {

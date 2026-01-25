@@ -6,11 +6,12 @@ const brandsRepository = createRepository<BrandItem & { href?: string }>({
 	sectionKey: "featuredBrands",
 	defaultItems: [],
 	idGenerator: (data) => {
-		const name = String(data.name || "");
-		return name
+		const name = String(data.name || "nueva-marca");
+		const baseId = name
 			.toLowerCase()
 			.replace(/\s+/g, "-")
 			.replace(/[^a-z0-9-]/g, "");
+		return `${baseId}-${Date.now().toString(36)}`;
 	},
 	validateOnCreate: (data) => {
 		if (!data.name || !data.description) {

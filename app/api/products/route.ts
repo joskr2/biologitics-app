@@ -6,11 +6,12 @@ const productsRepository = createRepository<ProductItem>({
 	sectionKey: "featuredProducts",
 	defaultItems: [],
 	idGenerator: (data) => {
-		const title = String(data.title || "");
-		return title
+		const title = String(data.title || "nuevo-producto");
+		const baseId = title
 			.toLowerCase()
 			.replace(/\s+/g, "-")
 			.replace(/[^a-z0-9-]/g, "");
+		return `${baseId}-${Date.now().toString(36)}`;
 	},
 	validateOnCreate: (data) => {
 		if (!data.title || !data.description || !data.image) {
