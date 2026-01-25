@@ -39,7 +39,23 @@ function Header({ data: propData, className }: HeaderProps) {
 		[currentLogo?.src]
 	);
 
-	const handleNavClick = useCallback(() => {
+	const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+		const href = e.currentTarget.getAttribute("href");
+		setIsMobileMenuOpen(false);
+
+		// Handle anchor links
+		if (href && href.startsWith("#")) {
+			e.preventDefault();
+			const targetId = href.slice(1);
+			const targetElement = document.getElementById(targetId);
+			if (targetElement) {
+				targetElement.scrollIntoView({ behavior: "smooth" });
+			}
+		}
+		// For regular links, let Link handle navigation normally
+	}, []);
+
+	const handleMobileButtonClick = useCallback(() => {
 		setIsMobileMenuOpen(false);
 	}, []);
 
@@ -90,7 +106,6 @@ function Header({ data: propData, className }: HeaderProps) {
 				<div className="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
 					<Link
 						href="/"
-						onClick={handleNavClick}
 						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg relative z-50"
 					>
 						{isLogoImage && currentLogo?.src ? (
@@ -122,7 +137,8 @@ function Header({ data: propData, className }: HeaderProps) {
 						{navigation.map((item) => (
 							<Link
 								key={item.href}
-								href={item.href}
+								href={item.href.startsWith("#") ? item.href : `#${item.href.replace("/", "")}`}
+								onClick={handleNavClick}
 								className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary relative pb-1 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 after:transition-transform hover:after:scale-x-100"
 							>
 								{item.label}
@@ -185,7 +201,7 @@ function Header({ data: propData, className }: HeaderProps) {
 						{navigation.map((item) => (
 							<Link
 								key={item.href}
-								href={item.href}
+								href={item.href.startsWith("#") ? item.href : `#${item.href.replace("/", "")}`}
 								onClick={handleNavClick}
 								className="group flex items-center justify-between rounded-lg px-4 py-4 text-lg font-medium text-foreground hover:bg-accent transition-colors border-b border-border/40 last:border-0"
 							>
@@ -202,7 +218,7 @@ function Header({ data: propData, className }: HeaderProps) {
 							variant="default"
 							size="lg"
 							className="w-full text-lg"
-							onClick={handleNavClick}
+							onClick={handleMobileButtonClick}
 						>
 							<Link href={cta.href}>{cta.label}</Link>
 						</Button>

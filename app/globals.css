@@ -166,5 +166,10 @@
 	}
 	body {
 		@apply bg-background text-foreground;
+		scroll-behavior: smooth;
+	}
+	/* Offset para anclas - compensa el header fixed de 64px */
+	section[id] {
+		scroll-margin-top: 5rem;
 	}
 }
