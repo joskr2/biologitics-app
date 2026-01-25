@@ -1,5 +1,6 @@
 "use server";
 
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -19,6 +20,12 @@ export type FormState = {
 	errors?: Record<string, string[]>;
 	inputs?: Partial<FormSchemaType>;
 };
+
+interface CloudflareEnv {
+	NEXT_INC_CACHE_R2_BUCKET?: {
+		put: (key: string, value: Uint8Array) => Promise<void>;
+	};
+}
 
 export async function submitContactForm(
 	_prevState: FormState,
@@ -43,7 +50,29 @@ export async function submitContactForm(
 		};
 	}
 
-	await new Promise((resolve) => setTimeout(resolve, 1000));
+	// Guardar en R2
+	try {
+		const { env } = (await getCloudflareContext({ async: true }).catch(() => ({
+			env: undefined,
+		}))) as { env: CloudflareEnv | undefined };
+
+		if (env?.NEXT_INC_CACHE_R2_BUCKET) {
+			const id = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+			const responseData = {
+				id,
+				...rawData,
+				fecha: new Date().toISOString(),
+			};
+
+			const jsonString = JSON.stringify(responseData, null, 2);
+			const encoder = new TextEncoder();
+			const data = encoder.encode(jsonString);
+
+			await env.NEXT_INC_CACHE_R2_BUCKET.put(`form-responses/${id}.json`, data);
+		}
+	} catch (error) {
+		console.error("Error guardando respuesta:", error);
+	}
 
 	return {
 		success: true,

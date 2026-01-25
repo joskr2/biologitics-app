@@ -7,6 +7,7 @@ import {
 	Image,
 	LayoutDashboard,
 	LogOut,
+	MessageSquare,
 	Package,
 	Tags,
 	UserCog,
@@ -63,6 +64,12 @@ const navMain = [
 		url: "#",
 		icon: UserCog,
 		items: [{ title: "Equipo de Ventas", url: "#team" }],
+	},
+	{
+		title: "Respuestas",
+		url: "#",
+		icon: MessageSquare,
+		items: [{ title: "Consultas del Formulario", url: "#responses" }],
 	},
 	{
 		title: "Footer",

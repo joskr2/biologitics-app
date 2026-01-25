@@ -22,6 +22,7 @@ import type { SiteContent } from "@/config/site-content";
 import { BrandsForm } from "../components/brands-form";
 import { ClientsForm } from "../components/clients-form";
 import { FooterForm } from "../components/footer-form";
+import { FormResponses } from "../components/form-responses";
 import { HeaderForm } from "../components/header-form";
 import { HeroForm } from "../components/hero-form";
 import { ProductsForm } from "../components/products-form";
@@ -79,7 +80,9 @@ export default function Dashboard({ initialData }: DashboardProps) {
 					? "Clientes"
 					: activeSection === "featuredTeam"
 						? "Equipo"
-						: activeSection;
+						: activeSection === "responses"
+							? "Respuestas"
+							: activeSection;
 
 	// Disable save button if hero section is invalid
 	const isSaveDisabled = isSaving || (activeSection === "hero" && !heroValid);
@@ -206,6 +209,7 @@ export default function Dashboard({ initialData }: DashboardProps) {
 									/>
 								</>
 							)}
+							{activeSection === "responses" && <FormResponses />}
 							{activeSection === "footer" && (
 								<FooterForm
 									data={data.footer}
