@@ -3,6 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import Autoplay from "embla-carousel-autoplay";
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { SectionContent } from "@/components/ui/section-content";
 import siteContent from "@/config/site-content.json";
@@ -37,6 +43,41 @@ function ClientCard({
 	);
 }
 
+function FeaturedClientsCarousel({ items }: { items: (typeof defaultData.items) }) {
+	const plugin = Autoplay({ delay: 7000, stopOnInteraction: false });
+
+	return (
+		<div className="relative">
+			<Carousel
+				plugins={[plugin]}
+				opts={{ loop: true }}
+				className="w-full"
+			>
+				<CarouselContent className="-ml-2">
+					{items.map((client) => (
+						<CarouselItem
+							key={client.id}
+							className="pl-2 basis-1/2 md:basis-1/3"
+						>
+							<ClientCard client={client} />
+						</CarouselItem>
+					))}
+				</CarouselContent>
+			</Carousel>
+		</div>
+	);
+}
+
+function FeaturedClientsGrid({ items }: { items: (typeof defaultData.items) }) {
+	return (
+		<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+			{items.map((client) => (
+				<ClientCard key={client.id} client={client} />
+			))}
+		</div>
+	);
+}
+
 export function FeaturedClients({
 	data,
 	title: propTitle,
@@ -61,10 +102,14 @@ export function FeaturedClients({
 			subtitle={propSubtitle ?? subtitle}
 			background="muted/30"
 		>
-			<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-				{items.map((client) => (
-					<ClientCard key={client.id} client={client} />
-				))}
+			{/* Featured Clients Carousel (Mobile/Tablet) */}
+			<div className="block lg:hidden">
+				<FeaturedClientsCarousel items={items} />
+			</div>
+
+			{/* Featured Clients Grid (Desktop) */}
+			<div className="hidden lg:block">
+				<FeaturedClientsGrid items={items} />
 			</div>
 
 			<div className="mt-10 text-center">
