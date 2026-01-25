@@ -44,6 +44,7 @@ export interface HeroContent {
 }
 
 export interface FeatureItem {
+	id?: string;
 	name: string;
 	category?: string;
 }

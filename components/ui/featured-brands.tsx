@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 
-import Autoplay from "embla-carousel-autoplay";
 import {
 	Carousel,
 	CarouselContent,
@@ -11,8 +11,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { CardContent, CardListItem } from "@/components/ui/card-content";
 import { SectionContent } from "@/components/ui/section-content";
+import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
-import type { FeaturedBrandsContent } from "@/config/site-content";
+import type { FeaturedBrandsContent, BrandItem } from "@/config/site-content";
 
 const defaultData = siteContent.featuredBrands;
 
@@ -21,17 +22,18 @@ interface FeaturedBrandsProps {
 }
 
 type BrandCardProps = Readonly<{
-	brand: (typeof defaultData.items)[0];
+	brand: BrandItem;
+	className?: string;
 }>;
 
-function BrandCard({ brand }: BrandCardProps) {
+function BrandCard({ brand, className }: BrandCardProps) {
 	const itemsList: CardListItem[] = brand.bestSellers.map((product) => ({
 		label: product.name,
 		secondary: product.category ?? "",
 	}));
 
 	return (
-		<div className="h-full">
+		<div className={cn("h-full", className)}>
 			<CardContent
 				image={brand.logo}
 				imageAlt={`Logo de ${brand.name}`}
@@ -46,37 +48,73 @@ function BrandCard({ brand }: BrandCardProps) {
 	);
 }
 
-function FeaturedBrandsCarousel({ items }: { items: (typeof defaultData.items) }) {
-	const plugin = Autoplay({ delay: 7000, stopOnInteraction: false });
+function AutoScrollCarousel({ items }: { items: BrandItem[] }) {
+	const apiRef = useRef<{ scrollNext: () => void } | null>(null);
+	const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+	const handleInit = useCallback((api: { scrollNext: () => void } | undefined) => {
+		if (api) {
+			apiRef.current = api;
+		}
+	}, []);
+
+	const startInterval = useCallback(() => {
+		if (intervalRef.current) clearInterval(intervalRef.current);
+		intervalRef.current = setInterval(() => apiRef.current?.scrollNext(), 4000);
+	}, []);
+
+	const stopInterval = useCallback(() => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+	}, []);
+
+	useEffect(() => {
+		startInterval();
+		return () => stopInterval();
+	}, [startInterval, stopInterval]);
+
+	if (items.length === 0) {
+		return (
+			<div className="py-12 text-center">
+				<p className="text-muted-foreground">No hay marcas disponibles.</p>
+			</div>
+		);
+	}
+
+	const showAsGrid = items.length <= 5;
+
+	if (showAsGrid) {
+		return (
+			<div
+				className={cn(
+					"grid gap-4",
+					items.length === 1
+						? "max-w-md mx-auto"
+						: items.length === 2
+							? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
+							: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
+				)}
+			>
+				{items.map((brand) => (
+					<BrandCard key={brand.id} brand={brand} />
+				))}
+			</div>
+		);
+	}
 
 	return (
-		<div className="relative">
-			<Carousel
-				plugins={[plugin]}
-				opts={{ loop: true }}
-				className="w-full"
-			>
+		<div className="relative" onMouseEnter={stopInterval} onMouseLeave={startInterval}>
+			<Carousel opts={{ loop: true, align: "start", watchSlides: false }} setApi={handleInit}>
 				<CarouselContent className="-ml-4">
 					{items.map((brand) => (
-						<CarouselItem
-							key={brand.id}
-							className="pl-4 basis-full sm:basis-1/2"
-						>
+						<CarouselItem key={brand.id} className="pl-4 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5">
 							<BrandCard brand={brand} />
 						</CarouselItem>
 					))}
 				</CarouselContent>
 			</Carousel>
-		</div>
-	);
-}
-
-function FeaturedBrandsGrid({ items }: { items: (typeof defaultData.items) }) {
-	return (
-		<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-			{items.map((brand) => (
-				<BrandCard key={brand.id} brand={brand} />
-			))}
 		</div>
 	);
 }
@@ -94,7 +132,7 @@ export function FeaturedBrands({
 	buttonHref?: string;
 } = {}) {
 	const merged = { ...defaultData, ...data } as {
-		items: (typeof defaultData.items)[0][];
+		items: BrandItem[];
 		title: string;
 		subtitle: string;
 		buttonText: string;
@@ -103,27 +141,11 @@ export function FeaturedBrands({
 	const { items, title, subtitle, buttonText, buttonHref } = merged;
 
 	return (
-		<SectionContent
-			id="marcas"
-			title={propTitle ?? title}
-			subtitle={propSubtitle ?? subtitle}
-			background="muted/30"
-		>
-			{/* Featured Brands Carousel (Mobile/Tablet) */}
-			<div className="block lg:hidden">
-				<FeaturedBrandsCarousel items={items} />
-			</div>
-
-			{/* Featured Brands Grid (Desktop) */}
-			<div className="hidden lg:block">
-				<FeaturedBrandsGrid items={items} />
-			</div>
-
+		<SectionContent id="marcas" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
+			<AutoScrollCarousel items={items} />
 			<div className="mt-10 text-center">
 				<Button variant="default" size="lg">
-					<Link href={propButtonHref ?? buttonHref}>
-						{propButtonText ?? buttonText}
-					</Link>
+					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
 				</Button>
 			</div>
 		</SectionContent>

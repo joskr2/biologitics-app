@@ -1,9 +1,9 @@
 "use client";
 
+import { useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import Autoplay from "embla-carousel-autoplay";
 import {
 	Carousel,
 	CarouselContent,
@@ -11,8 +11,9 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { SectionContent } from "@/components/ui/section-content";
+import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
-import type { FeaturedClientsContent } from "@/config/site-content";
+import type { FeaturedClientsContent, ClientItem } from "@/config/site-content";
 
 const defaultData = siteContent.featuredClients;
 
@@ -20,11 +21,7 @@ interface FeaturedClientsProps {
 	data?: FeaturedClientsContent;
 }
 
-function ClientCard({
-	client,
-}: Readonly<{
-	client: (typeof defaultData.items)[0];
-}>) {
+function ClientCard({ client }: Readonly<{ client: ClientItem }>) {
 	return (
 		<div className="group flex flex-col items-center justify-center p-6 bg-card rounded-xl border transition-all hover:shadow-md">
 			<div className="relative h-16 w-full max-w-40 mb-3">
@@ -43,37 +40,73 @@ function ClientCard({
 	);
 }
 
-function FeaturedClientsCarousel({ items }: { items: (typeof defaultData.items) }) {
-	const plugin = Autoplay({ delay: 7000, stopOnInteraction: false });
+function AutoScrollCarousel({ items }: { items: ClientItem[] }) {
+	const apiRef = useRef<{ scrollNext: () => void } | null>(null);
+	const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+	const handleInit = useCallback((api: { scrollNext: () => void } | undefined) => {
+		if (api) apiRef.current = api;
+	}, []);
+
+	const startInterval = useCallback(() => {
+		if (intervalRef.current) clearInterval(intervalRef.current);
+		intervalRef.current = setInterval(() => apiRef.current?.scrollNext(), 4000);
+	}, []);
+
+	const stopInterval = useCallback(() => {
+		if (intervalRef.current) {
+			clearInterval(intervalRef.current);
+			intervalRef.current = null;
+		}
+	}, []);
+
+	useEffect(() => {
+		startInterval();
+		return () => stopInterval();
+	}, [startInterval, stopInterval]);
+
+	if (items.length === 0) {
+		return (
+			<div className="py-12 text-center">
+				<p className="text-muted-foreground">No hay clientes disponibles.</p>
+			</div>
+		);
+	}
+
+	const showAsGrid = items.length <= 5;
+
+	if (showAsGrid) {
+		return (
+			<div
+				className={cn(
+					"grid gap-4",
+					items.length === 1
+						? "max-w-md mx-auto"
+						: items.length === 2
+							? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
+							: items.length <= 4
+								? "grid-cols-2 lg:grid-cols-4"
+								: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
+				)}
+			>
+				{items.map((client) => (
+					<ClientCard key={client.id} client={client} />
+				))}
+			</div>
+		);
+	}
 
 	return (
-		<div className="relative">
-			<Carousel
-				plugins={[plugin]}
-				opts={{ loop: true }}
-				className="w-full"
-			>
+		<div className="relative" onMouseEnter={stopInterval} onMouseLeave={startInterval}>
+			<Carousel opts={{ loop: true, align: "start", watchSlides: false }} setApi={handleInit}>
 				<CarouselContent className="-ml-2">
 					{items.map((client) => (
-						<CarouselItem
-							key={client.id}
-							className="pl-2 basis-1/2 md:basis-1/3"
-						>
+						<CarouselItem key={client.id} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
 							<ClientCard client={client} />
 						</CarouselItem>
 					))}
 				</CarouselContent>
 			</Carousel>
-		</div>
-	);
-}
-
-function FeaturedClientsGrid({ items }: { items: (typeof defaultData.items) }) {
-	return (
-		<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-			{items.map((client) => (
-				<ClientCard key={client.id} client={client} />
-			))}
 		</div>
 	);
 }
@@ -90,33 +123,14 @@ export function FeaturedClients({
 	buttonText?: string;
 	buttonHref?: string;
 } = {}) {
-	const { items, title, subtitle, buttonText, buttonHref } = {
-		...defaultData,
-		...data,
-	};
+	const { items, title, subtitle, buttonText, buttonHref } = { ...defaultData, ...data };
 
 	return (
-		<SectionContent
-			id="clientes"
-			title={propTitle ?? title}
-			subtitle={propSubtitle ?? subtitle}
-			background="muted/30"
-		>
-			{/* Featured Clients Carousel (Mobile/Tablet) */}
-			<div className="block lg:hidden">
-				<FeaturedClientsCarousel items={items} />
-			</div>
-
-			{/* Featured Clients Grid (Desktop) */}
-			<div className="hidden lg:block">
-				<FeaturedClientsGrid items={items} />
-			</div>
-
+		<SectionContent id="clientes" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
+			<AutoScrollCarousel items={items} />
 			<div className="mt-10 text-center">
 				<Button variant="default" size="lg">
-					<Link href={propButtonHref ?? buttonHref}>
-						{propButtonText ?? buttonText}
-					</Link>
+					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
 				</Button>
 			</div>
 		</SectionContent>

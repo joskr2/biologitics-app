@@ -185,7 +185,6 @@ export function FeaturedProducts({
 		>
 			{/* Products display - carousel for >5 items, grid for <=5 */}
 			<FeaturedProductsCarousel items={items} />
-
 			{/* Footer with Link */}
 			<div className="mt-10 text-center">
 				<Button variant="default" size="lg">
