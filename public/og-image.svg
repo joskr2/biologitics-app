@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16213e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Circle accent -->
+  <circle cx="900" cy="200" r="300" fill="#3b82f6" opacity="0.1" />
+  <circle cx="300" cy="500" r="200" fill="#10b981" opacity="0.1" />
+
+  <!-- Logo circle -->
+  <circle cx="200" cy="150" r="60" fill="#3b82f6" />
+  <text x="200" y="165" font-family="Arial, sans-serif" font-size="40" font-weight="bold" fill="white" text-anchor="middle">B</text>
+
+  <!-- Title -->
+  <text x="600" y="250" font-family="Arial, sans-serif" font-size="64" font-weight="bold" fill="white" text-anchor="middle">Biologistics</text>
+
+  <!-- Subtitle -->
+  <text x="600" y="320" font-family="Arial, sans-serif" font-size="28" fill="#94a3b8" text-anchor="middle">Equipos Científicos de Alta Gamma</text>
+
+  <!-- Divider -->
+  <line x1="200" y1="370" x2="1000" y2="370" stroke="#3b82f6" stroke-width="2" />
+
+  <!-- Features -->
+  <text x="400" y="430" font-family="Arial, sans-serif" font-size="24" fill="#e2e8f0" text-anchor="middle">Microscopios</text>
+  <text x="600" y="430" font-family="Arial, sans-serif" font-size="24" fill="#e2e8f0" text-anchor="middle">Centrífugas</text>
+  <text x="800" y="430" font-family="Arial, sans-serif" font-size="24" fill="#e2e8f0" text-anchor="middle">Incubadoras</text>
+
+  <!-- CTA -->
+  <rect x="450" y="480" width="300" height="60" rx="8" fill="#3b82f6" />
+  <text x="600" y="520" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white" text-anchor="middle">Ver Catálogo</text>
+
+  <!-- Peru flag accent -->
+  <rect x="0" y="620" width="1200" height="10" fill="#d52b1e" />
+  <rect x="0" y="625" width="1200" height="5" fill="white" />
+</svg>

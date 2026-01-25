@@ -58,9 +58,9 @@ function HeroSlideContent({
 
 			<div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 pt-16 pb-24 max-w-7xl mx-auto">
 				<div className="flex flex-col gap-5 text-white text-center md:text-left md:items-start">
-					<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl/tight font-bold tracking-tight text-white drop-shadow-lg">
+					<h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl/tight font-bold tracking-tight text-white drop-shadow-lg">
 						{slide.title}
-					</h1>
+					</h2>
 					<p className="text-base sm:text-lg md:text-xl/relaxed max-w-2xl text-white/90 drop-shadow-md">
 						{slide.subtitle}
 					</p>
@@ -152,6 +152,7 @@ function Hero({ data }: HeroProps) {
 			{/* Social Proof Stats */}
 			<div className="bg-muted/50 border-t py-6 sm:py-8">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+					<h2 className="sr-only">Nuestra Trayectoria</h2>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 						{socialProof.map((item) => (
 							<div

@@ -2,6 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
+import {
+	LocalBusinessSchema,
+	OrganizationSchema,
+	WebSiteSchema,
+} from "@/components/seo/organization-schema";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const roboto = Roboto({
@@ -84,7 +89,7 @@ export const metadata: Metadata = {
 		siteName: "Biologistics",
 		images: [
 			{
-				url: "/og-image.jpg", // Asegúrate de crear esta imagen en public/
+				url: "/og-image.svg",
 				width: 1200,
 				height: 630,
 				alt: "Equipos de Laboratorio Biologistics",
@@ -97,7 +102,7 @@ export const metadata: Metadata = {
 		card: "summary_large_image",
 		title: "Biologistics Perú",
 		description: "Equipos científicos y de laboratorio al mejor precio.",
-		images: ["/og-image.jpg"],
+		images: ["/og-image.svg"],
 	},
 };
 
@@ -108,6 +113,12 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="es" suppressHydrationWarning>
+			<head>
+				{/* SEO Structured Data */}
+				<OrganizationSchema metadata={metadata} />
+				<LocalBusinessSchema />
+				<WebSiteSchema />
+			</head>
 			<body
 				className={`${roboto.variable} ${geistSans.variable} ${geistMono.variable} antialiased font-sans`}
 			>

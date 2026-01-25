@@ -34,12 +34,22 @@ export default async function Page() {
 	return (
 		<>
 			<Header data={data.header} />
-			<Hero data={data.hero} />
-			<FeaturedProducts data={data.featuredProducts} />
-			<FeaturedBrands data={data.featuredBrands} />
-			<FeaturedClients data={data.featuredClients} />
-			<FeaturedTeam data={data.featuredTeam} />
-			<ContactForm />
+
+			{/* Main h1 - unique heading for SEO (sr-only for screen readers) */}
+			<h1 className="sr-only">
+				Biologistics - Venta de Equipos Científicos de Alta Gama para
+				Laboratorios en Perú
+			</h1>
+
+			<main>
+				<Hero data={data.hero} />
+				<FeaturedProducts data={data.featuredProducts} />
+				<FeaturedBrands data={data.featuredBrands} />
+				<FeaturedClients data={data.featuredClients} />
+				<FeaturedTeam data={data.featuredTeam} />
+				<ContactForm />
+			</main>
+
 			<Footer data={data.footer} />
 		</>
 	);
