@@ -44,11 +44,14 @@ export async function POST(request: Request) {
 			const kv = (env as CloudflareEnv).BIOLOGISTICS;
 			const data = (await request.json()) as SiteContent;
 			await kv.put("site-content", JSON.stringify(data));
-			return NextResponse.json({ success: true, data }, {
-				headers: {
-					"Cache-Control": "no-store, must-revalidate",
+			return NextResponse.json(
+				{ success: true, data },
+				{
+					headers: {
+						"Cache-Control": "no-store, must-revalidate",
+					},
 				},
-			});
+			);
 		}
 
 		// In development without KV, save to a simple file-based approach

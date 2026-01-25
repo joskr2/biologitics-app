@@ -1,4 +1,9 @@
+import createBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
+
+const withBundleAnalyzer = createBundleAnalyzer({
+	enabled: process.env.ANALYZE === "true",
+});
 
 const nextConfig: NextConfig = {
 	experimental: {
@@ -7,7 +12,7 @@ const nextConfig: NextConfig = {
 		},
 	},
 
-	reactCompiler: false,
+	reactCompiler: true,
 
 	images: {
 		formats: ["image/avif", "image/webp"],
@@ -18,7 +23,10 @@ const nextConfig: NextConfig = {
 				pathname: "/**",
 			},
 		],
+		// Device sizes for responsive images (optimizes which sizes are generated)
+		deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+		imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
 	},
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

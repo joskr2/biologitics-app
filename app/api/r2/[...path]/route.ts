@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 
 interface CloudflareEnv {
 	NEXT_INC_CACHE_R2_BUCKET?: {
-		get: (key: string) => Promise<{ arrayBuffer(): Promise<Uint8Array> } | null>;
+		get: (
+			key: string,
+		) => Promise<{ arrayBuffer(): Promise<Uint8Array> } | null>;
 	};
 }
 
@@ -15,9 +17,9 @@ export async function GET(
 		const { path } = await params;
 		const filename = path.join("/");
 
-		const { env } = await getCloudflareContext({ async: true }).catch(() => ({
+		const { env } = (await getCloudflareContext({ async: true }).catch(() => ({
 			env: undefined,
-		})) as { env: CloudflareEnv | undefined };
+		}))) as { env: CloudflareEnv | undefined };
 
 		if (!env?.NEXT_INC_CACHE_R2_BUCKET) {
 			return new NextResponse("R2 not available", { status: 503 });

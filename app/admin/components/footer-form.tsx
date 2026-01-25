@@ -62,7 +62,10 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 				<div>
 					<Label>Redes Sociales</Label>
 					{data.socialLinks.map((link, i) => (
-						<div key={link.name} className="border p-3 rounded-lg mt-2 space-y-2">
+						<div
+							key={link.name}
+							className="border p-3 rounded-lg mt-2 space-y-2"
+						>
 							<Input
 								placeholder="Nombre"
 								value={link.name}

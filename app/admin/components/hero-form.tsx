@@ -64,9 +64,7 @@ export function HeroForm({ data, onChange }: HeroFormProps) {
 												: "image/*"
 										}
 										placeholder={
-											slide.type === "video"
-												? "Subir video"
-												: "Subir imagen"
+											slide.type === "video" ? "Subir video" : "Subir imagen"
 										}
 										folder="hero"
 									/>

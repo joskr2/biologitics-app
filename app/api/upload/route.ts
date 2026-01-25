@@ -3,7 +3,11 @@ import { NextResponse } from "next/server";
 
 interface CloudflareEnv {
 	NEXT_INC_CACHE_R2_BUCKET?: {
-		put: (key: string, body: Uint8Array, options?: { httpMetadata?: { contentType?: string } }) => Promise<void>;
+		put: (
+			key: string,
+			body: Uint8Array,
+			options?: { httpMetadata?: { contentType?: string } },
+		) => Promise<void>;
 	};
 	ASSETS?: string;
 }
@@ -15,10 +19,7 @@ export async function POST(request: Request) {
 		const folder = (formData.get("folder") as string) || "uploads";
 
 		if (!file) {
-			return NextResponse.json(
-				{ error: "No file provided" },
-				{ status: 400 },
-			);
+			return NextResponse.json({ error: "No file provided" }, { status: 400 });
 		}
 
 		// Validate file type
@@ -35,7 +36,10 @@ export async function POST(request: Request) {
 
 		if (!allowedTypes.includes(file.type)) {
 			return NextResponse.json(
-				{ error: "Invalid file type. Allowed: jpg, png, gif, webp, svg, mp4, webm, mov" },
+				{
+					error:
+						"Invalid file type. Allowed: jpg, png, gif, webp, svg, mp4, webm, mov",
+				},
 				{ status: 400 },
 			);
 		}
@@ -56,9 +60,9 @@ export async function POST(request: Request) {
 		const filename = `${folder}/${timestamp}-${random}.${ext}`;
 
 		// Get Cloudflare context and R2 bucket
-		const { env } = await getCloudflareContext({ async: true }).catch(() => ({
+		const { env } = (await getCloudflareContext({ async: true }).catch(() => ({
 			env: undefined,
-		})) as { env: CloudflareEnv | undefined };
+		}))) as { env: CloudflareEnv | undefined };
 
 		if (env?.NEXT_INC_CACHE_R2_BUCKET) {
 			const r2 = env.NEXT_INC_CACHE_R2_BUCKET;
@@ -90,9 +94,6 @@ export async function POST(request: Request) {
 		});
 	} catch (error) {
 		console.error("Upload error:", error);
-		return NextResponse.json(
-			{ error: "Upload failed" },
-			{ status: 500 },
-		);
+		return NextResponse.json({ error: "Upload failed" }, { status: 500 });
 	}
 }
