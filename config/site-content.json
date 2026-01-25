@@ -27,6 +27,7 @@
 				"id": "slide-1",
 				"type": "video",
 				"src": "/banner.mp4",
+				"poster": "/hero-poster.jpg",
 				"title": "Equipamiento Científico de Alta Precisión",
 				"subtitle": "Distribuidores oficiales de las marcas líderes mundiales en tecnología para laboratorios e investigación",
 				"cta": {

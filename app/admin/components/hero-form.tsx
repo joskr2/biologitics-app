@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
@@ -9,14 +10,45 @@ import type { SiteContent } from "@/config/site-content";
 interface HeroFormProps {
 	data: SiteContent["hero"];
 	onChange: (d: unknown) => void;
+	onValidate?: (isValid: boolean) => void;
 }
 
-export function HeroForm({ data, onChange }: HeroFormProps) {
+// Helper to check if a slide is valid
+function isSlideValid(slide: SiteContent["hero"]["slides"][0]): boolean {
+	// For images, just need src
+	if (slide.type === "image") {
+		return Boolean(slide.src && slide.src.trim() !== "");
+	}
+	// For videos, need both src AND poster
+	if (slide.type === "video") {
+		return Boolean(
+			slide.src?.trim() !== "" && slide.poster?.trim() !== "",
+		);
+	}
+	return false;
+}
+
+export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 	const updateSlide = (index: number, field: string, value: string) => {
 		const newSlides = [...data.slides];
 		newSlides[index] = { ...newSlides[index], [field]: value };
 		onChange({ ...data, slides: newSlides });
 	};
+
+	const updatePoster = (index: number, value: string) => {
+		const newSlides = [...data.slides];
+		newSlides[index] = { ...newSlides[index], poster: value };
+		onChange({ ...data, slides: newSlides });
+	};
+
+	// Validate all slides and notify parent
+	const validateAndNotify = useCallback(() => {
+		const allValid = data.slides.every(isSlideValid);
+		onValidate?.(allValid);
+	}, [data.slides, onValidate]);
+
+	// Run validation on mount and when data changes
+	validateAndNotify();
 
 	const updateSocialProof = (index: number, field: string, value: string) => {
 		const newSocialProof = [...data.socialProof];
@@ -70,6 +102,24 @@ export function HeroForm({ data, onChange }: HeroFormProps) {
 									/>
 								</div>
 							</div>
+							{/* Poster upload - only for videos */}
+							{slide.type === "video" && (
+								<div className="space-y-2">
+									<Label className="text-xs text-amber-600">
+										Poster (imagen de carga)
+									</Label>
+									<FileUpload
+										value={slide.poster ?? ""}
+										onChange={(src) => updatePoster(i, src)}
+										accept="image/*"
+										placeholder="Subir imagen poster"
+										folder="hero/posters"
+									/>
+									<p className="text-xs text-muted-foreground">
+										Requerido: imagen para mostrar mientras carga el video
+									</p>
+								</div>
+							)}
 							<Input
 								placeholder="Subtítulo"
 								value={slide.subtitle}

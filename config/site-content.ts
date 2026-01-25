@@ -24,8 +24,9 @@ export interface HeaderContent {
 
 export interface HeroSlide {
 	id: string;
-	type: "video" | "image";
+	type: "video" | "image" | string;
 	src: string;
+	poster?: string;
 	title: string;
 	subtitle: string;
 	cta: CtaButton;

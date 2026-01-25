@@ -36,6 +36,7 @@ export default function Dashboard({ initialData }: DashboardProps) {
 	const [data, setData] = useState<SiteContent>(initialData);
 	const [activeSection, _setActiveSection] = useState("header");
 	const [isCollapsed, setIsCollapsed] = useState(false);
+	const [heroValid, setHeroValid] = useState(true);
 	const [saveState, saveAction, isSaving] = useActionState(saveDashboardData, {
 		success: false,
 		message: undefined,
@@ -79,6 +80,9 @@ export default function Dashboard({ initialData }: DashboardProps) {
 						? "Equipo"
 						: activeSection;
 
+	// Disable save button if hero section is invalid
+	const isSaveDisabled = isSaving || (activeSection === "hero" && !heroValid);
+
 	return (
 		<SidebarProvider defaultOpen={!isCollapsed}>
 			<AppSidebar
@@ -111,7 +115,12 @@ export default function Dashboard({ initialData }: DashboardProps) {
 							</BreadcrumbList>
 						</Breadcrumb>
 					</div>
-					<div className="ml-auto px-4">
+					<div className="ml-auto px-4 flex items-center gap-2">
+						{!heroValid && activeSection === "hero" && (
+							<span className="text-xs text-amber-600 hidden sm:inline">
+								Completa los posters de video para guardar
+							</span>
+						)}
 						<form action={saveAction}>
 							<input
 								type="hidden"
@@ -120,7 +129,7 @@ export default function Dashboard({ initialData }: DashboardProps) {
 							/>
 							<Button
 								type="submit"
-								disabled={isSaving}
+								disabled={isSaveDisabled}
 								size="sm"
 								className="gap-2"
 							>
@@ -160,6 +169,7 @@ export default function Dashboard({ initialData }: DashboardProps) {
 								<HeroForm
 									data={data.hero}
 									onChange={(val) => updateSection("hero", val)}
+									onValidate={setHeroValid}
 								/>
 							)}
 							{activeSection === "featuredProducts" && (

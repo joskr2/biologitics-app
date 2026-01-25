@@ -12,9 +12,9 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import siteContent from "@/config/site-content.json";
-import type { HeroContent } from "@/config/site-content";
+import type { HeroContent, HeroSlide } from "@/config/site-content";
 
-const defaultData = siteContent.hero;
+const defaultData = siteContent.hero as HeroContent;
 
 interface HeroProps {
 	data?: HeroContent;
@@ -25,9 +25,9 @@ function HeroSlideContent({
 	cta,
 	secondaryCta,
 }: {
-	slide: (typeof defaultData.slides)[0];
-	cta: (typeof defaultData.slides)[0]["cta"];
-	secondaryCta?: (typeof defaultData.slides)[0]["secondaryCta"];
+	slide: HeroSlide;
+	cta: HeroSlide["cta"];
+	secondaryCta?: HeroSlide["secondaryCta"];
 }) {
 	return (
 		<div className="relative h-[85vh] min-h-125 max-h-200 flex items-center">
@@ -35,7 +35,7 @@ function HeroSlideContent({
 				{slide.type === "video" ? (
 					<video
 						src={slide.src}
-						poster="/hero-poster.jpg"
+						poster={slide.poster}
 						preload="none"
 						autoPlay
 						loop
