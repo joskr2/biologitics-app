@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import type { SiteContent } from "@/config/site-content";
 import { saveLandingData } from "@/app/lib/db";
+import type { SiteContent } from "@/config/site-content";
 
 // --- LOGIN ---
 export async function loginAction(

@@ -19,14 +19,14 @@ import {
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
 import type { SiteContent } from "@/config/site-content";
-import { AppSidebar } from "./components/app-sidebar";
+import { BrandsForm } from "../components/brands-form";
+import { ClientsForm } from "../components/clients-form";
+import { FooterForm } from "../components/footer-form";
 import { HeaderForm } from "../components/header-form";
 import { HeroForm } from "../components/hero-form";
 import { ProductsForm } from "../components/products-form";
-import { BrandsForm } from "../components/brands-form";
-import { ClientsForm } from "../components/clients-form";
 import { TeamForm } from "../components/team-form";
-import { FooterForm } from "../components/footer-form";
+import { AppSidebar } from "./components/app-sidebar";
 
 interface DashboardProps {
 	initialData: SiteContent;
@@ -182,7 +182,10 @@ export default function Dashboard({ initialData }: DashboardProps) {
 							)}
 							{activeSection === "featuredTeam" && (
 								<>
-									{console.log("Dashboard featuredTeam data:", data.featuredTeam)}
+									{console.log(
+										"Dashboard featuredTeam data:",
+										data.featuredTeam,
+									)}
 									<TeamForm
 										data={data.featuredTeam}
 										onChange={(val) => {

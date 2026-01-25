@@ -11,6 +11,7 @@ import {
 	UserCog,
 	Users,
 } from "lucide-react";
+import { useEffect } from "react";
 import { logoutAction } from "@/app/actions/admin";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,7 @@ import {
 	SidebarFooter,
 	SidebarHeader,
 	SidebarRail,
+	useSidebar,
 } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main";
 import { TeamSwitcher } from "./team-switcher";
@@ -87,17 +89,28 @@ const data = {
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 	activeSection?: string;
 	onSectionChange?: (section: string) => void;
+	onCollapse?: (collapsed: boolean) => void;
 }
 
 export function AppSidebar({
 	activeSection,
 	onSectionChange,
+	onCollapse,
 	...props
 }: AppSidebarProps) {
+	const { state } = useSidebar();
+
 	const handleLogout = async () => {
 		await logoutAction();
 		window.location.reload();
 	};
+
+	// Notify parent when sidebar state changes
+	useEffect(() => {
+		if (onCollapse) {
+			onCollapse(state === "collapsed");
+		}
+	}, [state, onCollapse]);
 
 	return (
 		<Sidebar collapsible="icon" {...props}>

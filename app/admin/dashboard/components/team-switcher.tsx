@@ -41,7 +41,7 @@ export function TeamSwitcher({
 		<SidebarMenu>
 			<SidebarMenuItem>
 				<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-					<DropdownMenuTrigger asChild>
+					<DropdownMenuTrigger>
 						<SidebarMenuButton
 							size="lg"
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
