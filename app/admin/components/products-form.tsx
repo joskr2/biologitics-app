@@ -15,13 +15,6 @@ interface ProductsFormProps {
 	onChange: (d: unknown) => void;
 }
 
-function generateId(title: string): string {
-	return title
-		.toLowerCase()
-		.replace(/\s+/g, "-")
-		.replace(/[^a-z0-9-]/g, "");
-}
-
 function ProductCard({
 	item,
 	index,
@@ -185,8 +178,9 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 	};
 
 	const addItem = () => {
+		const timestamp = Date.now().toString(36);
 		const newProduct: ProductItem = {
-			id: generateId("Nuevo Producto"),
+			id: `producto-${timestamp}`,
 			title: "",
 			description: "",
 			image: "",
