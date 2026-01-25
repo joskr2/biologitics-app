@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
@@ -42,16 +43,19 @@ export function BrandsForm({ data, onChange }: BrandsFormProps) {
 
 				{data.items.map((item, i) => (
 					<div key={item.id} className="border p-4 rounded-lg space-y-3">
-						<div className="grid grid-cols-2 gap-3">
-							<Input
-								placeholder="Nombre de la marca"
-								value={item.name}
-								onChange={(e) => updateItem(i, "name", e.target.value)}
-							/>
-							<Input
-								placeholder="Logo (ruta)"
+						<Input
+							placeholder="Nombre de la marca"
+							value={item.name}
+							onChange={(e) => updateItem(i, "name", e.target.value)}
+						/>
+						<div className="space-y-2">
+							<Label className="text-xs">Logo de la marca</Label>
+							<FileUpload
 								value={item.logo}
-								onChange={(e) => updateItem(i, "logo", e.target.value)}
+								onChange={(logo) => updateItem(i, "logo", logo)}
+								accept="image/*"
+								placeholder="Subir logo"
+								folder="brands"
 							/>
 						</div>
 						<Input

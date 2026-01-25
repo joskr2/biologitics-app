@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
@@ -44,23 +46,15 @@ export function HeaderForm({ data, onChange }: HeaderFormProps) {
 				<CardTitle>Configuración del Header</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-6">
-				<div className="grid grid-cols-2 gap-4">
-					<div className="space-y-2">
-						<Label>Logo SRC</Label>
-						<Input
-							value={data.logo.src}
-							onChange={(e) => updateLogo("src", e.target.value)}
-							className="h-10"
-						/>
-					</div>
-					<div className="space-y-2">
-						<Label>Logo ALT</Label>
-						<Input
-							value={data.logo.alt}
-							onChange={(e) => updateLogo("alt", e.target.value)}
-							className="h-10"
-						/>
-					</div>
+				<div className="space-y-2">
+					<Label>Logo</Label>
+					<FileUpload
+						value={data.logo.src}
+						onChange={(src) => updateLogo("src", src)}
+						accept="image/svg+xml,image/png,image/jpeg"
+						placeholder="Subir logo (SVG, PNG)"
+						folder="logos"
+					/>
 				</div>
 
 				<div className="grid grid-cols-2 gap-4">

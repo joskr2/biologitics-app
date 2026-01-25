@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
@@ -33,23 +34,44 @@ export function HeroForm({ data, onChange }: HeroFormProps) {
 					<Label>Slides</Label>
 					{data.slides.map((slide, i) => (
 						<div key={slide.id} className="border p-4 rounded-lg space-y-3">
-							<div className="grid grid-cols-2 gap-3">
-								<Input
-									placeholder="Título"
-									value={slide.title}
-									onChange={(e) => updateSlide(i, "title", e.target.value)}
-								/>
-								<Input
-									placeholder="Tipo (video/image)"
-									value={slide.type}
-									onChange={(e) => updateSlide(i, "type", e.target.value)}
-								/>
-							</div>
 							<Input
-								placeholder="SRC (URL del video/imagen)"
-								value={slide.src}
-								onChange={(e) => updateSlide(i, "src", e.target.value)}
+								placeholder="Título"
+								value={slide.title}
+								onChange={(e) => updateSlide(i, "title", e.target.value)}
 							/>
+							<div className="grid grid-cols-2 gap-3">
+								<div className="space-y-2">
+									<Label className="text-xs">Tipo</Label>
+									<select
+										value={slide.type}
+										onChange={(e) => updateSlide(i, "type", e.target.value)}
+										className="w-full h-10 px-3 rounded-md border bg-background"
+									>
+										<option value="video">Video</option>
+										<option value="image">Imagen</option>
+									</select>
+								</div>
+								<div className="space-y-2">
+									<Label className="text-xs">
+										{slide.type === "video" ? "Video" : "Imagen"}
+									</Label>
+									<FileUpload
+										value={slide.src}
+										onChange={(src) => updateSlide(i, "src", src)}
+										accept={
+											slide.type === "video"
+												? "video/mp4,video/webm,video/quicktime"
+												: "image/*"
+										}
+										placeholder={
+											slide.type === "video"
+												? "Subir video"
+												: "Subir imagen"
+										}
+										folder="hero"
+									/>
+								</div>
+							</div>
 							<Input
 								placeholder="Subtítulo"
 								value={slide.subtitle}

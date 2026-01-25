@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
@@ -42,17 +43,22 @@ export function ClientsForm({ data, onChange }: ClientsFormProps) {
 
 				{data.items.map((item, i) => (
 					<div key={item.id} className="border p-4 rounded-lg space-y-3">
-						<div className="grid grid-cols-3 gap-3">
-							<Input
-								placeholder="Nombre del cliente"
-								value={item.name}
-								onChange={(e) => updateItem(i, "name", e.target.value)}
-							/>
-							<Input
-								placeholder="Logo (ruta)"
-								value={item.logo}
-								onChange={(e) => updateItem(i, "logo", e.target.value)}
-							/>
+						<Input
+							placeholder="Nombre del cliente"
+							value={item.name}
+							onChange={(e) => updateItem(i, "name", e.target.value)}
+						/>
+						<div className="grid grid-cols-2 gap-3">
+							<div className="space-y-2">
+								<Label className="text-xs">Logo del cliente</Label>
+								<FileUpload
+									value={item.logo}
+									onChange={(logo) => updateItem(i, "logo", logo)}
+									accept="image/*"
+									placeholder="Subir logo"
+									folder="clients"
+								/>
+							</div>
 							<Input
 								placeholder="Tipo"
 								value={item.type}

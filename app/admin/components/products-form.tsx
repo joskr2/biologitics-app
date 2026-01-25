@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
@@ -57,16 +58,19 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 
 				{data.items.map((item, i) => (
 					<div key={item.id} className="border p-4 rounded-lg space-y-3">
-						<div className="grid grid-cols-2 gap-3">
-							<Input
-								placeholder="Nombre del producto"
-								value={item.title}
-								onChange={(e) => updateItem(i, "title", e.target.value)}
-							/>
-							<Input
-								placeholder="URL de imagen"
+						<Input
+							placeholder="Nombre del producto"
+							value={item.title}
+							onChange={(e) => updateItem(i, "title", e.target.value)}
+						/>
+						<div className="space-y-2">
+							<Label className="text-xs">Imagen del producto</Label>
+							<FileUpload
 								value={item.image}
-								onChange={(e) => updateItem(i, "image", e.target.value)}
+								onChange={(image) => updateItem(i, "image", image)}
+								accept="image/*"
+								placeholder="Subir imagen"
+								folder="products"
 							/>
 						</div>
 						<Input

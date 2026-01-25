@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SiteContent } from "@/config/site-content";
@@ -61,12 +62,22 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 				<div>
 					<Label>Redes Sociales</Label>
 					{data.socialLinks.map((link, i) => (
-						<div key={link.name} className="flex gap-2 mt-2">
+						<div key={link.name} className="border p-3 rounded-lg mt-2 space-y-2">
 							<Input
 								placeholder="Nombre"
 								value={link.name}
 								onChange={(e) => updateSocialLink(i, "name", e.target.value)}
 							/>
+							<div className="space-y-2">
+								<Label className="text-xs">Icono</Label>
+								<FileUpload
+									value={link.icon}
+									onChange={(icon) => updateSocialLink(i, "icon", icon)}
+									accept="image/svg+xml,image/png,image/jpeg"
+									placeholder="Subir icono"
+									folder="icons"
+								/>
+							</div>
 							<Input
 								placeholder="Enlace"
 								value={link.href}

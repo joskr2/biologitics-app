@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { FeaturedTeamContent } from "@/config/site-content";
@@ -54,23 +55,28 @@ export function TeamForm({ data, onChange }: TeamFormProps) {
 								onChange={(e) => updateItem(i, "role", e.target.value)}
 							/>
 						</div>
-						<div className="grid grid-cols-2 gap-3">
-							<Input
-								placeholder="Foto (URL)"
+						<div className="space-y-2">
+							<Label className="text-xs">Foto del miembro</Label>
+							<FileUpload
 								value={item.photo}
-								onChange={(e) => updateItem(i, "photo", e.target.value)}
+								onChange={(photo) => updateItem(i, "photo", photo)}
+								accept="image/*"
+								placeholder="Subir foto"
+								folder="team"
 							/>
+						</div>
+						<div className="grid grid-cols-2 gap-3">
 							<Input
 								placeholder="Email"
 								value={item.email}
 								onChange={(e) => updateItem(i, "email", e.target.value)}
 							/>
+							<Input
+								placeholder="Teléfono"
+								value={item.phone}
+								onChange={(e) => updateItem(i, "phone", e.target.value)}
+							/>
 						</div>
-						<Input
-							placeholder="Teléfono"
-							value={item.phone}
-							onChange={(e) => updateItem(i, "phone", e.target.value)}
-						/>
 					</div>
 				))}
 			</CardContent>

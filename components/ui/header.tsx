@@ -74,9 +74,17 @@ function Header({ data: propData, className }: HeaderProps) {
 						onClick={handleNavClick}
 						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg relative z-50"
 					>
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
-							{logo.alt?.charAt(0) || "B"}
-						</div>
+						{logo.src && (logo.src.endsWith(".svg") || logo.src.match(/\.(svg|png|jpg|jpeg|webp)$/i)) ? (
+							<img
+								src={logo.src}
+								alt={logo.alt || "Biologistics"}
+								className="h-10 w-auto shrink-0"
+							/>
+						) : (
+							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
+								{logo.alt?.charAt(0) || "B"}
+							</div>
+						)}
 						<div className="flex flex-col">
 							<span className="font-semibold text-sm">Biologistics</span>
 							<span className="text-xs text-muted-foreground hidden xs:block">
