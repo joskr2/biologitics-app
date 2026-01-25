@@ -176,10 +176,16 @@ export default function Dashboard({ initialData }: DashboardProps) {
 								/>
 							)}
 							{activeSection === "featuredTeam" && (
-								<TeamForm
-									data={data.featuredTeam}
-									onChange={(val) => updateSection("featuredTeam", val)}
-								/>
+								<>
+									{console.log("Dashboard featuredTeam data:", data.featuredTeam)}
+									<TeamForm
+										data={data.featuredTeam}
+										onChange={(val) => {
+											console.log("TeamForm onChange:", val);
+											updateSection("featuredTeam", val);
+										}}
+									/>
+								</>
 							)}
 							{activeSection === "footer" && (
 								<FooterForm
