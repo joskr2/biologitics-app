@@ -28,13 +28,6 @@ function ProductCard({
 		label: feature,
 	}));
 
-	const handleAction = () => {
-		console.log(`Producto: ${product.title}`);
-		console.log(`ID: ${product.id}`);
-		console.log(`Descripción: ${product.description}`);
-		console.log("---");
-	};
-
 	return (
 		<div className="h-full">
 			<CardContent
@@ -46,7 +39,6 @@ function ProductCard({
 				buttonText="Obtener más información"
 				buttonHref={`/productos/${product.id}`}
 				imageType="photo"
-				onAction={handleAction}
 			/>
 		</div>
 	);

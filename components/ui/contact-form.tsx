@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { submitContactForm, type FormState } from "@/app/actions";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,19 +37,7 @@ export function ContactForm({
 			<SectionContent id="contacto" title={title} subtitle={subtitle}>
 				<div className="max-w-2xl mx-auto text-center py-12 animate-in fade-in zoom-in duration-300">
 					<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
-						<svg
-							className="w-8 h-8"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M5 13l4 4L19 7"
-							/>
-						</svg>
+						<CheckCircle2 className="w-8 h-8" />
 					</div>
 					<h3 className="text-2xl font-semibold mb-4">¡Mensaje Enviado!</h3>
 					<p className="text-muted-foreground mb-8">
@@ -173,7 +162,14 @@ export function ContactForm({
 						className="w-full"
 						disabled={isPending}
 					>
-						{isPending ? "Enviando solicitud..." : "Enviar Solicitud"}
+						{isPending ? (
+							<>
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								Enviando solicitud...
+							</>
+						) : (
+							"Enviar Solicitud"
+						)}
 					</Button>
 				</form>
 			</div>

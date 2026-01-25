@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import siteContent from "@/config/site-content.json";
 import type { FooterContent } from "@/config/site-content";
+import { cn } from "@/lib/utils";
 
 const currentYear = new Date().getFullYear();
 const defaultData = siteContent.footer;
@@ -50,7 +51,10 @@ function Footer({ data }: FooterProps) {
 										alt={social.name}
 										width={20}
 										height={20}
-										className="filter dark:invert"
+										className={cn(
+											"filter dark:invert transition-opacity",
+											"opacity-90 hover:opacity-100"
+										)}
 									/>
 								</Link>
 							))}
