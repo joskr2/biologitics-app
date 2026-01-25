@@ -14,8 +14,14 @@ interface HeaderFormProps {
 }
 
 export function HeaderForm({ data, onChange }: HeaderFormProps) {
-	const updateLogo = (field: string, value: string) => {
-		onChange({ ...data, logo: { ...data.logo, [field]: value } });
+	const updateLogo = (mode: "light" | "dark", field: string, value: string) => {
+		onChange({
+			...data,
+			logo: {
+				...data.logo,
+				[mode]: { ...data.logo[mode], [field]: value },
+			},
+		});
 	};
 
 	const updateCta = (field: string, value: string) => {
@@ -46,15 +52,55 @@ export function HeaderForm({ data, onChange }: HeaderFormProps) {
 				<CardTitle>Configuración del Header</CardTitle>
 			</CardHeader>
 			<CardContent className="space-y-6">
-				<div className="space-y-2">
-					<Label>Logo</Label>
-					<FileUpload
-						value={data.logo.src}
-						onChange={(src) => updateLogo("src", src)}
-						accept="image/svg+xml,image/png,image/jpeg"
-						placeholder="Subir logo (SVG, PNG)"
-						folder="logos"
-					/>
+				<div className="space-y-4">
+					<Label className="text-base font-medium">Logos (Modo Claro y Oscuro)</Label>
+					<p className="text-sm text-muted-foreground">
+						Sube dos versiones del logo: una para fondos claros y otra para fondos oscuros.
+					</p>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						{/* Logo Light Mode */}
+						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
+							<Label className="text-sm font-medium text-blue-600">Logo Modo Claro</Label>
+							<p className="text-xs text-muted-foreground mb-2">
+								Para fondos oscuros (logo claro)
+							</p>
+							<FileUpload
+								value={data?.logo?.light?.src ?? ""}
+								onChange={(src) => updateLogo("light", "src", src)}
+								accept="image/svg+xml,image/png,image/jpeg"
+								placeholder="Subir logo claro"
+								folder="logos"
+							/>
+							<Input
+								placeholder="Texto alternativo (alt)"
+								value={data?.logo?.light?.alt ?? ""}
+								onChange={(e) => updateLogo("light", "alt", e.target.value)}
+								className="h-8 text-sm"
+							/>
+						</div>
+
+						{/* Logo Dark Mode */}
+						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
+							<Label className="text-sm font-medium text-slate-700">Logo Modo Oscuro</Label>
+							<p className="text-xs text-muted-foreground mb-2">
+								Para fondos claros (logo oscuro)
+							</p>
+							<FileUpload
+								value={data?.logo?.dark?.src ?? ""}
+								onChange={(src) => updateLogo("dark", "src", src)}
+								accept="image/svg+xml,image/png,image/jpeg"
+								placeholder="Subir logo oscuro"
+								folder="logos"
+							/>
+							<Input
+								placeholder="Texto alternativo (alt)"
+								value={data?.logo?.dark?.alt ?? ""}
+								onChange={(e) => updateLogo("dark", "alt", e.target.value)}
+								className="h-8 text-sm"
+							/>
+						</div>
+					</div>
 				</div>
 
 				<div className="grid grid-cols-2 gap-4">

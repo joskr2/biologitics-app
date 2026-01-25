@@ -1,8 +1,14 @@
 {
 	"header": {
 		"logo": {
-			"src": "/logo.svg",
-			"alt": "Biologistics Logo"
+			"light": {
+				"src": "/logo-light.svg",
+				"alt": "Biologistics Logo"
+			},
+			"dark": {
+				"src": "/logo-dark.svg",
+				"alt": "Biologistics Logo"
+			}
 		},
 		"navigation": [
 			{ "label": "Productos", "href": "/productos" },
@@ -261,6 +267,10 @@
 		"company": {
 			"name": "Biologistics",
 			"description": "Venta de equipos científicos de alta calidad para laboratorios, investigación y educación.",
+			"logo": {
+				"light": "/footer-logo-light.svg",
+				"dark": "/footer-logo-dark.svg"
+			},
 			"email": "info@biologistics.com",
 			"phone": "+51 901631307",
 			"address": "Lima, Perú",

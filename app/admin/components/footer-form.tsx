@@ -16,6 +16,16 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 		onChange({ ...data, company: { ...data.company, [field]: value } });
 	};
 
+	const updateLogo = (mode: "light" | "dark", value: string) => {
+		onChange({
+			...data,
+			company: {
+				...data?.company,
+				logo: { ...data.company.logo, [mode]: value },
+			},
+		});
+	};
+
 	const updateSocialLink = (index: number, field: string, value: string) => {
 		const newLinks = [...data.socialLinks];
 		newLinks[index] = { ...newLinks[index], [field]: value };
@@ -56,6 +66,45 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 							value={data.company.whatsapp}
 							onChange={(e) => updateCompany("whatsapp", e.target.value)}
 						/>
+					</div>
+				</div>
+
+				<div className="space-y-4">
+					<Label className="text-base font-medium">Logos del Footer</Label>
+					<p className="text-sm text-muted-foreground">
+						Sube dos versiones del logo para el footer: clara para fondos oscuros, oscura para fondos claros.
+					</p>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						{/* Footer Logo Light - for dark backgrounds */}
+						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
+							<Label className="text-sm font-medium text-blue-600">Logo Fondo Claro</Label>
+							<p className="text-xs text-muted-foreground mb-2">
+								Para fondos oscuros (logo claro)
+							</p>
+							<FileUpload
+								value={data?.company?.logo?.light ?? ""}
+								onChange={(src) => updateLogo("light", src)}
+								accept="image/svg+xml,image/png,image/jpeg"
+								placeholder="Subir logo claro"
+								folder="footer-logos"
+							/>
+						</div>
+
+						{/* Footer Logo Dark - for light backgrounds */}
+						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
+							<Label className="text-sm font-medium text-slate-700">Logo Fondo Oscuro</Label>
+							<p className="text-xs text-muted-foreground mb-2">
+								Para fondos claros (logo oscuro)
+							</p>
+							<FileUpload
+								value={data?.company?.logo?.dark ?? ""}
+								onChange={(src) => updateLogo("dark", src)}
+								accept="image/svg+xml,image/png,image/jpeg"
+								placeholder="Subir logo oscuro"
+								folder="footer-logos"
+							/>
+						</div>
 					</div>
 				</div>
 

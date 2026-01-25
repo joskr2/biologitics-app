@@ -8,10 +8,15 @@ export interface CtaButton {
 	href: string;
 }
 
+export interface LogoContent {
+	src: string;
+	alt: string;
+}
+
 export interface HeaderContent {
 	logo: {
-		src: string;
-		alt: string;
+		light: LogoContent;
+		dark: LogoContent;
 	};
 	navigation: NavItem[];
 	cta: CtaButton;
@@ -113,6 +118,10 @@ export interface FeaturedTeamContent {
 export interface FooterCompany {
 	name: string;
 	description: string;
+	logo: {
+		light: string;
+		dark: string;
+	};
 	email: string;
 	phone: string;
 	address: string;

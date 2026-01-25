@@ -25,12 +25,18 @@ function Header({ data: propData, className }: HeaderProps) {
 	const data = propData || defaultHeader;
 	const { logo, cta, navigation } = data;
 
-	// Memoize logo check to avoid running regex on every render
+	// Fallback logo values for SSR safety
+	const lightLogo = (logo && logo.light) || { src: "", alt: "" };
+	const darkLogo = (logo && logo.dark) || { src: "", alt: "" };
+	const currentLogo = (isDark ? lightLogo : darkLogo) || { src: "", alt: "" };
+	const currentAlt = (isDark ? lightLogo.alt : darkLogo.alt) || "";
+
 	const isLogoImage = useMemo(
 		() =>
-			logo.src &&
-			(logo.src.endsWith(".svg") || logo.src.match(/\.(svg|png|jpg|jpeg|webp)$/i)),
-		[logo.src]
+			currentLogo?.src &&
+			(currentLogo.src.endsWith(".svg") ||
+				currentLogo.src.match(/\.(svg|png|jpg|jpeg|webp)$/i)),
+		[currentLogo?.src]
 	);
 
 	const handleNavClick = useCallback(() => {
@@ -87,18 +93,18 @@ function Header({ data: propData, className }: HeaderProps) {
 						onClick={handleNavClick}
 						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg relative z-50"
 					>
-						{isLogoImage ? (
+						{isLogoImage && currentLogo?.src ? (
 							<Image
-								src={logo.src}
-								alt={logo.alt || "Biologistics"}
-								width={40}
+								src={currentLogo.src}
+								alt={currentAlt || "Biologistics"}
+								width={120}
 								height={40}
 								className="h-10 w-auto shrink-0"
 								priority
 							/>
 						) : (
 							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
-								{logo.alt?.charAt(0) || "B"}
+								{currentAlt?.charAt(0) || "B"}
 							</div>
 						)}
 						<div className="flex flex-col">

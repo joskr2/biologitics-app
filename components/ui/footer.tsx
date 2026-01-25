@@ -28,13 +28,36 @@ function Footer({ data }: FooterProps) {
 					{/* Company Info */}
 					<div>
 						<div className="flex items-center gap-3 mb-4">
-							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xl">
-								B
-							</div>
-							<span className="font-semibold text-xl">{company.name}</span>
+							{/* Light mode logo - shown only in dark backgrounds */}
+							{company?.logo?.light && (
+								<Image
+									src={company?.logo?.light}
+									alt={`${company?.name} logo`}
+									width={120}
+									height={40}
+									className="h-10 w-auto hidden dark:block"
+								/>
+							)}
+							{/* Dark mode logo - shown only in light backgrounds */}
+							{company?.logo?.dark && (
+								<Image
+									src={company?.logo?.dark}
+									alt={`${company?.name} logo`}
+									width={120}
+									height={40}
+									className="h-10 w-auto dark:hidden"
+								/>
+							)}
+							{/* Fallback letter if no logo is configured */}
+							{!company?.logo?.light && !company?.logo?.dark && (
+								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xl">
+									B
+								</div>
+							)}
+							<span className="font-semibold text-xl">{company?.name}</span>
 						</div>
 						<p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-							{company.description}
+							{company?.description}
 						</p>
 						<div className="flex gap-3">
 							{socialLinks.map((social) => (
