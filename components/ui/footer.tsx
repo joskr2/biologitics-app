@@ -5,11 +5,21 @@ import Image from "next/image";
 import Link from "next/link";
 
 import siteContent from "@/config/site-content.json";
+import type { FooterContent } from "@/config/site-content";
 
 const currentYear = new Date().getFullYear();
-const { company, socialLinks, columns, legalLinks } = siteContent.footer;
+const defaultData = siteContent.footer;
 
-function Footer() {
+interface FooterProps {
+	data?: FooterContent;
+}
+
+function Footer({ data }: FooterProps) {
+	const { company, socialLinks, columns, legalLinks } = {
+		...defaultData,
+		...data,
+	};
+
 	return (
 		<footer className="bg-gray-100 text-gray-900 dark:bg-black dark:text-white transition-colors">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -22,7 +32,9 @@ function Footer() {
 							</div>
 							<span className="font-semibold text-xl">{company.name}</span>
 						</div>
-						<p className="text-gray-500 dark:text-gray-400 text-sm mb-4">{company.description}</p>
+						<p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+							{company.description}
+						</p>
 						<div className="flex gap-3">
 							{socialLinks.map((social) => (
 								<Link

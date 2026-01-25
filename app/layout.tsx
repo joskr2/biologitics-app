@@ -2,8 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
-import { Footer } from "@/components/ui/footer";
-import { Header } from "@/components/ui/header";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
 const roboto = Roboto({
@@ -120,9 +118,7 @@ export default function RootLayout({
 						enableSystem
 						disableTransitionOnChange
 					>
-						<Header />
 						{children}
-						<Footer />
 					</ThemeProvider>
 				</Suspense>
 			</body>

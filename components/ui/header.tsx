@@ -7,35 +7,22 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { SiteContent } from "@/config/site-content";
+import type { HeaderContent } from "@/config/site-content";
 import defaultData from "@/config/site-content.json";
 
-function Header({ className }: React.ComponentProps<"header">) {
+interface HeaderProps {
+	data?: HeaderContent;
+	className?: string;
+}
+
+function Header({ data: propData, className }: HeaderProps) {
 	const { theme, setTheme } = useTheme();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-	const [siteContent, setSiteContent] = useState<SiteContent>(
-		defaultData as SiteContent,
-	);
 	const isDark = theme === "dark";
 
-	// Fetch dynamic content from API
-	useEffect(() => {
-		const fetchContent = async () => {
-			try {
-				const res = await fetch("/api/site-content");
-				if (res.ok) {
-					const data = await res.json() as SiteContent;
-					setSiteContent(data);
-				}
-			} catch {
-				console.log("Using default content");
-			}
-		};
-
-		fetchContent();
-	}, []);
-
-	const { cta, navigation } = siteContent.header;
+	const defaultHeader = defaultData.header;
+	const data = propData || defaultHeader;
+	const { logo, cta, navigation } = data;
 
 	const handleNavClick = () => {
 		setIsMobileMenuOpen(false);
@@ -88,7 +75,7 @@ function Header({ className }: React.ComponentProps<"header">) {
 						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg relative z-50"
 					>
 						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
-							{siteContent.header.logo.alt?.charAt(0) || "B"}
+							{logo.alt?.charAt(0) || "B"}
 						</div>
 						<div className="flex flex-col">
 							<span className="font-semibold text-sm">Biologistics</span>

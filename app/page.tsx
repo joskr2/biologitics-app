@@ -4,6 +4,8 @@ import { FeaturedBrands } from "@/components/ui/featured-brands";
 import { FeaturedClients } from "@/components/ui/featured-clients";
 import { FeaturedProducts } from "@/components/ui/featured-products";
 import { FeaturedTeam } from "@/components/ui/featured-team";
+import { Footer } from "@/components/ui/footer";
+import { Header } from "@/components/ui/header";
 import { Hero } from "@/components/ui/hero";
 
 export default async function Page() {
@@ -11,12 +13,14 @@ export default async function Page() {
 
 	return (
 		<>
+			<Header data={data.header} />
 			<Hero data={data.hero} />
 			<FeaturedProducts data={data.featuredProducts} />
 			<FeaturedBrands data={data.featuredBrands} />
 			<FeaturedClients data={data.featuredClients} />
 			<FeaturedTeam data={data.featuredTeam} />
 			<ContactForm />
+			<Footer data={data.footer} />
 		</>
 	);
 }
