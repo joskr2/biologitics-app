@@ -35,6 +35,7 @@ interface DashboardProps {
 export default function Dashboard({ initialData }: DashboardProps) {
 	const [data, setData] = useState<SiteContent>(initialData);
 	const [activeSection, _setActiveSection] = useState("header");
+	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [saveState, saveAction, isSaving] = useActionState(saveDashboardData, {
 		success: false,
 		message: undefined,
@@ -79,15 +80,19 @@ export default function Dashboard({ initialData }: DashboardProps) {
 						: activeSection;
 
 	return (
-		<SidebarProvider>
+		<SidebarProvider defaultOpen={!isCollapsed}>
 			<AppSidebar
 				activeSection={activeSection}
 				onSectionChange={_setActiveSection}
+				onCollapse={setIsCollapsed}
 			/>
 			<SidebarInset className="z-0">
 				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white relative z-10">
 					<div className="flex items-center gap-2 px-4">
-						<SidebarTrigger className="-ml-1" />
+						<SidebarTrigger
+							className="-ml-1"
+							onClick={() => setIsCollapsed(!isCollapsed)}
+						/>
 						<Separator
 							orientation="vertical"
 							className="mr-2 data-[orientation=vertical]:h-4"

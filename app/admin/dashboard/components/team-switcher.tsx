@@ -6,6 +6,7 @@ import * as React from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
@@ -14,10 +15,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
 	SidebarMenu,
+	SidebarMenuButton,
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 export function TeamSwitcher({
 	teams,
@@ -40,18 +41,10 @@ export function TeamSwitcher({
 		<SidebarMenu>
 			<SidebarMenuItem>
 				<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-					<DropdownMenuTrigger>
-						{/* Using div instead of button to avoid nested button issue */}
-						<div
-							className={cn(
-								"flex w-full items-center gap-2 rounded-md p-2 text-left text-sm",
-								"h-12", // lg size
-								"ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-								"active:bg-sidebar-accent active:text-sidebar-accent-foreground",
-								"focus-visible:outline-hidden focus-visible:ring-2",
-								"cursor-pointer select-none [&_svg]:size-4 [&_svg]:shrink-0",
-								"data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
-							)}
+					<DropdownMenuTrigger asChild>
+						<SidebarMenuButton
+							size="lg"
+							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
 								<activeTeam.logo className="size-4" />
@@ -61,7 +54,7 @@ export function TeamSwitcher({
 								<span className="truncate text-xs">{activeTeam.plan}</span>
 							</div>
 							<ChevronsUpDown className="ml-auto" />
-						</div>
+						</SidebarMenuButton>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -69,25 +62,27 @@ export function TeamSwitcher({
 						side={isMobile ? "bottom" : "right"}
 						sideOffset={4}
 					>
-						<DropdownMenuLabel className="text-muted-foreground text-xs">
-							Teams
-						</DropdownMenuLabel>
-						{teams.map((team, index) => (
-							<DropdownMenuItem
-								key={team.name}
-								onClick={() => {
-									setActiveTeam(team);
-									setIsOpen(false);
-								}}
-								className="gap-2 p-2"
-							>
-								<div className="flex size-6 items-center justify-center rounded-md border">
-									<team.logo className="size-3.5 shrink-0" />
-								</div>
-								{team.name}
-								<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-							</DropdownMenuItem>
-						))}
+						<DropdownMenuGroup>
+							<DropdownMenuLabel className="text-muted-foreground text-xs">
+								Teams
+							</DropdownMenuLabel>
+							{teams.map((team, index) => (
+								<DropdownMenuItem
+									key={team.name}
+									onClick={() => {
+										setActiveTeam(team);
+										setIsOpen(false);
+									}}
+									className="gap-2 p-2"
+								>
+									<div className="flex size-6 items-center justify-center rounded-md border">
+										<team.logo className="size-3.5 shrink-0" />
+									</div>
+									{team.name}
+									<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+								</DropdownMenuItem>
+							))}
+						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem className="gap-2 p-2">
 							<div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
