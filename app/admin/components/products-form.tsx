@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,16 +15,21 @@ interface ProductsFormProps {
 	onChange: (d: unknown) => void;
 }
 
+interface ProductWithStatus extends ProductItem {
+	isSaving?: boolean;
+	isDeleting?: boolean;
+}
+
 function ProductCard({
 	item,
 	index,
 	onUpdate,
 	onDelete,
 }: {
-	item: ProductItem;
+	item: ProductWithStatus;
 	index: number;
 	onUpdate: (index: number, field: string, value: string | string[]) => void;
-	onDelete: (index: number) => void;
+	onDelete: (index: number, id: string) => Promise<void>;
 }) {
 	const [isExpanded, setIsExpanded] = useState(true);
 
@@ -64,6 +69,7 @@ function ProductCard({
 							value={item.title}
 							onChange={(e) => onUpdate(index, "title", e.target.value)}
 							className="font-medium h-8"
+							disabled={item.isSaving}
 						/>
 						<p className="text-xs text-muted-foreground mt-0.5">
 							ID: {item.id}
@@ -75,6 +81,7 @@ function ProductCard({
 						variant="ghost"
 						size="icon-sm"
 						onClick={() => setIsExpanded(!isExpanded)}
+						disabled={item.isSaving || item.isDeleting}
 					>
 						{isExpanded ? (
 							<ChevronUp className="size-4" />
@@ -85,10 +92,15 @@ function ProductCard({
 					<Button
 						variant="ghost"
 						size="icon-sm"
-						onClick={() => onDelete(index)}
+						onClick={() => onDelete(index, item.id)}
+						disabled={item.isSaving || item.isDeleting}
 						className="text-destructive hover:text-destructive hover:bg-destructive/10"
 					>
-						<Trash2 className="size-4" />
+						{item.isDeleting ? (
+							<Loader2 className="size-4 animate-spin" />
+						) : (
+							<Trash2 className="size-4" />
+						)}
 					</Button>
 				</div>
 			</div>
@@ -112,6 +124,7 @@ function ProductCard({
 							placeholder="Descripción breve del producto"
 							value={item.description}
 							onChange={(e) => onUpdate(index, "description", e.target.value)}
+							disabled={item.isSaving}
 						/>
 					</div>
 
@@ -123,6 +136,7 @@ function ProductCard({
 								size="sm"
 								onClick={addFeature}
 								className="h-7 text-xs"
+								disabled={item.isSaving}
 							>
 								<Plus className="size-3 mr-1" />
 								Agregar
@@ -135,12 +149,14 @@ function ProductCard({
 										placeholder="Característica"
 										value={feat}
 										onChange={(e) => updateFeatures(idx, e.target.value)}
+										disabled={item.isSaving}
 									/>
 									<Button
 										variant="ghost"
 										size="icon-sm"
 										onClick={() => removeFeature(idx)}
 										className="shrink-0"
+										disabled={item.isSaving}
 									>
 										<Trash2 className="size-3" />
 									</Button>
@@ -161,32 +177,131 @@ function ProductCard({
 
 export function ProductsForm({ data, onChange }: ProductsFormProps) {
 	const [isExpanded, setIsExpanded] = useState(true);
+	const [items, setItems] = useState<ProductWithStatus[]>(data.items);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
+
+	// Sync items when data changes from parent
+	useState(() => {
+		if (data.items.length !== items.length ||
+			JSON.stringify(data.items) !== JSON.stringify(items)) {
+			setItems(data.items);
+		}
+	});
 
 	const updateItem = (
 		index: number,
 		field: string,
 		value: string | string[],
 	) => {
-		const newItems = [...data.items];
-		newItems[index] = { ...newItems[index], [field]: value };
+		const newItems = [...items];
+		newItems[index] = { ...newItems[index], [field]: value, isSaving: true };
+		setItems(newItems);
 		onChange({ ...data, items: newItems });
+
+		// Save to API
+		saveItem(newItems[index]);
 	};
 
-	const deleteItem = (index: number) => {
-		const newItems = data.items.filter((_, i) => i !== index);
-		onChange({ ...data, items: newItems });
+	const saveItem = async (item: ProductWithStatus) => {
+		try {
+			const response = await fetch(`/api/products/${item.id}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(item),
+			});
+
+			if (!response.ok) {
+				throw new Error("Error al guardar producto");
+			}
+
+			const result = await response.json() as { warning?: string; data?: ProductWithStatus };
+
+			// Update without saving state
+			setItems((prev) =>
+				prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i))
+			);
+
+			if (result.warning) {
+				setSuccess("Producto actualizado (modo desarrollo)");
+			}
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Error al guardar");
+			setItems((prev) =>
+				prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i))
+			);
+		}
 	};
 
-	const addItem = () => {
-		const timestamp = Date.now().toString(36);
-		const newProduct: ProductItem = {
-			id: `producto-${timestamp}`,
-			title: "",
-			description: "",
-			image: "",
-			features: ["", "", ""],
-		};
-		onChange({ ...data, items: [...data.items, newProduct] });
+	const deleteItem = async (index: number, id: string) => {
+		const newItems = [...items];
+		newItems[index] = { ...newItems[index], isDeleting: true };
+		setItems(newItems);
+
+		try {
+			const response = await fetch(`/api/products/${id}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Error al eliminar producto");
+			}
+
+			const result = await response.json() as { warning?: string };
+
+			// Remove from list
+			const removed = items.filter((item) => item.id !== id);
+			setItems(removed);
+			onChange({ ...data, items: removed });
+
+			if (result.warning) {
+				setSuccess("Producto eliminado (modo desarrollo)");
+			}
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Error al eliminar");
+			setItems((prev) =>
+				prev.map((i) => (i.id === id ? { ...i, isDeleting: false } : i))
+			);
+		}
+	};
+
+	const addItem = async () => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			const response = await fetch("/api/products", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					title: "",
+					description: "",
+					image: "",
+					features: ["", "", ""],
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("Error al crear producto");
+			}
+
+			const result = await response.json() as { warning?: string; data?: ProductWithStatus };
+
+			if (result.data) {
+				const newItems = [...items, { ...result.data, isSaving: false }];
+				setItems(newItems);
+				onChange({ ...data, items: newItems });
+			}
+
+			if (result.warning) {
+				setSuccess("Producto creado (modo desarrollo)");
+			}
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Error al crear producto");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -210,6 +325,16 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 			</CardHeader>
 			{isExpanded && (
 				<CardContent className="space-y-6">
+					{error && (
+						<div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+							{error}
+						</div>
+					)}
+					{success && (
+						<div className="p-3 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
+							{success}
+						</div>
+					)}
 					<div className="grid grid-cols-2 gap-4">
 						<div>
 							<Label>Título de la sección</Label>
@@ -232,7 +357,7 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 					</div>
 
 					<div className="space-y-4">
-						{data.items.map((item, i) => (
+						{items.map((item, i) => (
 							<ProductCard
 								key={item.id}
 								item={item}
@@ -243,8 +368,17 @@ export function ProductsForm({ data, onChange }: ProductsFormProps) {
 						))}
 					</div>
 
-					<Button variant="outline" onClick={addItem} className="w-full">
-						<Plus className="size-4 mr-2" />
+					<Button
+						variant="outline"
+						onClick={addItem}
+						disabled={loading}
+						className="w-full"
+					>
+						{loading ? (
+							<Loader2 className="size-4 mr-2 animate-spin" />
+						) : (
+							<Plus className="size-4 mr-2" />
+						)}
 						Agregar Nuevo Producto
 					</Button>
 				</CardContent>

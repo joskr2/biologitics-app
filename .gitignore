@@ -42,3 +42,5 @@ next-env.d.ts
 wrangler.jsonc
 .open-next
 .wrangler
+.serena
+.playwright-mcp

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,16 +15,21 @@ interface ClientsFormProps {
 	onChange: (d: unknown) => void;
 }
 
+interface ClientWithStatus extends ClientItem {
+	isSaving?: boolean;
+	isDeleting?: boolean;
+}
+
 function ClientCard({
 	item,
 	index,
 	onUpdate,
 	onDelete,
 }: {
-	item: ClientItem;
+	item: ClientWithStatus;
 	index: number;
 	onUpdate: (index: number, field: string, value: string) => void;
-	onDelete: (index: number) => void;
+	onDelete: (index: number, id: string) => Promise<void>;
 }) {
 	const [isExpanded, setIsExpanded] = useState(true);
 
@@ -48,6 +53,7 @@ function ClientCard({
 							value={item.name}
 							onChange={(e) => onUpdate(index, "name", e.target.value)}
 							className="font-medium h-8"
+							disabled={item.isSaving}
 						/>
 						<p className="text-xs text-muted-foreground mt-0.5">
 							ID: {item.id}
@@ -59,6 +65,7 @@ function ClientCard({
 						variant="ghost"
 						size="icon-sm"
 						onClick={() => setIsExpanded(!isExpanded)}
+						disabled={item.isSaving || item.isDeleting}
 					>
 						{isExpanded ? (
 							<ChevronUp className="size-4" />
@@ -69,10 +76,15 @@ function ClientCard({
 					<Button
 						variant="ghost"
 						size="icon-sm"
-						onClick={() => onDelete(index)}
+						onClick={() => onDelete(index, item.id)}
+						disabled={item.isSaving || item.isDeleting}
 						className="text-destructive hover:text-destructive hover:bg-destructive/10"
 					>
-						<Trash2 className="size-4" />
+						{item.isDeleting ? (
+							<Loader2 className="size-4 animate-spin" />
+						) : (
+							<Trash2 className="size-4" />
+						)}
 					</Button>
 				</div>
 			</div>
@@ -96,6 +108,7 @@ function ClientCard({
 								placeholder="Ej: Hospital, Laboratorio, Universidad..."
 								value={item.type}
 								onChange={(e) => onUpdate(index, "type", e.target.value)}
+								disabled={item.isSaving}
 							/>
 						</div>
 					</div>
@@ -107,27 +120,116 @@ function ClientCard({
 
 export function ClientsForm({ data, onChange }: ClientsFormProps) {
 	const [isExpanded, setIsExpanded] = useState(true);
+	const [items, setItems] = useState<ClientWithStatus[]>(data.items);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 
 	const updateItem = (index: number, field: string, value: string) => {
-		const newItems = [...data.items];
-		newItems[index] = { ...newItems[index], [field]: value };
+		const newItems = [...items];
+		newItems[index] = { ...newItems[index], [field]: value, isSaving: true };
+		setItems(newItems);
 		onChange({ ...data, items: newItems });
+
+		// Save to API
+		saveItem(newItems[index]);
 	};
 
-	const deleteItem = (index: number) => {
-		const newItems = data.items.filter((_, i) => i !== index);
-		onChange({ ...data, items: newItems });
+	const saveItem = async (item: ClientWithStatus) => {
+		try {
+			const response = await fetch(`/api/clients/${item.id}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(item),
+			});
+
+			if (!response.ok) {
+				throw new Error("Error al guardar cliente");
+			}
+
+			const result = await response.json() as { warning?: string };
+
+			setItems((prev) =>
+				prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i))
+			);
+
+			if (result.warning) {
+				setSuccess("Cliente actualizado (modo desarrollo)");
+			}
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Error al guardar");
+			setItems((prev) =>
+				prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i))
+			);
+		}
 	};
 
-	const addItem = () => {
-		const timestamp = Date.now().toString(36);
-		const newClient: ClientItem = {
-			id: `cliente-${timestamp}`,
-			name: "",
-			logo: "",
-			type: "",
-		};
-		onChange({ ...data, items: [...data.items, newClient] });
+	const deleteItem = async (index: number, id: string) => {
+		const newItems = [...items];
+		newItems[index] = { ...newItems[index], isDeleting: true };
+		setItems(newItems);
+
+		try {
+			const response = await fetch(`/api/clients/${id}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Error al eliminar cliente");
+			}
+
+			const result = await response.json() as { warning?: string };
+
+			const removed = items.filter((item) => item.id !== id);
+			setItems(removed);
+			onChange({ ...data, items: removed });
+
+			if (result.warning) {
+				setSuccess("Cliente eliminado (modo desarrollo)");
+			}
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Error al eliminar");
+			setItems((prev) =>
+				prev.map((i) => (i.id === id ? { ...i, isDeleting: false } : i))
+			);
+		}
+	};
+
+	const addItem = async () => {
+		setLoading(true);
+		setError(null);
+
+		try {
+			const response = await fetch("/api/clients", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					name: "",
+					logo: "",
+					type: "",
+				}),
+			});
+
+			if (!response.ok) {
+				throw new Error("Error al crear cliente");
+			}
+
+			const result = await response.json() as { warning?: string; data?: ClientWithStatus };
+
+			if (result.data) {
+				const newItems = [...items, { ...result.data, isSaving: false }];
+				setItems(newItems);
+				onChange({ ...data, items: newItems });
+			}
+
+			if (result.warning) {
+				setSuccess("Cliente creado (modo desarrollo)");
+			}
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Error al crear cliente");
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -151,6 +253,16 @@ export function ClientsForm({ data, onChange }: ClientsFormProps) {
 			</CardHeader>
 			{isExpanded && (
 				<CardContent className="space-y-6">
+					{error && (
+						<div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+							{error}
+						</div>
+					)}
+					{success && (
+						<div className="p-3 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
+							{success}
+						</div>
+					)}
 					<div className="grid grid-cols-2 gap-4">
 						<div>
 							<Label>Título de la sección</Label>
@@ -173,7 +285,7 @@ export function ClientsForm({ data, onChange }: ClientsFormProps) {
 					</div>
 
 					<div className="space-y-4">
-						{data.items.map((item, i) => (
+						{items.map((item, i) => (
 							<ClientCard
 								key={item.id}
 								item={item}
@@ -184,8 +296,17 @@ export function ClientsForm({ data, onChange }: ClientsFormProps) {
 						))}
 					</div>
 
-					<Button variant="outline" onClick={addItem} className="w-full">
-						<Plus className="size-4 mr-2" />
+					<Button
+						variant="outline"
+						onClick={addItem}
+						disabled={loading}
+						className="w-full"
+					>
+						{loading ? (
+							<Loader2 className="size-4 mr-2 animate-spin" />
+						) : (
+							<Plus className="size-4 mr-2" />
+						)}
 						Agregar Nuevo Cliente
 					</Button>
 				</CardContent>
