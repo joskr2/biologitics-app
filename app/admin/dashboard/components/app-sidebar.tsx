@@ -3,6 +3,7 @@
 import {
 	Footprints,
 	GalleryVerticalEnd,
+	Globe,
 	Image,
 	LayoutDashboard,
 	LogOut,
@@ -68,6 +69,12 @@ const navMain = [
 		url: "#",
 		icon: Footprints,
 		items: [{ title: "Información de Pie", url: "#footer" }],
+	},
+	{
+		title: "SEO",
+		url: "#",
+		icon: Globe,
+		items: [{ title: "Configuración SEO", url: "#seo" }],
 	},
 ];
 

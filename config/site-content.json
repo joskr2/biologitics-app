@@ -307,5 +307,61 @@
 			{ "label": "Política de Privacidad", "href": "/privacidad" },
 			{ "label": "Política de Cookies", "href": "/cookies" }
 		]
+	},
+	"seo": {
+		"metadataBase": "https://www.biologistics.pe",
+		"title": {
+			"default": "Biologistics - Venta de Equipos Científicos en Perú",
+			"template": "%s | Biologistics"
+		},
+		"description": "Importación y venta de equipos científicos de alta gama para laboratorios en Perú. Microscopios, centrífugas, incubadoras y equipamiento médico certificado.",
+		"keywords": [
+			"equipos científicos",
+			"laboratorio perú",
+			"venta de microscopios",
+			"equipamiento médico",
+			"biologistics",
+			"insumos laboratorio"
+		],
+		"authors": [{ "name": "Biologistics Perú" }],
+		"creator": "Biologistics S.A.C.",
+		"robots": {
+			"index": true,
+			"follow": true,
+			"googleBot": {
+				"index": true,
+				"follow": true,
+				"max-video-preview": -1,
+				"max-image-preview": "large",
+				"max-snippet": -1
+			}
+		},
+		"canonicalUrl": "https://www.biologistics.pe",
+		"openGraph": {
+			"type": "website",
+			"locale": "es_PE",
+			"url": "https://www.biologistics.pe",
+			"title": "Biologistics - Tecnología para tu Laboratorio",
+			"description": "Venta e importación de equipos científicos garantizados en Perú.",
+			"siteName": "Biologistics",
+			"images": [
+				{
+					"url": "/og-image.svg",
+					"width": 1200,
+					"height": 630,
+					"alt": "Equipos de Laboratorio Biologistics"
+				}
+			]
+		},
+		"twitter": {
+			"card": "summary_large_image",
+			"title": "Biologistics Perú",
+			"description": "Equipos científicos y de laboratorio al mejor precio.",
+			"images": ["/og-image.svg"]
+		},
+		"themeColors": [
+			{ "media": "(prefers-color-scheme: light)", "color": "#ffffff" },
+			{ "media": "(prefers-color-scheme: dark)", "color": "#000000" }
+		]
 	}
 }

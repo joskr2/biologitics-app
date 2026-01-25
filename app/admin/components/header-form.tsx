@@ -53,15 +53,20 @@ export function HeaderForm({ data, onChange }: HeaderFormProps) {
 			</CardHeader>
 			<CardContent className="space-y-6">
 				<div className="space-y-4">
-					<Label className="text-base font-medium">Logos (Modo Claro y Oscuro)</Label>
+					<Label className="text-base font-medium">
+						Logos (Modo Claro y Oscuro)
+					</Label>
 					<p className="text-sm text-muted-foreground">
-						Sube dos versiones del logo: una para fondos claros y otra para fondos oscuros.
+						Sube dos versiones del logo: una para fondos claros y otra para
+						fondos oscuros.
 					</p>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						{/* Logo Light Mode */}
 						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
-							<Label className="text-sm font-medium text-blue-600">Logo Modo Claro</Label>
+							<Label className="text-sm font-medium text-blue-600">
+								Logo Modo Claro
+							</Label>
 							<p className="text-xs text-muted-foreground mb-2">
 								Para fondos oscuros (logo claro)
 							</p>
@@ -82,7 +87,9 @@ export function HeaderForm({ data, onChange }: HeaderFormProps) {
 
 						{/* Logo Dark Mode */}
 						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
-							<Label className="text-sm font-medium text-slate-700">Logo Modo Oscuro</Label>
+							<Label className="text-sm font-medium text-slate-700">
+								Logo Modo Oscuro
+							</Label>
 							<p className="text-xs text-muted-foreground mb-2">
 								Para fondos claros (logo oscuro)
 							</p>

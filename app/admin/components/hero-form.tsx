@@ -21,9 +21,7 @@ function isSlideValid(slide: SiteContent["hero"]["slides"][0]): boolean {
 	}
 	// For videos, need both src AND poster
 	if (slide.type === "video") {
-		return Boolean(
-			slide.src?.trim() !== "" && slide.poster?.trim() !== "",
-		);
+		return Boolean(slide.src?.trim() !== "" && slide.poster?.trim() !== "");
 	}
 	return false;
 }

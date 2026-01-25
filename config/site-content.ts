@@ -152,6 +152,80 @@ export interface FooterContent {
 	legalLinks: FooterLegalLink[];
 }
 
+export interface SEOAuthor {
+	name: string;
+	url?: string;
+}
+
+export interface SEOImage {
+	url: string;
+	width?: number;
+	height?: number;
+	alt: string;
+}
+
+export interface SEORobots {
+	index?: boolean;
+	follow?: boolean;
+	googleBot?: {
+		index?: boolean;
+		follow?: boolean;
+		"max-video-preview"?: number;
+		"max-image-preview"?: "large" | "none" | "standard";
+		"max-snippet"?: number;
+	};
+}
+
+export interface SEOContent {
+	// Metadata Base
+	metadataBase: string;
+
+	// Title & Description
+	title: {
+		default: string;
+		template: string;
+	};
+	description: string;
+
+	// Keywords
+	keywords: string[];
+
+	// Authors & Creator
+	authors: SEOAuthor[];
+	creator: string;
+
+	// Robots
+	robots: SEORobots;
+
+	// Canonical URL
+	canonicalUrl: string;
+
+	// Open Graph
+	openGraph: {
+		type: string;
+		locale: string;
+		url: string;
+		title: string;
+		description: string;
+		siteName: string;
+		images: SEOImage[];
+	};
+
+	// Twitter
+	twitter: {
+		card: string;
+		title: string;
+		description: string;
+		images: string[];
+	};
+
+	// Theme Colors
+	themeColors: Array<{
+		media: string;
+		color: string;
+	}>;
+}
+
 export interface SiteContent {
 	header: HeaderContent;
 	hero: HeroContent;
@@ -160,4 +234,5 @@ export interface SiteContent {
 	featuredClients: FeaturedClientsContent;
 	featuredTeam: FeaturedTeamContent;
 	footer: FooterContent;
+	seo: SEOContent;
 }

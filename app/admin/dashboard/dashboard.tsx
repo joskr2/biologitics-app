@@ -25,6 +25,7 @@ import { FooterForm } from "../components/footer-form";
 import { HeaderForm } from "../components/header-form";
 import { HeroForm } from "../components/hero-form";
 import { ProductsForm } from "../components/products-form";
+import { SEOForm } from "../components/seo-form";
 import { TeamForm } from "../components/team-form";
 import { AppSidebar } from "./components/app-sidebar";
 
@@ -209,6 +210,12 @@ export default function Dashboard({ initialData }: DashboardProps) {
 								<FooterForm
 									data={data.footer}
 									onChange={(val) => updateSection("footer", val)}
+								/>
+							)}
+							{activeSection === "seo" && (
+								<SEOForm
+									data={data.seo}
+									onChange={(val) => updateSection("seo", val)}
 								/>
 							)}
 						</div>

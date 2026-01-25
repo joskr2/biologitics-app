@@ -8,6 +8,7 @@ import {
 	WebSiteSchema,
 } from "@/components/seo/organization-schema";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import siteContent from "@/config/site-content.json";
 
 const roboto = Roboto({
 	subsets: ["latin"],
@@ -28,82 +29,57 @@ const geistMono = Geist_Mono({
 	display: "swap",
 });
 
+const seo = siteContent.seo;
+
 export const viewport: Viewport = {
 	width: "device-width",
 	initialScale: 1,
-	themeColor: [
-		{ media: "(prefers-color-scheme: light)", color: "#ffffff" },
-		{ media: "(prefers-color-scheme: dark)", color: "#000000" },
-	],
+	themeColor: seo.themeColors.map((c) => ({
+		media: c.media,
+		color: c.color,
+	})),
 };
 
 export const metadata: Metadata = {
-	// Reemplaza esto con tu dominio real cuando lo tengas (ej: https://biologistics.pe)
-	// Si no lo pones, las imágenes de compartir en redes sociales fallarán.
-	metadataBase: new URL("http://localhost:3000"),
+	metadataBase: new URL(seo.metadataBase),
 
-	title: {
-		default: "Biologistics - Venta de Equipos Científicos en Perú",
-		template: "%s | Biologistics", // Permite títulos dinámicos en otras páginas
-	},
+	title: seo.title,
+	description: seo.description,
 
-	description:
-		"Importación y venta de equipos científicos de alta gama para laboratorios en Perú. Microscopios, centrífugas, incubadoras y equipamiento médico certificado.",
+	keywords: seo.keywords,
 
-	keywords: [
-		"equipos científicos",
-		"laboratorio perú",
-		"venta de microscopios",
-		"equipamiento médico",
-		"biologistics",
-		"insumos laboratorio",
-	],
-
-	authors: [{ name: "Biologistics Perú" }],
-	creator: "Biologistics S.A.C.",
+	authors: seo.authors,
+	creator: seo.creator,
 
 	robots: {
-		index: true,
-		follow: true,
-		googleBot: {
-			index: true,
-			follow: true,
-			"max-video-preview": -1,
-			"max-image-preview": "large",
-			"max-snippet": -1,
-		},
+		index: seo.robots.index,
+		follow: seo.robots.follow,
+		googleBot: seo.robots.googleBot
+			? {
+					index: seo.robots.googleBot.index,
+					follow: seo.robots.googleBot.follow,
+					"max-video-preview": seo.robots.googleBot["max-video-preview"] as
+						| number
+						| undefined,
+					"max-image-preview": seo.robots.googleBot["max-image-preview"] as
+						| "large"
+						| "none"
+						| "standard"
+						| undefined,
+					"max-snippet": seo.robots.googleBot["max-snippet"] as
+						| number
+						| undefined,
+				}
+			: undefined,
 	},
 
 	alternates: {
-		canonical: "/",
+		canonical: seo.canonicalUrl,
 	},
 
-	// Para compartir en Facebook / LinkedIn / WhatsApp
-	openGraph: {
-		type: "website",
-		locale: "es_PE",
-		url: "https://www.biologistics.pe", // Tu URL real
-		title: "Biologistics - Tecnología para tu Laboratorio",
-		description:
-			"Venta e importación de equipos científicos garantizados en Perú.",
-		siteName: "Biologistics",
-		images: [
-			{
-				url: "/og-image.svg",
-				width: 1200,
-				height: 630,
-				alt: "Equipos de Laboratorio Biologistics",
-			},
-		],
-	},
+	openGraph: seo.openGraph as Metadata["openGraph"],
 
-	// Para compartir en Twitter/X
-	twitter: {
-		card: "summary_large_image",
-		title: "Biologistics Perú",
-		description: "Equipos científicos y de laboratorio al mejor precio.",
-		images: ["/og-image.svg"],
-	},
+	twitter: seo.twitter,
 };
 
 export default function RootLayout({

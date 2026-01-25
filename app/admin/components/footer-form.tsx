@@ -72,13 +72,16 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 				<div className="space-y-4">
 					<Label className="text-base font-medium">Logos del Footer</Label>
 					<p className="text-sm text-muted-foreground">
-						Sube dos versiones del logo para el footer: clara para fondos oscuros, oscura para fondos claros.
+						Sube dos versiones del logo para el footer: clara para fondos
+						oscuros, oscura para fondos claros.
 					</p>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						{/* Footer Logo Light - for dark backgrounds */}
 						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
-							<Label className="text-sm font-medium text-blue-600">Logo Fondo Claro</Label>
+							<Label className="text-sm font-medium text-blue-600">
+								Logo Fondo Claro
+							</Label>
 							<p className="text-xs text-muted-foreground mb-2">
 								Para fondos oscuros (logo claro)
 							</p>
@@ -93,7 +96,9 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 
 						{/* Footer Logo Dark - for light backgrounds */}
 						<div className="space-y-2 p-4 border rounded-lg bg-muted/20">
-							<Label className="text-sm font-medium text-slate-700">Logo Fondo Oscuro</Label>
+							<Label className="text-sm font-medium text-slate-700">
+								Logo Fondo Oscuro
+							</Label>
 							<p className="text-xs text-muted-foreground mb-2">
 								Para fondos claros (logo oscuro)
 							</p>
