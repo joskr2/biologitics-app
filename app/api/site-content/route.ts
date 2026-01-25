@@ -14,12 +14,20 @@ export async function GET() {
 			const kv = (env as CloudflareEnv).BIOLOGISTICS;
 			const data = await kv.get("site-content", { type: "json" });
 			if (data) {
-				return NextResponse.json(data);
+				return NextResponse.json(data, {
+					headers: {
+						"Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+					},
+				});
 			}
 		}
 
 		// Fallback to default data
-		return NextResponse.json(defaultData as SiteContent);
+		return NextResponse.json(defaultData as SiteContent, {
+			headers: {
+				"Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+			},
+		});
 	} catch {
 		console.log("KV not available, using default data");
 		return NextResponse.json(defaultData as SiteContent);
@@ -36,7 +44,11 @@ export async function POST(request: Request) {
 			const kv = (env as CloudflareEnv).BIOLOGISTICS;
 			const data = (await request.json()) as SiteContent;
 			await kv.put("site-content", JSON.stringify(data));
-			return NextResponse.json({ success: true, data });
+			return NextResponse.json({ success: true, data }, {
+				headers: {
+					"Cache-Control": "no-store, must-revalidate",
+				},
+			});
 		}
 
 		// In development without KV, save to a simple file-based approach

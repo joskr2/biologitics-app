@@ -35,6 +35,8 @@ function HeroSlideContent({
 				{slide.type === "video" ? (
 					<video
 						src={slide.src}
+						poster="/hero-poster.jpg"
+						preload="none"
 						autoPlay
 						loop
 						muted
@@ -46,6 +48,7 @@ function HeroSlideContent({
 						src={slide.src}
 						alt={slide.title}
 						fill
+						priority
 						sizes="100vw"
 						className="object-cover"
 					/>

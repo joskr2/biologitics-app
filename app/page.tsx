@@ -8,7 +8,8 @@ import { Footer } from "@/components/ui/footer";
 import { Header } from "@/components/ui/header";
 import { Hero } from "@/components/ui/hero";
 
-export const dynamic = "force-dynamic";
+// ISR: Cache page for 60 seconds, then revalidate in background
+export const revalidate = 60;
 
 export default async function Page() {
 	const data = await getLandingData();
