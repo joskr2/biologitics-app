@@ -72,8 +72,8 @@ export function CardContent({
 								{imageType === "logo" ? "Productos Destacados" : "Características"}
 							</p>
 							<div className="space-y-2">
-								{items.map((item) => (
-									<div key={`${item.label}-${item.secondary || ""}`} className="flex items-center gap-2 text-sm">
+								{items.map((item, index) => (
+									<div key={`item-${index}-${item.label}`} className="flex items-center gap-2 text-sm">
 										<span className="size-1.5 rounded-full bg-primary shrink-0" />
 										<span className="text-foreground font-medium">{item.label}</span>
 										{item.secondary && (

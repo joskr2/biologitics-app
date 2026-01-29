@@ -19,17 +19,24 @@ interface HeaderProps {
 function Header({ data: propData, className }: HeaderProps) {
 	const { theme, setTheme } = useTheme();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-	const isDark = theme === "dark";
+	const [mounted, setMounted] = useState(false);
+
+	// Prevent hydration mismatch by only showing theme-specific content after mount
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	const isDark = mounted && theme === "dark";
 
 	const defaultHeader = defaultData.header;
 	const data = propData || defaultHeader;
 	const { logo, cta, navigation } = data;
 
-	// Fallback logo values for SSR safety
+	// Fallback logo values for SSR safety - use light logo during SSR to avoid hydration mismatch
 	const lightLogo = (logo && logo.light) || { src: "", alt: "" };
 	const darkLogo = (logo && logo.dark) || { src: "", alt: "" };
-	const currentLogo = (isDark ? lightLogo : darkLogo) || { src: "", alt: "" };
-	const currentAlt = (isDark ? lightLogo.alt : darkLogo.alt) || "";
+	const currentLogo = (mounted ? (isDark ? lightLogo : darkLogo) : lightLogo) || { src: "", alt: "" };
+	const currentAlt = (mounted ? (isDark ? lightLogo.alt : darkLogo.alt) : lightLogo.alt) || "";
 
 	const isLogoImage = useMemo(
 		() =>

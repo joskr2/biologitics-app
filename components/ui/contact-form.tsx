@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState, useCallback } from "react";
+import { motion } from "motion/react";
 import { submitContactForm, type FormState } from "@/app/actions";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,13 @@ export function ContactForm({
 		<SectionContent id="contacto" title={title} subtitle={subtitle}>
 			<div className="max-w-2xl mx-auto" key={formKey}>
 				<form action={action} className="space-y-6">
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4 }}
+						className="grid grid-cols-1 md:grid-cols-2 gap-6"
+					>
 						<Field data-invalid={!!state.errors?.nombre}>
 							<FieldLabel htmlFor="nombre">Nombre completo *</FieldLabel>
 							<Input
@@ -89,9 +96,15 @@ export function ContactForm({
 								<FieldError>{state.errors.email[0]}</FieldError>
 							)}
 						</Field>
-					</div>
+					</motion.div>
 
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4, delay: 0.1 }}
+						className="grid grid-cols-1 md:grid-cols-2 gap-6"
+					>
 						<Field data-invalid={!!state.errors?.empresa}>
 							<FieldLabel htmlFor="empresa">Empresa / Institución</FieldLabel>
 							<Input
@@ -116,68 +129,89 @@ export function ContactForm({
 								<FieldError>{state.errors.telefono[0]}</FieldError>
 							)}
 						</Field>
-					</div>
+					</motion.div>
 
-					<Field data-invalid={!!state.errors?.producto}>
-						<FieldLabel>Producto de interés</FieldLabel>
-						<Select
-							name="producto"
-							defaultValue={state.inputs?.producto ?? ""}
-						>
-							<SelectTrigger aria-invalid={!!state.errors?.producto}>
-								<SelectValue placeholder="Selecciona un producto..." />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="microscopio">
-									Microscopio Digital Pro
-								</SelectItem>
-								<SelectItem value="centrifuga">
-									Centrífuga de Laboratorio
-								</SelectItem>
-								<SelectItem value="espectrofotometro">
-									Espectrofotómetro UV-Vis
-								</SelectItem>
-								<SelectItem value="incubadora">
-									Incubadora de Cultivos
-								</SelectItem>
-								<SelectItem value="autoclave">Autoclave de Mesa</SelectItem>
-								<SelectItem value="otro">Otro / Cotización General</SelectItem>
-							</SelectContent>
-						</Select>
-						{state.errors?.producto && (
-							<FieldError>{state.errors.producto[0]}</FieldError>
-						)}
-					</Field>
-
-					<Field data-invalid={!!state.errors?.mensaje}>
-						<FieldLabel htmlFor="mensaje">Mensaje *</FieldLabel>
-						<Textarea
-							id="mensaje"
-							name="mensaje"
-							className="min-h-32"
-							defaultValue={state.inputs?.mensaje ?? ""}
-							required
-						/>
-						{state.errors?.mensaje && (
-							<FieldError>{state.errors.mensaje[0]}</FieldError>
-						)}
-					</Field>
-
-					<Button
-						type="submit"
-						size="lg"
-						className="w-full"
-						disabled={isPending}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4, delay: 0.2 }}
 					>
-						{isPending ? (
-							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-								Enviando solicitud...
-							</>
-						) : (
-							"Enviar Solicitud"
-						)}
-					</Button>
+						<Field data-invalid={!!state.errors?.producto}>
+							<FieldLabel>Producto de interés</FieldLabel>
+							<Select
+								name="producto"
+								defaultValue={state.inputs?.producto ?? ""}
+							>
+								<SelectTrigger aria-invalid={!!state.errors?.producto}>
+									<SelectValue placeholder="Selecciona un producto..." />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="microscopio">
+										Microscopio Digital Pro
+									</SelectItem>
+									<SelectItem value="centrifuga">
+										Centrífuga de Laboratorio
+									</SelectItem>
+									<SelectItem value="espectrofotometro">
+										Espectrofotómetro UV-Vis
+									</SelectItem>
+									<SelectItem value="incubadora">
+										Incubadora de Cultivos
+									</SelectItem>
+									<SelectItem value="autoclave">Autoclave de Mesa</SelectItem>
+									<SelectItem value="otro">Otro / Cotización General</SelectItem>
+								</SelectContent>
+							</Select>
+							{state.errors?.producto && (
+								<FieldError>{state.errors.producto[0]}</FieldError>
+							)}
+						</Field>
+					</motion.div>
+
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4, delay: 0.3 }}
+					>
+						<Field data-invalid={!!state.errors?.mensaje}>
+							<FieldLabel htmlFor="mensaje">Mensaje *</FieldLabel>
+							<Textarea
+								id="mensaje"
+								name="mensaje"
+								className="min-h-32"
+								defaultValue={state.inputs?.mensaje ?? ""}
+								required
+							/>
+							{state.errors?.mensaje && (
+								<FieldError>{state.errors.mensaje[0]}</FieldError>
+							)}
+						</Field>
+					</motion.div>
+
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4, delay: 0.4 }}
+					>
+						<Button
+							type="submit"
+							size="lg"
+							className="w-full"
+							disabled={isPending}
+						>
+							{isPending ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Enviando solicitud...
+								</>
+							) : (
+								"Enviar Solicitud"
+							)}
+						</Button>
+					</motion.div>
 				</form>
 			</div>
 		</SectionContent>

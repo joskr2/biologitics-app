@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
 
 import {
 	Carousel,
@@ -79,12 +80,17 @@ function FeaturedProductsCarousel({
 							: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
 				)}
 			>
-				{items.map((product) => (
-					<ProductCard
+				{items.map((product, index) => (
+					<motion.div
 						key={product.id}
-						product={product}
+						initial={{ opacity: 0, y: 30 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.5, delay: index * 0.1 }}
 						className={items.length <= 4 ? "xl:flex xl:flex-col" : ""}
-					/>
+					>
+						<ProductCard product={product} />
+					</motion.div>
 				))}
 			</div>
 		);
@@ -186,13 +192,19 @@ export function FeaturedProducts({
 			{/* Products display - carousel for >5 items, grid for <=5 */}
 			<FeaturedProductsCarousel items={items} />
 			{/* Footer with Link */}
-			<div className="mt-10 text-center">
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true }}
+				transition={{ duration: 0.5, delay: 0.3 }}
+				className="mt-10 text-center"
+			>
 				<Button variant="default" size="lg">
 					<Link href={propButtonHref ?? buttonHref}>
 						{propButtonText ?? buttonText}
 					</Link>
 				</Button>
-			</div>
+			</motion.div>
 		</SectionContent>
 	);
 }

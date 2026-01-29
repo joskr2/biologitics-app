@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "motion/react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -58,30 +59,49 @@ function HeroSlideContent({
 
 			<div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 pt-16 pb-24 max-w-7xl mx-auto">
 				<div className="flex flex-col gap-5 text-white text-center md:text-left md:items-start">
-					<h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl/tight font-bold tracking-tight text-white drop-shadow-lg">
+					<motion.h2
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, ease: "easeOut" }}
+						className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl/tight font-bold tracking-tight text-white drop-shadow-lg"
+					>
 						{slide.title}
-					</h2>
-					<p className="text-base sm:text-lg md:text-xl/relaxed max-w-2xl text-white/90 drop-shadow-md">
+					</motion.h2>
+					<motion.p
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+						className="text-base sm:text-lg md:text-xl/relaxed max-w-2xl text-white/90 drop-shadow-md"
+					>
 						{slide.subtitle}
-					</p>
-					<div className="flex flex-col sm:flex-row gap-3 mt-2 md:justify-start">
-						<Button
-							variant="default"
-							size="lg"
-							className="shadow-lg hover:shadow-xl transition-shadow"
-						>
-							<Link href={cta.href}>{cta.label}</Link>
-						</Button>
-						{secondaryCta && (
+					</motion.p>
+					<motion.div
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+						className="flex flex-col sm:flex-row gap-3 mt-2 md:justify-start"
+					>
+						<Link href={cta.href}>
 							<Button
-								variant="outline"
+								variant="default"
 								size="lg"
-								className="border-white/50 bg-white/10 text-white hover:bg-white/20"
+								className="shadow-lg hover:shadow-xl transition-shadow"
 							>
-								<Link href={secondaryCta.href}>{secondaryCta.label}</Link>
+								{cta.label}
 							</Button>
+						</Link>
+						{secondaryCta && (
+							<Link href={secondaryCta.href}>
+								<Button
+									variant="outline"
+									size="lg"
+									className="border-white/50 bg-white/10 text-white hover:bg-white/20"
+								>
+									{secondaryCta.label}
+								</Button>
+							</Link>
 						)}
-					</div>
+					</motion.div>
 				</div>
 			</div>
 		</div>
@@ -154,9 +174,13 @@ function Hero({ data }: HeroProps) {
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 					<h2 className="sr-only">Nuestra Trayectoria</h2>
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-						{socialProof.map((item) => (
-							<div
+						{socialProof.map((item, index) => (
+							<motion.div
 								key={item.label}
+								initial={{ opacity: 0, y: 20 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.5, delay: index * 0.1 }}
 								className="text-center px-4 py-3 rounded-lg bg-background/50 sm:bg-transparent"
 							>
 								<div className="text-2xl sm:text-3xl font-bold text-primary">
@@ -165,7 +189,7 @@ function Hero({ data }: HeroProps) {
 								<div className="text-xs sm:text-sm text-muted-foreground">
 									{item.label}
 								</div>
-							</div>
+							</motion.div>
 						))}
 					</div>
 				</div>

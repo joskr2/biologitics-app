@@ -5,6 +5,31 @@ import defaultData from "../../config/site-content.json";
 
 export const runtime = "edge";
 
+// Helper to deduplicate items by ID and ensure unique keys
+function deduplicateItems<T extends { id: string }>(
+	items: T[],
+): T[] {
+	const seen = new Set<string>();
+	const result: T[] = [];
+
+	for (const item of items) {
+		if (!seen.has(item.id)) {
+			seen.add(item.id);
+			result.push(item);
+		} else {
+			// Create a unique ID for duplicates
+			const uniqueItem = {
+				...item,
+				id: `${item.id}-${result.length}`,
+			};
+			seen.add(uniqueItem.id);
+			result.push(uniqueItem);
+		}
+	}
+
+	return result;
+}
+
 // In-memory cache with TTL (works in edge environment)
 interface CacheEntry {
 	data: SiteContent;
@@ -36,6 +61,20 @@ export const getLandingData = reactCache(async (): Promise<SiteContent> => {
 
 		const data = await kv.get("site-content", { type: "json" });
 		const result = (data as SiteContent) || (defaultData as SiteContent);
+
+		// Deduplicate items to prevent React key warnings
+		if (result.featuredProducts?.items) {
+			result.featuredProducts.items = deduplicateItems(result.featuredProducts.items);
+		}
+		if (result.featuredBrands?.items) {
+			result.featuredBrands.items = deduplicateItems(result.featuredBrands.items);
+		}
+		if (result.featuredClients?.items) {
+			result.featuredClients.items = deduplicateItems(result.featuredClients.items);
+		}
+		if (result.featuredTeam?.items) {
+			result.featuredTeam.items = deduplicateItems(result.featuredTeam.items);
+		}
 
 		// Store in cache
 		cache.set("site-content", {

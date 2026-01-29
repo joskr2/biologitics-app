@@ -3,6 +3,7 @@
 import { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 
+import { motion } from "motion/react";
 import {
 	Carousel,
 	CarouselContent,
@@ -97,8 +98,16 @@ function AutoScrollCarousel({ items }: { items: BrandItem[] }) {
 							: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
 				)}
 			>
-				{items.map((brand) => (
-					<BrandCard key={brand.id} brand={brand} />
+				{items.map((brand, index) => (
+					<motion.div
+						key={brand.id}
+						initial={{ opacity: 0, y: 30 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.5, delay: index * 0.1 }}
+					>
+						<BrandCard brand={brand} />
+					</motion.div>
 				))}
 			</div>
 		);
@@ -143,11 +152,17 @@ export function FeaturedBrands({
 	return (
 		<SectionContent id="marcas" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
 			<AutoScrollCarousel items={items} />
-			<div className="mt-10 text-center">
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true }}
+				transition={{ duration: 0.5, delay: 0.3 }}
+				className="mt-10 text-center"
+			>
 				<Button variant="default" size="lg">
 					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
 				</Button>
-			</div>
+			</motion.div>
 		</SectionContent>
 	);
 }

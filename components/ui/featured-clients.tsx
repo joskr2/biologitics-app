@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useCallback, useRef } from "react";
+import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -89,8 +90,16 @@ function AutoScrollCarousel({ items }: { items: ClientItem[] }) {
 								: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
 				)}
 			>
-				{items.map((client) => (
-					<ClientCard key={client.id} client={client} />
+				{items.map((client, index) => (
+					<motion.div
+						key={client.id}
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.4, delay: index * 0.08 }}
+					>
+						<ClientCard client={client} />
+					</motion.div>
 				))}
 			</div>
 		);
@@ -128,11 +137,17 @@ export function FeaturedClients({
 	return (
 		<SectionContent id="clientes" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
 			<AutoScrollCarousel items={items} />
-			<div className="mt-10 text-center">
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				whileInView={{ opacity: 1, y: 0 }}
+				viewport={{ once: true }}
+				transition={{ duration: 0.5, delay: 0.3 }}
+				className="mt-10 text-center"
+			>
 				<Button variant="default" size="lg">
 					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
 				</Button>
-			</div>
+			</motion.div>
 		</SectionContent>
 	);
 }

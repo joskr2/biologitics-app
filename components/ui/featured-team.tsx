@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { MailIcon, PhoneIcon } from "lucide-react";
@@ -98,8 +99,16 @@ function AutoScrollCarousel({ items }: { items: TeamMember[] }) {
 								: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5",
 				)}
 			>
-				{items.map((member) => (
-					<TeamCard key={member.id} member={member} />
+				{items.map((member, index) => (
+					<motion.div
+						key={member.id}
+						initial={{ opacity: 0, y: 30 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.5, delay: index * 0.1 }}
+					>
+						<TeamCard member={member} />
+					</motion.div>
 				))}
 			</div>
 		);
