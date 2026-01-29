@@ -1,4 +1,5 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { cache as reactCache } from "react";
 import type { SiteContent } from "@/config/site-content";
 import defaultData from "../../config/site-content.json";
 
@@ -17,7 +18,7 @@ function isCacheValid(entry: CacheEntry): boolean {
 	return Date.now() - entry.timestamp < CACHE_TTL;
 }
 
-export async function getLandingData(): Promise<SiteContent> {
+export const getLandingData = reactCache(async (): Promise<SiteContent> => {
 	// Check in-memory cache first
 	const cached = cache.get("site-content");
 	if (cached && isCacheValid(cached)) {
@@ -47,7 +48,7 @@ export async function getLandingData(): Promise<SiteContent> {
 		console.error("Error fetching from KV:", error);
 		return defaultData as SiteContent;
 	}
-}
+});
 
 export async function saveLandingData(
 	data: SiteContent,

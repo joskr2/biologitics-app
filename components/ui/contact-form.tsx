@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState, useCallback } from "react";
 import { submitContactForm, type FormState } from "@/app/actions";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,12 @@ export function ContactForm({
 		initialState,
 	);
 
+	const [formKey, setFormKey] = useState(0);
+
+	const resetForm = useCallback(() => {
+		setFormKey((prev) => prev + 1);
+	}, []);
+
 	if (state.success) {
 		return (
 			<SectionContent id="contacto" title={title} subtitle={subtitle}>
@@ -43,7 +49,7 @@ export function ContactForm({
 					<p className="text-muted-foreground mb-8">
 						{state.message || "Gracias por contactarnos."}
 					</p>
-					<Button variant="outline" onClick={() => window.location.reload()}>
+					<Button variant="outline" onClick={resetForm}>
 						Enviar otra consulta
 					</Button>
 				</div>
@@ -51,9 +57,10 @@ export function ContactForm({
 		);
 	}
 
+	// Key forces form re-render to reset all inputs
 	return (
 		<SectionContent id="contacto" title={title} subtitle={subtitle}>
-			<div className="max-w-2xl mx-auto">
+			<div className="max-w-2xl mx-auto" key={formKey}>
 				<form action={action} className="space-y-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<Field data-invalid={!!state.errors?.nombre}>

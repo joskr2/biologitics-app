@@ -14,7 +14,18 @@ interface CloudflareEnv {
 
 export async function POST(request: Request) {
 	try {
-		const formData = await request.formData();
+		// Start fetching context immediately in parallel with form data parsing
+		const contextPromise = getCloudflareContext({ async: true }).catch(() => ({
+			env: undefined,
+		}));
+
+		const formDataPromise = request.formData();
+
+		const [formData, context] = await Promise.all([
+			formDataPromise,
+			contextPromise,
+		]);
+
 		const file = formData.get("file") as File | null;
 		const folder = (formData.get("folder") as string) || "uploads";
 
@@ -59,10 +70,8 @@ export async function POST(request: Request) {
 		const ext = file.name.split(".").pop() || "";
 		const filename = `${folder}/${timestamp}-${random}.${ext}`;
 
-		// Get Cloudflare context and R2 bucket
-		const { env } = (await getCloudflareContext({ async: true }).catch(() => ({
-			env: undefined,
-		}))) as { env: CloudflareEnv | undefined };
+		// Get Cloudflare context (already fetched)
+		const { env } = context as { env: CloudflareEnv | undefined };
 
 		if (env?.NEXT_INC_CACHE_R2_BUCKET) {
 			const r2 = env.NEXT_INC_CACHE_R2_BUCKET;

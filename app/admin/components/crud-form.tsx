@@ -2,12 +2,21 @@
 
 import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+// Hook to keep a value stable in a ref
+function useLatest<T>(value: T) {
+	const ref = useRef(value);
+	useLayoutEffect(() => {
+		ref.current = value;
+	});
+	return ref;
+}
 
 export interface BaseItem {
 	id: string;
@@ -51,7 +60,7 @@ export interface CrudFormConfig<T extends BaseItem> {
 	fields: FieldConfig[];
 }
 
-function ItemCard<T extends BaseItem>({
+const ItemCard = memo(function ItemCard<T extends BaseItem>({
 	item,
 	index,
 	config,
@@ -265,7 +274,7 @@ function ItemCard<T extends BaseItem>({
 			)}
 		</div>
 	);
-}
+});
 
 function createEmptyNested(config: {
 	fields: NestedFieldConfig[];
@@ -292,18 +301,7 @@ export function CrudForm<T extends BaseItem>({
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 
-	const updateItem = (index: number, field: string, value: unknown) => {
-		const newItems = [...items];
-		newItems[index] = {
-			...newItems[index],
-			[field]: value,
-			isSaving: true,
-		} as T;
-		setItems(newItems);
-		onChange({ ...data, items: newItems });
-
-		saveItem(newItems[index]);
-	};
+	const itemsRef = useLatest(items);
 
 	const saveItem = async (item: T) => {
 		try {
@@ -334,36 +332,59 @@ export function CrudForm<T extends BaseItem>({
 		}
 	};
 
-	const deleteItem = async (index: number, id: string) => {
-		const newItems = [...items];
-		newItems[index] = { ...newItems[index], isDeleting: true } as T;
-		setItems(newItems);
+	const saveItemRef = useLatest(saveItem);
 
-		try {
-			const response = await fetch(`${config.apiEndpoint}/${id}`, {
-				method: "DELETE",
-			});
+	const updateItem = useCallback(
+		(index: number, field: string, value: unknown) => {
+			const currentItems = itemsRef.current;
+			const newItems = [...currentItems];
+			newItems[index] = {
+				...newItems[index],
+				[field]: value,
+				isSaving: true,
+			} as T;
+			setItems(newItems);
+			onChange({ ...data, items: newItems });
 
-			if (!response.ok) {
-				throw new Error(`Error al eliminar ${config.resourceName}`);
+			saveItemRef.current(newItems[index]);
+		},
+		[data, onChange, itemsRef, saveItemRef],
+	);
+
+	const deleteItem = useCallback(
+		async (index: number, id: string) => {
+			const currentItems = itemsRef.current;
+			const newItems = [...currentItems];
+			newItems[index] = { ...newItems[index], isDeleting: true } as T;
+			setItems(newItems);
+
+			try {
+				const response = await fetch(`${config.apiEndpoint}/${id}`, {
+					method: "DELETE",
+				});
+
+				if (!response.ok) {
+					throw new Error(`Error al eliminar ${config.resourceName}`);
+				}
+
+				const result = (await response.json()) as { warning?: string };
+
+				const removed = currentItems.filter((item) => item.id !== id);
+				setItems(removed);
+				onChange({ ...data, items: removed });
+
+				if (result.warning) {
+					setSuccess(`${config.resourceName} eliminado (modo desarrollo)`);
+				}
+			} catch (err) {
+				setError(err instanceof Error ? err.message : "Error al eliminar");
+				setItems((prev) =>
+					prev.map((i) => (i.id === id ? { ...i, isDeleting: false } : i)),
+				);
 			}
-
-			const result = (await response.json()) as { warning?: string };
-
-			const removed = items.filter((item) => item.id !== id);
-			setItems(removed);
-			onChange({ ...data, items: removed });
-
-			if (result.warning) {
-				setSuccess(`${config.resourceName} eliminado (modo desarrollo)`);
-			}
-		} catch (err) {
-			setError(err instanceof Error ? err.message : "Error al eliminar");
-			setItems((prev) =>
-				prev.map((i) => (i.id === id ? { ...i, isDeleting: false } : i)),
-			);
-		}
-	};
+		},
+		[data, onChange, itemsRef, config.apiEndpoint, config.resourceName],
+	);
 
 	const addItem = async () => {
 		setLoading(true);

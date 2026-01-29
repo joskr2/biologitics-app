@@ -27,17 +27,32 @@ function isSlideValid(slide: SiteContent["hero"]["slides"][0]): boolean {
 }
 
 export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
-	const updateSlide = (index: number, field: string, value: string) => {
-		const newSlides = [...data.slides];
-		newSlides[index] = { ...newSlides[index], [field]: value };
-		onChange({ ...data, slides: newSlides });
-	};
+	const updateSlide = useCallback(
+		(index: number, field: string, value: string) => {
+			const newSlides = [...data.slides];
+			newSlides[index] = { ...newSlides[index], [field]: value };
+			onChange({ ...data, slides: newSlides });
+		},
+		[data, onChange],
+	);
 
-	const updatePoster = (index: number, value: string) => {
-		const newSlides = [...data.slides];
-		newSlides[index] = { ...newSlides[index], poster: value };
-		onChange({ ...data, slides: newSlides });
-	};
+	const updatePoster = useCallback(
+		(index: number, value: string) => {
+			const newSlides = [...data.slides];
+			newSlides[index] = { ...newSlides[index], poster: value };
+			onChange({ ...data, slides: newSlides });
+		},
+		[data, onChange],
+	);
+
+	const updateSocialProof = useCallback(
+		(index: number, field: string, value: string) => {
+			const newSocialProof = [...data.socialProof];
+			newSocialProof[index] = { ...newSocialProof[index], [field]: value };
+			onChange({ ...data, socialProof: newSocialProof });
+		},
+		[data, onChange],
+	);
 
 	// Validate all slides and notify parent
 	const validateAndNotify = useCallback(() => {
@@ -48,11 +63,47 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 	// Run validation on mount and when data changes
 	validateAndNotify();
 
-	const updateSocialProof = (index: number, field: string, value: string) => {
-		const newSocialProof = [...data.socialProof];
-		newSocialProof[index] = { ...newSocialProof[index], [field]: value };
-		onChange({ ...data, socialProof: newSocialProof });
-	};
+	const handleTitleChange = useCallback(
+		(index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+			updateSlide(index, "title", e.target.value);
+		},
+		[updateSlide],
+	);
+
+	const handleSubtitleChange = useCallback(
+		(index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+			updateSlide(index, "subtitle", e.target.value);
+		},
+		[updateSlide],
+	);
+
+	const handleTypeChange = useCallback(
+		(index: number, e: React.ChangeEvent<HTMLSelectElement>) => {
+			updateSlide(index, "type", e.target.value);
+		},
+		[updateSlide],
+	);
+
+	const handleSrcChange = useCallback(
+		(index: number, src: string) => {
+			updateSlide(index, "src", src);
+		},
+		[updateSlide],
+	);
+
+	const handlePosterChange = useCallback(
+		(index: number, src: string) => {
+			updatePoster(index, src);
+		},
+		[updatePoster],
+	);
+
+	const handleSocialProofChange = useCallback(
+		(index: number, field: string, e: React.ChangeEvent<HTMLInputElement>) => {
+			updateSocialProof(index, field, e.target.value);
+		},
+		[updateSocialProof],
+	);
 
 	return (
 		<Card>
@@ -67,14 +118,14 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 							<Input
 								placeholder="Título"
 								value={slide.title}
-								onChange={(e) => updateSlide(i, "title", e.target.value)}
+								onChange={(e) => handleTitleChange(i, e)}
 							/>
 							<div className="grid grid-cols-2 gap-3">
 								<div className="space-y-2">
 									<Label className="text-xs">Tipo</Label>
 									<select
 										value={slide.type}
-										onChange={(e) => updateSlide(i, "type", e.target.value)}
+										onChange={(e) => handleTypeChange(i, e)}
 										className="w-full h-10 px-3 rounded-md border bg-background"
 									>
 										<option value="video">Video</option>
@@ -87,7 +138,7 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 									</Label>
 									<FileUpload
 										value={slide.src}
-										onChange={(src) => updateSlide(i, "src", src)}
+										onChange={(src) => handleSrcChange(i, src)}
 										accept={
 											slide.type === "video"
 												? "video/mp4,video/webm,video/quicktime"
@@ -108,7 +159,7 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 									</Label>
 									<FileUpload
 										value={slide.poster ?? ""}
-										onChange={(src) => updatePoster(i, src)}
+										onChange={(src) => handlePosterChange(i, src)}
 										accept="image/*"
 										placeholder="Subir imagen poster"
 										folder="hero/posters"
@@ -121,7 +172,7 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 							<Input
 								placeholder="Subtítulo"
 								value={slide.subtitle}
-								onChange={(e) => updateSlide(i, "subtitle", e.target.value)}
+								onChange={(e) => handleSubtitleChange(i, e)}
 							/>
 						</div>
 					))}
@@ -134,12 +185,12 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 							<Input
 								placeholder="Valor (ej: 500+)"
 								value={item.value}
-								onChange={(e) => updateSocialProof(i, "value", e.target.value)}
+								onChange={(e) => handleSocialProofChange(i, "value", e)}
 							/>
 							<Input
 								placeholder="Label"
 								value={item.label}
-								onChange={(e) => updateSocialProof(i, "label", e.target.value)}
+								onChange={(e) => handleSocialProofChange(i, "label", e)}
 							/>
 						</div>
 					))}
