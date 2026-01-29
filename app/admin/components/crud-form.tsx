@@ -9,7 +9,6 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-// Hook to keep a value stable in a ref
 function useLatest<T>(value: T) {
 	const ref = useRef(value);
 	useLayoutEffect(() => {
