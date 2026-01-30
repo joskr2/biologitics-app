@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { SectionContent } from "@/components/ui/section-content";
+import { RevealScale } from "@/components/ui/animated-section";
 import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 import type { FeaturedClientsContent, ClientItem } from "@/config/site-content";
@@ -90,16 +91,10 @@ function AutoScrollCarousel({ items }: { items: ClientItem[] }) {
 								: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
 				)}
 			>
-				{items.map((client, index) => (
-					<motion.div
-						key={client.id}
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.4, delay: index * 0.08 }}
-					>
+				{items.map((client) => (
+					<RevealScale key={client.id} scale={0.94}>
 						<ClientCard client={client} />
-					</motion.div>
+					</RevealScale>
 				))}
 			</div>
 		);
@@ -126,16 +121,18 @@ export function FeaturedClients({
 	subtitle: propSubtitle,
 	buttonText: propButtonText,
 	buttonHref: propButtonHref,
+	sectionId = "clientes",
 }: FeaturedClientsProps & {
 	title?: string;
 	subtitle?: string;
 	buttonText?: string;
 	buttonHref?: string;
+	sectionId?: string;
 } = {}) {
 	const { items, title, subtitle, buttonText, buttonHref } = { ...defaultData, ...data };
 
 	return (
-		<SectionContent id="clientes" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
+		<SectionContent id={sectionId} title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
 			<AutoScrollCarousel items={items} />
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}

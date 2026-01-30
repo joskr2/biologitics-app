@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState, useCallback } from "react";
-import { motion } from "motion/react";
+import { StickyReveal } from "@/components/ui/animated-section";
 import { submitContactForm, type FormState } from "@/app/actions";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ const initialState: FormState = {
 export function ContactForm({
 	title = "Solicita Información",
 	subtitle = "Completa el formulario y nuestro equipo te contactará",
+	sectionId = "contacto",
 }) {
 	const [state, action, isPending] = useActionState(
 		submitContactForm,
@@ -41,7 +42,7 @@ export function ContactForm({
 
 	if (state.success) {
 		return (
-			<SectionContent id="contacto" title={title} subtitle={subtitle}>
+			<SectionContent id={sectionId} title={title} subtitle={subtitle}>
 				<div className="max-w-2xl mx-auto text-center py-12 animate-in fade-in zoom-in duration-300">
 					<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
 						<CheckCircle2 className="w-8 h-8" />
@@ -60,83 +61,67 @@ export function ContactForm({
 
 	// Key forces form re-render to reset all inputs
 	return (
-		<SectionContent id="contacto" title={title} subtitle={subtitle}>
-			<div className="max-w-2xl mx-auto" key={formKey}>
-				<form action={action} className="space-y-6">
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.4 }}
-						className="grid grid-cols-1 md:grid-cols-2 gap-6"
-					>
-						<Field data-invalid={!!state.errors?.nombre}>
-							<FieldLabel htmlFor="nombre">Nombre completo *</FieldLabel>
-							<Input
-								id="nombre"
-								name="nombre"
-								defaultValue={state.inputs?.nombre ?? ""}
-								required
-							/>
-							{state.errors?.nombre && (
-								<FieldError>{state.errors.nombre[0]}</FieldError>
-							)}
-						</Field>
+		<SectionContent id={sectionId} title={title} subtitle={subtitle}>
+			<StickyReveal>
+				<div className="max-w-2xl mx-auto" key={formKey}>
+					<form action={action} className="space-y-6">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<Field data-invalid={!!state.errors?.nombre}>
+								<FieldLabel htmlFor="nombre">Nombre completo *</FieldLabel>
+								<Input
+									id="nombre"
+									name="nombre"
+									defaultValue={state.inputs?.nombre ?? ""}
+									required
+								/>
+								{state.errors?.nombre && (
+									<FieldError>{state.errors.nombre[0]}</FieldError>
+								)}
+							</Field>
 
-						<Field data-invalid={!!state.errors?.email}>
-							<FieldLabel htmlFor="email">Correo electrónico *</FieldLabel>
-							<Input
-								id="email"
-								name="email"
-								type="email"
-								defaultValue={state.inputs?.email ?? ""}
-								required
-							/>
-							{state.errors?.email && (
-								<FieldError>{state.errors.email[0]}</FieldError>
-							)}
-						</Field>
-					</motion.div>
+							<Field data-invalid={!!state.errors?.email}>
+								<FieldLabel htmlFor="email">Correo electrónico *</FieldLabel>
+								<Input
+									id="email"
+									name="email"
+									type="email"
+									defaultValue={state.inputs?.email ?? ""}
+									required
+								/>
+								{state.errors?.email && (
+									<FieldError>{state.errors.email[0]}</FieldError>
+								)}
+							</Field>
+						</div>
 
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.4, delay: 0.1 }}
-						className="grid grid-cols-1 md:grid-cols-2 gap-6"
-					>
-						<Field data-invalid={!!state.errors?.empresa}>
-							<FieldLabel htmlFor="empresa">Empresa / Institución</FieldLabel>
-							<Input
-								id="empresa"
-								name="empresa"
-								defaultValue={state.inputs?.empresa ?? ""}
-							/>
-							{state.errors?.empresa && (
-								<FieldError>{state.errors.empresa[0]}</FieldError>
-							)}
-						</Field>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<Field data-invalid={!!state.errors?.empresa}>
+								<FieldLabel htmlFor="empresa">Empresa / Institución</FieldLabel>
+								<Input
+									id="empresa"
+									name="empresa"
+									defaultValue={state.inputs?.empresa ?? ""}
+								/>
+								{state.errors?.empresa && (
+									<FieldError>{state.errors.empresa[0]}</FieldError>
+								)}
+							</Field>
 
-						<Field data-invalid={!!state.errors?.telefono}>
-							<FieldLabel htmlFor="telefono">Teléfono</FieldLabel>
-							<Input
-								id="telefono"
-								name="telefono"
-								type="tel"
-								defaultValue={state.inputs?.telefono ?? ""}
-							/>
-							{state.errors?.telefono && (
-								<FieldError>{state.errors.telefono[0]}</FieldError>
-							)}
-						</Field>
-					</motion.div>
+							<Field data-invalid={!!state.errors?.telefono}>
+								<FieldLabel htmlFor="telefono">Teléfono</FieldLabel>
+								<Input
+									id="telefono"
+									name="telefono"
+									type="tel"
+									defaultValue={state.inputs?.telefono ?? ""}
+								/>
+								{state.errors?.telefono && (
+									<FieldError>{state.errors.telefono[0]}</FieldError>
+								)}
+							</Field>
+						</div>
 
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.4, delay: 0.2 }}
-					>
+						<div>
 						<Field data-invalid={!!state.errors?.producto}>
 							<FieldLabel>Producto de interés</FieldLabel>
 							<Select
@@ -167,14 +152,9 @@ export function ContactForm({
 								<FieldError>{state.errors.producto[0]}</FieldError>
 							)}
 						</Field>
-					</motion.div>
+					</div>
 
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.4, delay: 0.3 }}
-					>
+					<div>
 						<Field data-invalid={!!state.errors?.mensaje}>
 							<FieldLabel htmlFor="mensaje">Mensaje *</FieldLabel>
 							<Textarea
@@ -188,32 +168,26 @@ export function ContactForm({
 								<FieldError>{state.errors.mensaje[0]}</FieldError>
 							)}
 						</Field>
-					</motion.div>
+					</div>
 
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.4, delay: 0.4 }}
+					<Button
+						type="submit"
+						size="lg"
+						className="w-full"
+						disabled={isPending}
 					>
-						<Button
-							type="submit"
-							size="lg"
-							className="w-full"
-							disabled={isPending}
-						>
-							{isPending ? (
-								<>
-									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-									Enviando solicitud...
-								</>
-							) : (
-								"Enviar Solicitud"
-							)}
-						</Button>
-					</motion.div>
+						{isPending ? (
+							<>
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								Enviando solicitud...
+							</>
+						) : (
+							"Enviar Solicitud"
+						)}
+					</Button>
 				</form>
 			</div>
+			</StickyReveal>
 		</SectionContent>
 	);
 }

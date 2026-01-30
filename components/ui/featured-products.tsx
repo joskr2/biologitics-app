@@ -3,7 +3,6 @@
 import { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { motion } from "motion/react";
-
 import {
 	Carousel,
 	CarouselContent,
@@ -12,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CardContent, CardListItem } from "@/components/ui/card-content";
 import { SectionContent } from "@/components/ui/section-content";
+import { RevealScale } from "@/components/ui/animated-section";
 import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 import type { FeaturedProductsContent, ProductItem } from "@/config/site-content";
@@ -80,17 +80,14 @@ function FeaturedProductsCarousel({
 							: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
 				)}
 			>
-				{items.map((product, index) => (
-					<motion.div
+				{items.map((product) => (
+					<RevealScale
 						key={product.id}
-						initial={{ opacity: 0, y: 30 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.5, delay: index * 0.1 }}
+						scale={0.92}
 						className={items.length <= 4 ? "xl:flex xl:flex-col" : ""}
 					>
 						<ProductCard product={product} />
-					</motion.div>
+					</RevealScale>
 				))}
 			</div>
 		);
@@ -172,11 +169,13 @@ export function FeaturedProducts({
 	subtitle: propSubtitle,
 	buttonText: propButtonText,
 	buttonHref: propButtonHref,
+	sectionId = "productos",
 }: FeaturedProductsProps & {
 	title?: string;
 	subtitle?: string;
 	buttonText?: string;
 	buttonHref?: string;
+	sectionId?: string;
 } = {}) {
 	const { items, title, subtitle, buttonText, buttonHref } = {
 		...defaultData,
@@ -185,7 +184,7 @@ export function FeaturedProducts({
 
 	return (
 		<SectionContent
-			id="productos"
+			id={sectionId}
 			title={propTitle ?? title}
 			subtitle={propSubtitle ?? subtitle}
 		>

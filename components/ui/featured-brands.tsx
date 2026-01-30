@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { CardContent, CardListItem } from "@/components/ui/card-content";
 import { SectionContent } from "@/components/ui/section-content";
+import { RevealScale } from "@/components/ui/animated-section";
 import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 import type { FeaturedBrandsContent, BrandItem } from "@/config/site-content";
@@ -98,16 +99,10 @@ function AutoScrollCarousel({ items }: { items: BrandItem[] }) {
 							: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
 				)}
 			>
-				{items.map((brand, index) => (
-					<motion.div
-						key={brand.id}
-						initial={{ opacity: 0, y: 30 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						viewport={{ once: true }}
-						transition={{ duration: 0.5, delay: index * 0.1 }}
-					>
+				{items.map((brand) => (
+					<RevealScale key={brand.id} scale={0.92}>
 						<BrandCard brand={brand} />
-					</motion.div>
+					</RevealScale>
 				))}
 			</div>
 		);
@@ -134,11 +129,13 @@ export function FeaturedBrands({
 	subtitle: propSubtitle,
 	buttonText: propButtonText,
 	buttonHref: propButtonHref,
+	sectionId = "marcas",
 }: FeaturedBrandsProps & {
 	title?: string;
 	subtitle?: string;
 	buttonText?: string;
 	buttonHref?: string;
+	sectionId?: string;
 } = {}) {
 	const merged = { ...defaultData, ...data } as {
 		items: BrandItem[];
@@ -150,7 +147,7 @@ export function FeaturedBrands({
 	const { items, title, subtitle, buttonText, buttonHref } = merged;
 
 	return (
-		<SectionContent id="marcas" title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
+		<SectionContent id={sectionId} title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
 			<AutoScrollCarousel items={items} />
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}

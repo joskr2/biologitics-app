@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { motion, MotionProps } from "motion/react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 type AnimationType =
@@ -109,7 +110,7 @@ export function StaggeredList({
 					key={index}
 					animation={animation}
 					delay={staggerDelay * index}
-					className="flex-1 min-w-[200px]"
+					className="flex-1 min-w-50"
 				>
 					{child}
 				</AnimatedSection>
@@ -159,6 +160,142 @@ export function HeroText({ children, className, delay = 0 }: Readonly<HeroTextPr
 			className={className}
 		>
 			{children}
+		</motion.div>
+	);
+}
+
+// ============================================
+// Apple-Style Scroll Animations
+// ============================================
+
+interface ParallaxProps {
+	children: ReactNode;
+	className?: string;
+	speed?: number; // 0-1, lower is slower
+}
+
+export function Parallax({
+	children,
+	className,
+	speed = 0.5,
+}: Readonly<ParallaxProps>) {
+	return (
+		<motion.div
+			className={className}
+			style={{ y: 0 }}
+			initial={{ opacity: 0 }}
+			whileInView={{ opacity: 1 }}
+			viewport={{ once: false, amount: 0.3 }}
+			transition={{ duration: 0.8 }}
+		>
+			<motion.div
+				style={{ y: 0 }}
+				whileInView={{ y: -20 * speed }}
+				transition={{ duration: 0.8, ease: "easeOut" }}
+				viewport={{ once: false }}
+			>
+				{children}
+			</motion.div>
+		</motion.div>
+	);
+}
+
+interface RevealScaleProps {
+	children: ReactNode;
+	className?: string;
+	scale?: number; // 0.8 to 1
+}
+
+export function RevealScale({
+	children,
+	className,
+	scale = 0.95,
+}: Readonly<RevealScaleProps>) {
+	return (
+		<motion.div
+			initial={{ opacity: 0, scale }}
+			whileInView={{ opacity: 1, scale: 1 }}
+			viewport={{ once: true, margin: "-50px" }}
+			transition={{ duration: 0.7, ease: "easeOut" }}
+			className={className}
+		>
+			{children}
+		</motion.div>
+	);
+}
+
+interface StickyRevealProps {
+	children: ReactNode;
+	className?: string;
+}
+
+export function StickyReveal({ children, className }: Readonly<StickyRevealProps>) {
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 50 }}
+			whileInView={{ opacity: 1, y: 0 }}
+			viewport={{ once: true, amount: 0.3 }}
+			transition={{ duration: 0.8, ease: "easeOut" }}
+			className={className}
+		>
+			{children}
+		</motion.div>
+	);
+}
+
+interface ImageRevealProps {
+	src: string;
+	alt: string;
+	className?: string;
+	sizes?: string;
+}
+
+export function ImageReveal({
+	src,
+	alt,
+	className,
+	sizes = "100vw",
+}: Readonly<ImageRevealProps>) {
+	return (
+		<motion.div
+			initial={{ opacity: 0, scale: 1.1 }}
+			whileInView={{ opacity: 1, scale: 1 }}
+			viewport={{ once: true, amount: 0.3 }}
+			transition={{ duration: 1, ease: "easeOut" }}
+			className={className}
+		>
+			<Image src={src} alt={alt} fill sizes={sizes} className="object-cover" />
+		</motion.div>
+	);
+}
+
+interface CounterAnimationProps {
+	value: string;
+	label: string;
+	className?: string;
+}
+
+export function CounterAnimation({
+	value,
+	label,
+	className,
+}: Readonly<CounterAnimationProps>) {
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			whileInView={{ opacity: 1, y: 0 }}
+			viewport={{ once: true }}
+			transition={{ duration: 0.5 }}
+			className={className}
+		>
+			<motion.span
+				initial={{ opacity: 0 }}
+				whileInView={{ opacity: 1 }}
+				transition={{ duration: 0.3, delay: 0.2 }}
+			>
+				{value}
+			</motion.span>
+			<span className="block text-sm text-muted-foreground mt-1">{label}</span>
 		</motion.div>
 	);
 }
