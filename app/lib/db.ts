@@ -6,9 +6,7 @@ import defaultData from "../../config/site-content.json";
 export const runtime = "edge";
 
 // Helper to deduplicate items by ID and ensure unique keys
-function deduplicateItems<T extends { id: string }>(
-	items: T[],
-): T[] {
+function deduplicateItems<T extends { id: string }>(items: T[]): T[] {
 	const seen = new Set<string>();
 	const result: T[] = [];
 
@@ -64,13 +62,19 @@ export const getLandingData = reactCache(async (): Promise<SiteContent> => {
 
 		// Deduplicate items to prevent React key warnings
 		if (result.featuredProducts?.items) {
-			result.featuredProducts.items = deduplicateItems(result.featuredProducts.items);
+			result.featuredProducts.items = deduplicateItems(
+				result.featuredProducts.items,
+			);
 		}
 		if (result.featuredBrands?.items) {
-			result.featuredBrands.items = deduplicateItems(result.featuredBrands.items);
+			result.featuredBrands.items = deduplicateItems(
+				result.featuredBrands.items,
+			);
 		}
 		if (result.featuredClients?.items) {
-			result.featuredClients.items = deduplicateItems(result.featuredClients.items);
+			result.featuredClients.items = deduplicateItems(
+				result.featuredClients.items,
+			);
 		}
 		if (result.featuredTeam?.items) {
 			result.featuredTeam.items = deduplicateItems(result.featuredTeam.items);

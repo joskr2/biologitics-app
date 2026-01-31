@@ -7,6 +7,7 @@ import {
 	OrganizationSchema,
 	WebSiteSchema,
 } from "@/components/seo/organization-schema";
+import { HeaderWrapper } from "@/components/ui/header-wrapper";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import siteContent from "@/config/site-content.json";
 
@@ -105,6 +106,7 @@ export default function RootLayout({
 						enableSystem
 						disableTransitionOnChange
 					>
+						<HeaderWrapper />
 						{children}
 					</ThemeProvider>
 				</Suspense>

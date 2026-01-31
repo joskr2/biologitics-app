@@ -5,7 +5,6 @@ import { FeaturedClients } from "@/components/ui/featured-clients";
 import { FeaturedProducts } from "@/components/ui/featured-products";
 import { FeaturedTeam } from "@/components/ui/featured-team";
 import { Footer } from "@/components/ui/footer";
-import { Header } from "@/components/ui/header";
 import { Hero } from "@/components/ui/hero";
 
 // Lazy load ContactForm - it uses react-hook-form and zod which add significant bundle size
@@ -33,8 +32,6 @@ export default async function Page() {
 
 	return (
 		<>
-			<Header data={data.header} />
-
 			{/* Main h1 - unique heading for SEO (sr-only for screen readers) */}
 			<h1 className="sr-only">
 				Biologistics - Venta de Equipos Científicos de Alta Gama para
