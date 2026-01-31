@@ -5,7 +5,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/ui/footer";
-import { Header } from "@/components/ui/header";
 import type { ProductItem } from "@/config/site-content";
 import siteContent from "@/config/site-content.json";
 
@@ -64,8 +63,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Header />
-
 			<main className="flex-1">
 				{/* Breadcrumb */}
 				<nav className="border-b bg-muted/30" aria-label="Breadcrumb">
@@ -112,12 +109,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 						<div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 							{/* Product Image */}
-							<div className="relative aspect-4/3 rounded-2xl overflow-hidden bg-muted/50 border">
+							<div className="relative aspect-4/3 w-full max-h-[500px] rounded-2xl overflow-hidden bg-muted/50 border">
 								<Image
 									src={product.image}
 									alt={product.title}
 									fill
-									className="object-cover"
+									className="object-contain p-4"
 									sizes="(max-width: 1024px) 100vw, 50vw"
 									priority
 								/>
@@ -250,15 +247,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 										href={`/productos/${relatedProduct.id}`}
 										className="group block"
 									>
-										<div className="aspect-4/3 rounded-xl overflow-hidden bg-muted/50 border mb-4">
-											<Image
-												src={relatedProduct.image}
-												alt={relatedProduct.title}
-												fill
-												className="object-cover group-hover:scale-105 transition-transform duration-300"
-												sizes="(max-width: 768px) 50vw, 25vw"
-											/>
-										</div>
 										<h3 className="font-semibold group-hover:text-primary transition-colors">
 											{relatedProduct.title}
 										</h3>

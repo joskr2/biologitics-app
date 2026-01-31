@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/components/ui/footer";
-import { Header } from "@/components/ui/header";
 import siteContent from "@/config/site-content.json";
 
 export const metadata: Metadata = {
@@ -23,8 +22,6 @@ export default function ProductsPage() {
 
 	return (
 		<div className="min-h-screen flex flex-col">
-			<Header />
-
 			<main className="flex-1">
 				{/* Hero Section */}
 				<section className="relative py-20 lg:py-32 overflow-hidden">
@@ -55,13 +52,13 @@ export default function ProductsPage() {
 										className="group bg-background rounded-2xl border overflow-hidden hover:shadow-lg transition-all duration-300"
 									>
 										{/* Image */}
-										<div className="relative aspect-16/10 overflow-hidden bg-muted/50">
+										<div className="relative aspect-16/10 w-full max-h-[300px] overflow-hidden bg-muted/50">
 											<Image
 												src={product.image}
 												alt={product.title}
 												fill
-												className="object-cover group-hover:scale-105 transition-transform duration-500"
-												sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+										className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+										sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 											/>
 											<div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 										</div>
