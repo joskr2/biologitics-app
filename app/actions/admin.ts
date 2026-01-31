@@ -13,9 +13,8 @@ export async function loginAction(
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
 
-	// Credenciales hardcodeadas - puedes cambiarlas o usar variables de entorno
-	const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@biologistics.com";
-	const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "biologistics2024";
+	const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
+	const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 	if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
 		const cookieStore = await cookies();
