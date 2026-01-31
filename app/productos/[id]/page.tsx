@@ -100,7 +100,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 				<section className="py-12 lg:py-20">
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						<Link
-							href="#productos"
+							href="/productos"
 							className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-8 text-sm"
 						>
 							<ArrowLeft className="size-4" />
@@ -109,7 +109,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 						<div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 							{/* Product Image */}
-							<div className="relative aspect-4/3 w-full max-h-[500px] rounded-2xl overflow-hidden bg-muted/50 border">
+							<div className="relative aspect-4/3 w-full max-h-125 rounded-2xl overflow-hidden bg-muted/50 border">
 								<Image
 									src={product.image}
 									alt={product.title}
@@ -168,14 +168,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
 								</div>
 
 								{/* Download Brochure */}
-								<Button
+								{/* <Button
 									variant="ghost"
 									size="sm"
 									className="text-muted-foreground"
 								>
 									<Download className="size-4 mr-2" />
 									Descargar ficha técnica
-								</Button>
+								</Button> */}
 							</div>
 						</div>
 					</div>
