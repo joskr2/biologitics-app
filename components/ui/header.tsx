@@ -2,7 +2,7 @@
 
 import { MenuIcon, MoonIcon, SunIcon, XIcon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,6 +20,8 @@ function Header({ data: propData, className }: HeaderProps) {
 	const { theme, setTheme } = useTheme();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const [mounted, setMounted] = useState(false);
+	const [lightLogoError, setLightLogoError] = useState(false);
+	const [darkLogoError, setDarkLogoError] = useState(false);
 
 	// Prevent hydration mismatch by only showing theme-specific content after mount
 	useEffect(() => {
@@ -28,23 +30,14 @@ function Header({ data: propData, className }: HeaderProps) {
 
 	const isDark = mounted && theme === "dark";
 
-	const defaultHeader = defaultData.header;
-	const data = propData || defaultHeader;
+	const data = propData || defaultData.header;
 	const { logo, cta, navigation } = data;
 
-	// Fallback logo values for SSR safety - use light logo during SSR to avoid hydration mismatch
-	const lightLogo = (logo && logo.light) || { src: "", alt: "" };
-	const darkLogo = (logo && logo.dark) || { src: "", alt: "" };
-	const currentLogo = (mounted ? (isDark ? lightLogo : darkLogo) : lightLogo) || { src: "", alt: "" };
-	const currentAlt = (mounted ? (isDark ? lightLogo.alt : darkLogo.alt) : lightLogo.alt) || "";
-
-	const isLogoImage = useMemo(
-		() =>
-			currentLogo?.src &&
-			(currentLogo.src.endsWith(".svg") ||
-				currentLogo.src.match(/\.(svg|png|jpg|jpeg|webp)$/i)),
-		[currentLogo?.src]
-	);
+	// Logo values for theme-aware display (only show if src exists and no error)
+	const lightLogo = logo?.light || null;
+	const darkLogo = logo?.dark || null;
+	const showLightLogo = lightLogo?.src && !lightLogoError;
+	const showDarkLogo = darkLogo?.src && !darkLogoError;
 
 	const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
 		const href = e.currentTarget.getAttribute("href");
@@ -115,20 +108,31 @@ function Header({ data: propData, className }: HeaderProps) {
 						href="/"
 						className="flex items-center gap-3 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary rounded-lg relative z-50"
 					>
-						{isLogoImage && currentLogo?.src ? (
+						{/* Light mode logo - shown only in dark backgrounds */}
+						{showLightLogo && (
 							<Image
-								src={currentLogo.src}
-								alt={currentAlt || "Biologistics"}
+								src={lightLogo.src}
+								alt={lightLogo.alt || "Biologistics"}
 								width={120}
 								height={40}
-								className="h-10 w-auto shrink-0"
+								className="h-10 w-auto shrink-0 hidden dark:block"
 								priority
+								onError={() => setLightLogoError(true)}
 							/>
-						) : (
-							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg shrink-0">
-								{currentAlt?.charAt(0) || "B"}
-							</div>
 						)}
+						{/* Dark mode logo - shown only in light backgrounds */}
+						{showDarkLogo && (
+							<Image
+								src={darkLogo.src}
+								alt={darkLogo.alt || "Biologistics"}
+								width={120}
+								height={40}
+								className="h-10 w-auto shrink-0 dark:hidden"
+								priority
+								onError={() => setDarkLogoError(true)}
+							/>
+						)}
+
 						<div className="flex flex-col">
 							<span className="font-semibold text-sm">Biologistics</span>
 							<span className="text-xs text-muted-foreground hidden xs:block">

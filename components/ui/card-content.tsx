@@ -45,16 +45,16 @@ export function CardContent({
 			: "object-cover transition-transform duration-300 hover:scale-105";
 
 	return (
-		<div className="group relative h-full overflow-hidden rounded-2xl border bg-card transition-all hover:shadow-lg">
+		<div className="group relative h-full overflow-hidden rounded-xl border bg-card transition-all hover:shadow-md">
 			<div className="flex h-full flex-col">
 				<div
 					className={`relative shrink-0 ${
-						imageType === "logo" ? "h-32 items-center justify-center bg-muted/30 p-8" : "aspect-16/10 overflow-hidden bg-muted"
+						imageType === "logo" ? "h-28 items-center justify-center bg-muted/30 p-6" : "h-36 sm:h-40 overflow-hidden bg-muted"
 					}`}
 				>
 					<div
 						className={`relative ${
-							imageType === "logo" ? "h-16 w-40" : "h-full w-full"
+							imageType === "logo" ? "h-14 w-36" : "h-full w-full"
 						}`}
 					>
 						<Image src={image} alt={imageAlt} fill sizes="(max-width: 768px) 50vw, 20vw" className={imageClassName} />

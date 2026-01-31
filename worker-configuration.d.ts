@@ -87,6 +87,7 @@ type WorkerGlobalScopeEventMap = {
     unhandledrejection: PromiseRejectionEvent;
     rejectionhandled: PromiseRejectionEvent;
 };
+
 declare abstract class WorkerGlobalScope extends EventTarget<WorkerGlobalScopeEventMap> {
     EventTarget: typeof EventTarget;
 }
