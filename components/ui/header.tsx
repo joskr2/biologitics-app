@@ -31,7 +31,8 @@ function Header({ data: propData, className }: HeaderProps) {
 	const isDark = mounted && theme === "dark";
 
 	const data = propData || defaultData.header;
-	const { logo, cta, navigation, headerNavigation } = data;
+	const { logo, cta, navigation, headerNavigation: hn } = data;
+	const headerNavigation = hn || defaultData.header.headerNavigation || [];
 
 	// Filter navigation based on headerNavigation config from admin
 	const validNavigation = navigation.filter((item) =>
@@ -153,7 +154,13 @@ function Header({ data: propData, className }: HeaderProps) {
 						{validNavigation.map((item, idx) => (
 							<Link
 								key={`${item.href}-${idx}`}
-								href={item.href.startsWith("#") ? item.href : `#${item.href.replace("/", "")}`}
+								href={
+									item.href === "/contacto"
+										? "/#contacto"
+										: item.href.startsWith("#")
+											? item.href
+											: `#${item.href.replace("/", "")}`
+								}
 								onClick={handleNavClick}
 								className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary relative pb-1 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 after:transition-transform hover:after:scale-x-100"
 							>
@@ -217,7 +224,13 @@ function Header({ data: propData, className }: HeaderProps) {
 						{validNavigation.map((item, idx) => (
 							<Link
 								key={`${item.href}-${idx}`}
-								href={item.href.startsWith("#") ? item.href : `#${item.href.replace("/", "")}`}
+								href={
+									item.href === "/contacto"
+										? "/#contacto"
+										: item.href.startsWith("#")
+											? item.href
+											: `#${item.href.replace("/", "")}`
+								}
 								onClick={handleNavClick}
 								className="group flex items-center justify-between rounded-lg px-4 py-4 text-lg font-medium text-foreground hover:bg-accent transition-colors border-b border-border/40 last:border-0"
 							>

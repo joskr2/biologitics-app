@@ -6,27 +6,52 @@ import Link from "next/link";
 import { useState } from "react";
 
 import siteContent from "@/config/site-content.json";
-import type { FooterContent } from "@/config/site-content";
+import type { NavItem, SiteContent } from "@/config/site-content";
 import { cn } from "@/lib/utils";
 
 const currentYear = new Date().getFullYear();
 const defaultData = siteContent.footer;
+const defaultHeaderNav = siteContent.header.headerNavigation;
 
 interface FooterProps {
-	data?: FooterContent;
+	data?: SiteContent;
 }
 
 function Footer({ data }: FooterProps) {
-	const { company, socialLinks, columns, legalLinks } = {
-		...defaultData,
-		...data,
-	};
+	const footerData = data?.footer || defaultData;
+	const { company, socialLinks, columns, legalLinks } = footerData;
+
+	// Get headerNavigation from passed data or fallback to default
+	const headerNavItems = data?.header?.headerNavigation || defaultHeaderNav;
 
 	const [lightLogoError, setLightLogoError] = useState(false);
 	const [darkLogoError, setDarkLogoError] = useState(false);
 
 	const hasLightLogo = company?.logo?.light && !lightLogoError;
 	const hasDarkLogo = company?.logo?.dark && !darkLogoError;
+
+	// Transform href similar to header: /path -> #path, /contacto -> /#contacto
+	const transformHref = (href: string) => {
+		if (href === "/contacto") return "/#contacto";
+		if (href.startsWith("#")) return href;
+		return `#${href.replace("/", "")}`;
+	};
+
+	// Filter and transform links based on headerNavigation config
+	const getFilteredLinks = (links: NavItem[]) => {
+		return links
+			.filter((link) => headerNavItems.includes(link.href))
+			.map((link) => ({
+				...link,
+				href: transformHref(link.href),
+			}));
+	};
+
+	// Filter columns to only show those with links
+	const filteredColumns = columns.map((column) => ({
+		...column,
+		links: getFilteredLinks(column.links),
+	})).filter((column) => column.links.length > 0);
 
 	return (
 		<footer className="bg-gray-100 text-gray-900 dark:bg-black dark:text-white transition-colors">
@@ -89,7 +114,7 @@ function Footer({ data }: FooterProps) {
 					</div>
 
 					{/* Dynamic Columns */}
-					{columns.map((column, colIdx) => (
+					{filteredColumns.map((column, colIdx) => (
 						<div key={`${column.title}-${colIdx}`}>
 							<h3 className="font-semibold text-lg mb-4">{column.title}</h3>
 							<ul className="space-y-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
@@ -60,8 +60,10 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 		onValidate?.(allValid);
 	}, [data.slides, onValidate]);
 
-	// Run validation on mount and when data changes
-	validateAndNotify();
+	// Run validation on mount and when data changes (useEffect to avoid render-time updates)
+	useEffect(() => {
+		validateAndNotify();
+	}, [validateAndNotify]);
 
 	const handleTitleChange = useCallback(
 		(index: number, e: React.ChangeEvent<HTMLInputElement>) => {

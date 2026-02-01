@@ -181,6 +181,9 @@ export async function saveLandingData(
 			}
 		}
 
+		// Also save the full site-content key for the API route to read
+		await kv.put("site-content", JSON.stringify(data));
+
 		// Invalidate cache so next read fetches fresh data
 		cache.delete("site-content");
 

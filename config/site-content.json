@@ -18,10 +18,10 @@
 			{ "label": "Equipo", "href": "/equipo" },
 			{ "label": "Contacto", "href": "/contacto" }
 		],
-		"headerNavigation": ["/productos", "/marcas", "/clientes", "/equipo"],
+		"headerNavigation": ["/productos", "/marcas", "/clientes", "/equipo", "/contacto"],
 		"cta": {
 			"label": "Solicitar Cotización",
-			"href": "/cotizacion"
+			"href": "/#contacto"
 		}
 	},
 	"hero": {
