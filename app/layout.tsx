@@ -10,6 +10,7 @@ import {
 import { HeaderWrapper } from "@/components/ui/header-wrapper";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import siteContent from "@/config/site-content.json";
+import { FooterWrapper } from "@/components/ui/footer-wrapper";
 
 const roboto = Roboto({
 	subsets: ["latin"],
@@ -108,6 +109,7 @@ export default function RootLayout({
 					>
 						<HeaderWrapper />
 						{children}
+						<FooterWrapper />
 					</ThemeProvider>
 				</Suspense>
 			</body>

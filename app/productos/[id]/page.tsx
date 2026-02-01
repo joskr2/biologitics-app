@@ -1,10 +1,9 @@
-import { ArrowLeft, CheckCircle2, Download, Mail, Phone } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Mail, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Footer } from "@/components/ui/footer";
 import type { ProductItem } from "@/config/site-content";
 import siteContent from "@/config/site-content.json";
 
@@ -166,22 +165,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 										</a>
 									</Button>
 								</div>
-
-								{/* Download Brochure */}
-								{/* <Button
-									variant="ghost"
-									size="sm"
-									className="text-muted-foreground"
-								>
-									<Download className="size-4 mr-2" />
-									Descargar ficha técnica
-								</Button> */}
 							</div>
 						</div>
 					</div>
 				</section>
 
-				{/* Product Navigation */}
 				{(prevProduct || nextProduct) && (
 					<section className="py-8 border-t bg-muted/30">
 						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -321,8 +309,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
 					</div>
 				</section>
 			</main>
-
-			<Footer />
 		</div>
 	);
 }

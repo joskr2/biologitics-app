@@ -3,6 +3,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 import siteContent from "@/config/site-content.json";
 import type { FooterContent } from "@/config/site-content";
@@ -21,6 +22,12 @@ function Footer({ data }: FooterProps) {
 		...data,
 	};
 
+	const [lightLogoError, setLightLogoError] = useState(false);
+	const [darkLogoError, setDarkLogoError] = useState(false);
+
+	const hasLightLogo = company?.logo?.light && !lightLogoError;
+	const hasDarkLogo = company?.logo?.dark && !darkLogoError;
+
 	return (
 		<footer className="bg-gray-100 text-gray-900 dark:bg-black dark:text-white transition-colors">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -29,32 +36,29 @@ function Footer({ data }: FooterProps) {
 					<div>
 						<div className="flex items-center gap-3 mb-4">
 							{/* Light mode logo - shown only in dark backgrounds */}
-							{company?.logo?.light && (
+							{hasLightLogo && (
 								<Image
-									src={company?.logo?.light}
-									alt={`${company?.name} logo`}
+									src={company.logo.light}
+									alt={`${company.name} logo`}
 									width={120}
 									height={40}
 									className="h-10 w-auto hidden dark:block"
+									onError={() => setLightLogoError(true)}
 								/>
 							)}
 							{/* Dark mode logo - shown only in light backgrounds */}
-							{company?.logo?.dark && (
+							{hasDarkLogo && (
 								<Image
-									src={company?.logo?.dark}
-									alt={`${company?.name} logo`}
+									src={company.logo.dark}
+									alt={`${company.name} logo`}
 									width={120}
 									height={40}
 									className="h-10 w-auto dark:hidden"
+									onError={() => setDarkLogoError(true)}
 								/>
 							)}
-							{/* Fallback letter if no logo is configured */}
-							{!company?.logo?.light && !company?.logo?.dark && (
-								<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-xl">
-									B
-								</div>
-							)}
-							<span className="font-semibold text-xl">{company?.name}</span>
+							{/* Company name - always shown */}
+							<span className="font-semibold text-xl">{company.name}</span>
 						</div>
 						<p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
 							{company?.description}

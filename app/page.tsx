@@ -4,10 +4,8 @@ import { FeaturedBrands } from "@/components/ui/featured-brands";
 import { FeaturedClients } from "@/components/ui/featured-clients";
 import { FeaturedProducts } from "@/components/ui/featured-products";
 import { FeaturedTeam } from "@/components/ui/featured-team";
-import { Footer } from "@/components/ui/footer";
 import { Hero } from "@/components/ui/hero";
 
-// Lazy load ContactForm - it uses react-hook-form and zod which add significant bundle size
 const ContactForm = dynamic(
 	() => import("@/components/ui/contact-form").then((mod) => mod.ContactForm),
 	{
@@ -24,7 +22,6 @@ const ContactForm = dynamic(
 	},
 );
 
-// ISR: Cache page for 60 seconds, then revalidate in background
 export const revalidate = 60;
 
 export default async function Page() {
@@ -32,7 +29,6 @@ export default async function Page() {
 
 	return (
 		<>
-			{/* Main h1 - unique heading for SEO (sr-only for screen readers) */}
 			<h1 className="sr-only">
 				Biologistics - Venta de Equipos Científicos de Alta Gama para
 				Laboratorios en Perú
@@ -46,8 +42,6 @@ export default async function Page() {
 				<FeaturedTeam data={data.featuredTeam} />
 				<ContactForm />
 			</main>
-
-			<Footer data={data.footer} />
 		</>
 	);
 }
