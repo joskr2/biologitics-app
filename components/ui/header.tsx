@@ -31,7 +31,12 @@ function Header({ data: propData, className }: HeaderProps) {
 	const isDark = mounted && theme === "dark";
 
 	const data = propData || defaultData.header;
-	const { logo, cta, navigation } = data;
+	const { logo, cta, navigation, headerNavigation } = data;
+
+	// Filter navigation based on headerNavigation config from admin
+	const validNavigation = navigation.filter((item) =>
+		headerNavigation.includes(item.href)
+	);
 
 	// Logo values for theme-aware display (only show if src exists and no error)
 	const lightLogo = logo?.light || null;
@@ -145,9 +150,9 @@ function Header({ data: propData, className }: HeaderProps) {
 						className="hidden md:flex items-center gap-6"
 						aria-label="Navegación principal"
 					>
-						{navigation.map((item) => (
+						{validNavigation.map((item, idx) => (
 							<Link
-								key={item.href}
+								key={`${item.href}-${idx}`}
 								href={item.href.startsWith("#") ? item.href : `#${item.href.replace("/", "")}`}
 								onClick={handleNavClick}
 								className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary relative pb-1 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary after:scale-x-0 after:transition-transform hover:after:scale-x-100"
@@ -209,9 +214,9 @@ function Header({ data: propData, className }: HeaderProps) {
 						className="flex flex-col gap-2"
 						aria-label="Navegación principal móvil"
 					>
-						{navigation.map((item) => (
+						{validNavigation.map((item, idx) => (
 							<Link
-								key={item.href}
+								key={`${item.href}-${idx}`}
 								href={item.href.startsWith("#") ? item.href : `#${item.href.replace("/", "")}`}
 								onClick={handleNavClick}
 								className="group flex items-center justify-between rounded-lg px-4 py-4 text-lg font-medium text-foreground hover:bg-accent transition-colors border-b border-border/40 last:border-0"

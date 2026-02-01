@@ -1,6 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
 import type { SiteContent } from "@/config/site-content";
+import { withAdminAuth } from "@/lib/api/auth";
 import defaultData from "../../../config/site-content.json";
 
 export async function GET() {
@@ -34,7 +35,7 @@ export async function GET() {
 	}
 }
 
-export async function POST(request: Request) {
+export const POST = withAdminAuth(async (request: Request) => {
 	try {
 		const { env } = await getCloudflareContext({ async: true }).catch(() => ({
 			env: null,
@@ -69,4 +70,4 @@ export async function POST(request: Request) {
 			{ status: 500 },
 		);
 	}
-}
+});

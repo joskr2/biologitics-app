@@ -89,11 +89,11 @@ export function CardContent({
 						<Button variant="outline" size="sm" className="w-full">
 							<Link href={buttonHref}>{buttonText}</Link>
 						</Button>
-					) : (
+					) : onAction ? (
 						<Button variant="outline" size="sm" className="w-full gap-2" onClick={handleAction}>
 							{buttonText}
 						</Button>
-					)}
+					) : null}
 				</div>
 			</div>
 		</div>

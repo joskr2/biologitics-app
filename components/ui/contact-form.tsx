@@ -28,6 +28,12 @@ export function ContactForm({
 	title = "Solicita Información",
 	subtitle = "Completa el formulario y nuestro equipo te contactará",
 	sectionId = "contacto",
+	animationDelay = 0,
+}: {
+	title?: string;
+	subtitle?: string;
+	sectionId?: string;
+	animationDelay?: number;
 }) {
 	const [state, action, isPending] = useActionState(
 		submitContactForm,
@@ -42,7 +48,7 @@ export function ContactForm({
 
 	if (state.success) {
 		return (
-			<SectionContent id={sectionId} title={title} subtitle={subtitle}>
+			<SectionContent id={sectionId} title={title} subtitle={subtitle} animationDelay={animationDelay}>
 				<div className="max-w-2xl mx-auto text-center py-12 animate-in fade-in zoom-in duration-300">
 					<div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-6">
 						<CheckCircle2 className="w-8 h-8" />
@@ -61,7 +67,7 @@ export function ContactForm({
 
 	// Key forces form re-render to reset all inputs
 	return (
-		<SectionContent id={sectionId} title={title} subtitle={subtitle}>
+		<SectionContent id={sectionId} title={title} subtitle={subtitle} animationDelay={animationDelay}>
 			<StickyReveal>
 				<div className="max-w-2xl mx-auto" key={formKey}>
 					<form action={action} className="space-y-6">

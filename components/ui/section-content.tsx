@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { motion } from "motion/react";
 
 export interface SectionContentProps {
 	id?: string;
@@ -9,6 +10,8 @@ export interface SectionContentProps {
 	children: ReactNode;
 	className?: string;
 	background?: "background" | "muted/30";
+	animation?: "fade-in-up" | "fade-in" | "none";
+	animationDelay?: number;
 }
 
 export function SectionContent({
@@ -18,8 +21,10 @@ export function SectionContent({
 	children,
 	className = "",
 	background = "background",
+	animation = "fade-in-up",
+	animationDelay = 0,
 }: Readonly<SectionContentProps>) {
-	return (
+	const content = (
 		<section
 			id={id}
 			className={`py-12 sm:py-16 lg:py-20 ${background === "muted/30" ? "bg-muted/30" : "bg-background"} ${className}`}
@@ -34,5 +39,28 @@ export function SectionContent({
 				{children}
 			</div>
 		</section>
+	);
+
+	if (animation === "none") return content;
+
+	const animationProps = {
+		initial: { opacity: 0, y: 30 },
+		whileInView: { opacity: 1, y: 0 },
+		viewport: { once: true, margin: "-100px" },
+		transition: { duration: 0.6, delay: animationDelay, ease: "easeOut" as const },
+	};
+
+	if (animation === "fade-in-up") {
+		return <motion.div {...animationProps}>{content}</motion.div>;
+	}
+
+	return (
+		<motion.div
+			initial={{ opacity: 0 }}
+			whileInView={{ opacity: 1 }}
+			viewport={{ once: true }}
+		>
+			{content}
+		</motion.div>
 	);
 }

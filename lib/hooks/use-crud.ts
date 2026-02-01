@@ -1,4 +1,10 @@
 import { useCallback, useState } from "react";
+import {
+	createItem,
+	deleteItem,
+	getResourceName,
+	updateItem,
+} from "@/lib/api/crud-api";
 
 export interface CrudItem {
 	id: string;
@@ -10,6 +16,8 @@ export interface CrudItem {
 export interface UseCrudConfig {
 	apiEndpoint: string;
 	defaultItem: () => Partial<CrudItem>;
+	onSuccess?: (message: string) => void;
+	onError?: (message: string) => void;
 }
 
 export interface UseCrudReturn<T extends CrudItem> {
@@ -32,73 +40,77 @@ export function useCrud<T extends CrudItem>(
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 
+	const resourceName = getResourceName(config.apiEndpoint);
+
 	const saveItem = useCallback(
 		async (item: T) => {
 			try {
-				const response = await fetch(`${config.apiEndpoint}/${item.id}`, {
-					method: "PUT",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(item),
-				});
+				const result = await updateItem<T>(config.apiEndpoint, item);
 
-				if (!response.ok) {
-					throw new Error(`Error al guardar`);
+				if (!result.success) {
+					const errorMsg = result.error || "Error al guardar";
+					setError(errorMsg);
+					config.onError?.(errorMsg);
+					return;
 				}
-
-				const result = (await response.json()) as { warning?: string };
 
 				setItems((prev) =>
 					prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i)),
 				);
 
 				if (result.warning) {
-					setSuccess(
-						`${getResourceName(config.apiEndpoint)} actualizado (modo desarrollo)`,
-					);
+					const successMsg = `${resourceName} actualizado`;
+					setSuccess(successMsg);
+					config.onSuccess?.(successMsg);
 				}
 			} catch (err) {
-				setError(err instanceof Error ? err.message : "Error al guardar");
+				const errorMsg =
+					err instanceof Error ? err.message : "Error al guardar";
+				setError(errorMsg);
+				config.onError?.(errorMsg);
 				setItems((prev) =>
 					prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i)),
 				);
 			}
 		},
-		[config.apiEndpoint],
+		[config.apiEndpoint, config.onError, config.onSuccess, resourceName],
 	);
 
-	const deleteItem = useCallback(
+	const deleteItemFn = useCallback(
 		async (index: number, id: string) => {
 			const newItems = [...items];
 			newItems[index] = { ...newItems[index], isDeleting: true } as T;
 			setItems(newItems);
 
 			try {
-				const response = await fetch(`${config.apiEndpoint}/${id}`, {
-					method: "DELETE",
-				});
+				const result = await deleteItem(config.apiEndpoint, id);
 
-				if (!response.ok) {
-					throw new Error(`Error al eliminar`);
+				if (!result.success) {
+					const errorMsg = result.error || "Error al eliminar";
+					setError(errorMsg);
+					config.onError?.(errorMsg);
+					return;
 				}
-
-				const result = (await response.json()) as { warning?: string };
 
 				const removed = items.filter((item) => item.id !== id);
 				setItems(removed);
 
 				if (result.warning) {
-					setSuccess(
-						`${getResourceName(config.apiEndpoint)} eliminado (modo desarrollo)`,
-					);
+					const successMsg = `${resourceName} eliminado`;
+					setSuccess(successMsg);
+					config.onSuccess?.(successMsg);
 				}
 			} catch (err) {
-				setError(err instanceof Error ? err.message : "Error al eliminar");
+				const errorMsg =
+					err instanceof Error ? err.message : "Error al eliminar";
+				setError(errorMsg);
+				config.onError?.(errorMsg);
 				setItems((prev) =>
 					prev.map((i) => (i.id === id ? { ...i, isDeleting: false } : i)),
 				);
 			}
 		},
-		[items, config.apiEndpoint],
+		[items, config.apiEndpoint, config.onError, config.onSuccess, resourceName],
 	);
 
 	const addItem = useCallback(async () => {
@@ -106,20 +118,18 @@ export function useCrud<T extends CrudItem>(
 		setError(null);
 
 		try {
-			const response = await fetch(config.apiEndpoint, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(config.defaultItem()),
-			});
+			const result = await createItem<T>(
+				config.apiEndpoint,
+				config.defaultItem() as Partial<T>,
+			);
 
-			if (!response.ok) {
-				throw new Error(`Error al crear`);
+			if (!result.success) {
+				const errorMsg = result.error || `Error al crear ${resourceName}`;
+				setError(errorMsg);
+				config.onError?.(errorMsg);
+				setLoading(false);
+				return;
 			}
-
-			const result = (await response.json()) as {
-				warning?: string;
-				data?: T;
-			};
 
 			if (result.data) {
 				const newItem = result.data;
@@ -127,20 +137,25 @@ export function useCrud<T extends CrudItem>(
 			}
 
 			if (result.warning) {
-				setSuccess(
-					`${getResourceName(config.apiEndpoint)} creado (modo desarrollo)`,
-				);
+				const successMsg = `${resourceName} creado`;
+				setSuccess(successMsg);
+				config.onSuccess?.(successMsg);
 			}
 		} catch (err) {
-			setError(
-				err instanceof Error
-					? err.message
-					: `Error al crear ${getResourceName(config.apiEndpoint)}`,
-			);
+			const errorMsg =
+				err instanceof Error ? err.message : `Error al crear ${resourceName}`;
+			setError(errorMsg);
+			config.onError?.(errorMsg);
 		} finally {
 			setLoading(false);
 		}
-	}, [config.apiEndpoint, config.defaultItem]);
+	}, [
+		config.apiEndpoint,
+		config.defaultItem,
+		config.onError,
+		config.onSuccess,
+		resourceName,
+	]);
 
 	const clearMessages = useCallback(() => {
 		setError(null);
@@ -154,25 +169,15 @@ export function useCrud<T extends CrudItem>(
 		success,
 		setItems,
 		saveItem,
-		deleteItem,
+		deleteItem: deleteItemFn,
 		addItem,
 		clearMessages,
 	};
 }
 
 /**
- * Helper para obtener nombre legible del recurso
+ * Hook for creating a single item
  */
-function getResourceName(endpoint: string): string {
-	const names: Record<string, string> = {
-		"/api/brands": "Marca",
-		"/api/clients": "Cliente",
-		"/api/team": "Miembro del equipo",
-		"/api/products": "Producto",
-	};
-	return names[endpoint] || "Elemento";
-}
-
 export function useCreateItem<T extends CrudItem>(
 	apiEndpoint: string,
 ): {
@@ -188,25 +193,16 @@ export function useCreateItem<T extends CrudItem>(
 			setLoading(true);
 			setError(null);
 
-			try {
-				const response = await fetch(apiEndpoint, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(data),
-				});
+			const result = await createItem<T>(apiEndpoint, data);
 
-				if (!response.ok) {
-					throw new Error("Error al crear");
-				}
-
-				const result = (await response.json()) as { data?: T };
-				return result.data || null;
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "Error al crear");
-				return null;
-			} finally {
+			if (!result.success) {
+				setError(result.error || "Error al crear");
 				setLoading(false);
+				return null;
 			}
+
+			setLoading(false);
+			return result.data || null;
 		},
 		[apiEndpoint],
 	);

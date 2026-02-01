@@ -14,8 +14,11 @@
 			{ "label": "Productos", "href": "/productos" },
 			{ "label": "Marcas", "href": "/marcas" },
 			{ "label": "Nosotros", "href": "/nosotros" },
+			{ "label": "Clientes", "href": "/clientes" },
+			{ "label": "Equipo", "href": "/equipo" },
 			{ "label": "Contacto", "href": "/contacto" }
 		],
+		"headerNavigation": ["/productos", "/marcas", "/clientes", "/equipo"],
 		"cta": {
 			"label": "Solicitar Cotización",
 			"href": "/cotizacion"

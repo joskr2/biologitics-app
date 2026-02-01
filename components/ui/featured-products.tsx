@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "motion/react";
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-} from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardListItem } from "@/components/ui/card-content";
 import { SectionContent } from "@/components/ui/section-content";
 import { RevealScale } from "@/components/ui/animated-section";
+import { MobileCarousel } from "@/components/ui/mobile-carousel";
 import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 import type { FeaturedProductsContent, ProductItem } from "@/config/site-content";
@@ -49,117 +45,29 @@ function ProductCard({
 	);
 }
 
-function FeaturedProductsCarousel({
-	items,
-}: {
-	items: ProductItem[];
-}) {
-	// Si no hay productos, mostrar mensaje
-	if (items.length === 0) {
-		return (
-			<div className="py-12 text-center">
-				<p className="text-muted-foreground">
-					No hay productos disponibles en este momento.
-				</p>
-			</div>
-		);
-	}
-
-	// Si hay 5 o menos, mostrar grid, si hay más de 5, carousel
-	const showAsGrid = items.length <= 5;
-
-	if (showAsGrid) {
-		return (
-			<div
-				className={cn(
-					"grid gap-4",
-					items.length === 1
-						? "max-w-md mx-auto"
-						: items.length === 2
-							? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
-							: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5",
-				)}
-			>
-				{items.map((product) => (
-					<RevealScale
-						key={product.id}
-						scale={0.92}
-						className={items.length <= 4 ? "xl:flex xl:flex-col" : ""}
-					>
-						<ProductCard product={product} />
-					</RevealScale>
-				))}
-			</div>
-		);
-	}
-
-	// Más de 5 productos: carousel con auto-scroll lento (4 segundos por slide)
-	return <AutoScrollCarousel items={items} />;
-}
-
-function AutoScrollCarousel({ items }: { items: ProductItem[] }) {
-	const apiRef = useRef<{
-		scrollNext: () => void;
-	} | null>(null);
-	const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-	const handleInit = useCallback((api: { scrollNext: () => void } | undefined) => {
-		if (api) {
-			apiRef.current = api;
-		}
-	}, []);
-
-	const startInterval = useCallback(() => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-		}
-		intervalRef.current = setInterval(() => {
-			apiRef.current?.scrollNext();
-		}, 4000);
-	}, []);
-
-	const stopInterval = useCallback(() => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
-		}
-	}, []);
-
-	useEffect(() => {
-		startInterval();
-
-		return () => {
-			stopInterval();
-		};
-	}, [startInterval, stopInterval]);
-
+function ProductCardMobile({
+	product,
+}: Readonly<{
+	product: ProductItem;
+}>) {
 	return (
-		<div
-			className="relative"
-			onMouseEnter={stopInterval}
-			onMouseLeave={startInterval}
+		<Link
+			href={`/productos/${product.id}`}
+			className="block h-full p-3 bg-card rounded-xl border hover:shadow-md transition-shadow"
 		>
-			<Carousel
-				opts={{
-					loop: true,
-					align: "start",
-					watchSlides: false,
-				}}
-				className="w-full"
-				setApi={handleInit}
-			>
-				<CarouselContent className="-ml-4">
-					{items.map((product) => (
-						<CarouselItem
-							key={product.id}
-							className="pl-4 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
-						>
-							<ProductCard product={product} />
-						</CarouselItem>
-					))}
-				</CarouselContent>
-			</Carousel>
-		</div>
+			<div className="relative h-40 w-full mb-3 rounded-lg overflow-hidden">
+				<Image
+					src={product.image}
+					alt={product.title}
+					fill
+					sizes="(max-width: 640px) 50vw, 100vw"
+					className="object-cover"
+				/>
+			</div>
+			<h3 className="font-semibold text-sm text-center line-clamp-2">
+				{product.title}
+			</h3>
+		</Link>
 	);
 }
 
@@ -170,12 +78,14 @@ export function FeaturedProducts({
 	buttonText: propButtonText,
 	buttonHref: propButtonHref,
 	sectionId = "productos",
+	animationDelay = 0,
 }: FeaturedProductsProps & {
 	title?: string;
 	subtitle?: string;
 	buttonText?: string;
 	buttonHref?: string;
 	sectionId?: string;
+	animationDelay?: number;
 } = {}) {
 	const { items, title, subtitle, buttonText, buttonHref } = {
 		...defaultData,
@@ -187,9 +97,52 @@ export function FeaturedProducts({
 			id={sectionId}
 			title={propTitle ?? title}
 			subtitle={propSubtitle ?? subtitle}
+			animationDelay={animationDelay}
 		>
-			{/* Products display - carousel for >5 items, grid for <=5 */}
-			<FeaturedProductsCarousel items={items} />
+			{/* Mobile: Carousel with 2 items */}
+			<div className="lg:hidden">
+				<MobileCarousel
+					items={items}
+					renderItem={(item) => <ProductCardMobile product={item as ProductItem} />}
+					slidesPerView={2}
+					gap={8}
+				/>
+			</div>
+
+			{/* Desktop: Grid */}
+			<div className="hidden lg:block">
+				{items.length === 0 ? (
+					<div className="py-12 text-center">
+						<p className="text-muted-foreground">
+							No hay productos disponibles en este momento.
+						</p>
+					</div>
+				) : (
+					<div
+						className={cn(
+							"grid gap-4",
+							items.length === 1
+								? "max-w-md mx-auto"
+								: items.length === 2
+									? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
+									: items.length <= 4
+										? "grid-cols-2 lg:grid-cols-4"
+										: "grid-cols-3 lg:grid-cols-5",
+						)}
+					>
+						{items.map((product) => (
+							<RevealScale
+								key={product.id}
+								scale={0.92}
+								className={items.length <= 4 ? "xl:flex xl:flex-col" : ""}
+							>
+								<ProductCard product={product} />
+							</RevealScale>
+						))}
+					</div>
+				)}
+			</div>
+
 			{/* Footer with Link */}
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}

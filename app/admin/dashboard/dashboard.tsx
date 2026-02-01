@@ -3,6 +3,7 @@
 import { Loader2, Save } from "lucide-react";
 import { useActionState, useEffect, useState } from "react";
 import { saveDashboardData } from "@/app/actions/admin";
+import { AnimatedSection } from "@/components/ui/animated-section";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -18,6 +19,7 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useToastNotification } from "@/components/ui/toast";
 import type { SiteContent } from "@/config/site-content";
 import { BrandsForm } from "../components/brands-form";
 import { ClientsForm } from "../components/clients-form";
@@ -49,17 +51,17 @@ export default function Dashboard({ initialData }: DashboardProps) {
 		error?: string;
 	});
 
-	// Show success message after save (no reload needed)
-	const [showSuccess, setShowSuccess] = useState(false);
+	const { showSuccess: showToastSuccess, showError: showToastError } =
+		useToastNotification();
 
+	// Show success/error messages via toast
 	useEffect(() => {
 		if (saveState.success) {
-			setShowSuccess(true);
-			// Hide success message after 3 seconds
-			const timer = setTimeout(() => setShowSuccess(false), 3000);
-			return () => clearTimeout(timer);
+			showToastSuccess("Guardado", "Los cambios se guardaron correctamente");
+		} else if (saveState.error) {
+			showToastError("Error", saveState.error);
 		}
-	}, [saveState.success]);
+	}, [saveState.success, saveState.error, showToastSuccess, showToastError]);
 
 	const updateSection = (
 		sectionKey: keyof SiteContent,
@@ -149,72 +151,86 @@ export default function Dashboard({ initialData }: DashboardProps) {
 				</header>
 
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-gray-50/50 relative z-0">
-					{showSuccess && (
-						<div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-							¡Cambios guardados exitosamente! La página principal se
-							actualizará.
-						</div>
-					)}
-					{saveState.error && (
-						<div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-							{saveState.error}
-						</div>
-					)}
-
 					<div className="flex-1 rounded-xl md:min-h-min">
 						<div className="max-w-4xl mx-auto space-y-6">
-							{activeSection === "header" && (
-								<HeaderForm
-									data={data.header}
-									onChange={(val) => updateSection("header", val)}
-								/>
-							)}
-							{activeSection === "hero" && (
-								<HeroForm
-									data={data.hero}
-									onChange={(val) => updateSection("hero", val)}
-									onValidate={setHeroValid}
-								/>
-							)}
-							{activeSection === "featuredProducts" && (
-								<ProductsForm
-									data={data.featuredProducts}
-									onChange={(val) => updateSection("featuredProducts", val)}
-								/>
-							)}
-							{activeSection === "featuredBrands" && (
-								<BrandsForm
-									data={data.featuredBrands}
-									onChange={(val) => updateSection("featuredBrands", val)}
-								/>
-							)}
-							{activeSection === "featuredClients" && (
-								<ClientsForm
-									data={data.featuredClients}
-									onChange={(val) => updateSection("featuredClients", val)}
-								/>
-							)}
-							{activeSection === "featuredTeam" && (
-								<TeamForm
-									data={data.featuredTeam}
-									onChange={(val) => {
-										updateSection("featuredTeam", val);
-									}}
-								/>
-							)}
-							{activeSection === "responses" && <FormResponses />}
-							{activeSection === "footer" && (
-								<FooterForm
-									data={data.footer}
-									onChange={(val) => updateSection("footer", val)}
-								/>
-							)}
-							{activeSection === "seo" && (
-								<SEOForm
-									data={data.seo}
-									onChange={(val) => updateSection("seo", val)}
-								/>
-							)}
+							<AnimatedSection animation="fade-in-up" delay={0.1}>
+								{activeSection === "header" && (
+									<HeaderForm
+										data={data.header}
+										onChange={(val) => updateSection("header", val)}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.2}>
+								{activeSection === "hero" && (
+									<HeroForm
+										data={data.hero}
+										onChange={(val) => updateSection("hero", val)}
+										onValidate={setHeroValid}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.3}>
+								{activeSection === "featuredProducts" && (
+									<ProductsForm
+										data={data.featuredProducts}
+										onChange={(val) => updateSection("featuredProducts", val)}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.4}>
+								{activeSection === "featuredBrands" && (
+									<BrandsForm
+										data={data.featuredBrands}
+										onChange={(val) => updateSection("featuredBrands", val)}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.5}>
+								{activeSection === "featuredClients" && (
+									<ClientsForm
+										data={data.featuredClients}
+										onChange={(val) => updateSection("featuredClients", val)}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.6}>
+								{activeSection === "featuredTeam" && (
+									<TeamForm
+										data={data.featuredTeam}
+										onChange={(val) => {
+											updateSection("featuredTeam", val);
+										}}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.7}>
+								{activeSection === "responses" && <FormResponses />}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.8}>
+								{activeSection === "footer" && (
+									<FooterForm
+										data={data.footer}
+										onChange={(val) => updateSection("footer", val)}
+									/>
+								)}
+							</AnimatedSection>
+
+							<AnimatedSection animation="fade-in-up" delay={0.9}>
+								{activeSection === "seo" && (
+									<SEOForm
+										data={data.seo}
+										onChange={(val) => updateSection("seo", val)}
+									/>
+								)}
+							</AnimatedSection>
 						</div>
 					</div>
 				</div>

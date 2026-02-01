@@ -3,9 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Footer } from "@/components/ui/footer";
 import siteContent from "@/config/site-content.json";
-import { } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: `Catálogo de Productos | ${siteContent.seo.title.default}`,
@@ -42,7 +40,7 @@ export default function ProductsPage() {
 				<section className="py-16 lg:py-3">
 					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-							{items.map((product) => {
+							{items.map((product, index) => {
 								const itemsList = product.features.map((feature) => ({
 									label: feature,
 								}));
@@ -52,14 +50,18 @@ export default function ProductsPage() {
 										key={product.id}
 										className="bg-background rounded-2xl border overflow-hidden hover:shadow-lg hover:scale-105 transition-all duration-300"
 									>
-										<Link href={`/productos/${product.id}`} className="block h-full">
+										<Link
+											href={`/productos/${product.id}`}
+											className="block h-full"
+										>
 											{/* Image */}
 											<div className="relative aspect-16/10 w-full max-h-75 overflow-hidden">
 												<Image
 													src={product.image}
 													alt={product.title}
 													fill
-													className="object-contain p-2  transition-transform duration-500"
+													priority={index < 3}
+													className="object-contain p-2 transition-transform duration-500"
 													sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
 												/>
 											</div>
@@ -75,9 +77,9 @@ export default function ProductsPage() {
 
 												{/* Features Preview */}
 												<ul className="space-y-2 mb-6">
-													{itemsList.slice(0, 3).map((item) => (
+													{itemsList.slice(0, 3).map((item, idx) => (
 														<li
-															key={item.label}
+															key={`${item.label}-${idx}`}
 															className="flex items-start gap-2 text-sm"
 														>
 															<CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
@@ -95,16 +97,15 @@ export default function ProductsPage() {
 
 												{/* CTA */}
 												<Button
-												variant="outline"
-												className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors flex flex-row"
-											>
+													variant="outline"
+													className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors flex flex-row"
+												>
 													Ver Detalles
-												<ArrowRight className="size-4 ml-2 group-hover:translate-x-1 transition-transform" />
-											</Button>
+													<ArrowRight className="size-4 ml-2 group-hover:translate-x-1 transition-transform" />
+												</Button>
 											</div>
 										</Link>
 									</article>
-
 								);
 							})}
 						</div>

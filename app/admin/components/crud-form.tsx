@@ -8,6 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+	createItem,
+	deleteItem as deleteItemApi,
+	updateItem,
+} from "@/lib/api/crud-api";
 
 function useLatest<T>(value: T) {
 	const ref = useRef(value);
@@ -21,6 +26,7 @@ export interface BaseItem {
 	id: string;
 	isSaving?: boolean;
 	isDeleting?: boolean;
+	[key: string]: unknown;
 }
 
 export interface SectionConfig {
@@ -304,17 +310,16 @@ export function CrudForm<T extends BaseItem>({
 
 	const saveItem = async (item: T) => {
 		try {
-			const response = await fetch(`${config.apiEndpoint}/${item.id}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(item),
-			});
+			const result = await updateItem(
+				config.apiEndpoint,
+				item as T & { id: string },
+			);
 
-			if (!response.ok) {
-				throw new Error(`Error al guardar ${config.resourceName}`);
+			if (!result.success) {
+				throw new Error(
+					result.error || `Error al guardar ${config.resourceName}`,
+				);
 			}
-
-			const result = (await response.json()) as { warning?: string };
 
 			setItems((prev) =>
 				prev.map((i) => (i.id === item.id ? { ...i, isSaving: false } : i)),
@@ -333,7 +338,7 @@ export function CrudForm<T extends BaseItem>({
 
 	const saveItemRef = useLatest(saveItem);
 
-	const updateItem = useCallback(
+	const handleFieldUpdate = useCallback(
 		(index: number, field: string, value: unknown) => {
 			const currentItems = itemsRef.current;
 			const newItems = [...currentItems];
@@ -358,15 +363,13 @@ export function CrudForm<T extends BaseItem>({
 			setItems(newItems);
 
 			try {
-				const response = await fetch(`${config.apiEndpoint}/${id}`, {
-					method: "DELETE",
-				});
+				const result = await deleteItemApi(config.apiEndpoint, id);
 
-				if (!response.ok) {
-					throw new Error(`Error al eliminar ${config.resourceName}`);
+				if (!result.success) {
+					throw new Error(
+						result.error || `Error al eliminar ${config.resourceName}`,
+					);
 				}
-
-				const result = (await response.json()) as { warning?: string };
 
 				const removed = currentItems.filter((item) => item.id !== id);
 				setItems(removed);
@@ -390,17 +393,16 @@ export function CrudForm<T extends BaseItem>({
 		setError(null);
 
 		try {
-			const response = await fetch(config.apiEndpoint, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(config.defaultNewItem()),
-			});
+			const result = await createItem(
+				config.apiEndpoint,
+				config.defaultNewItem() as Partial<T>,
+			);
 
-			if (!response.ok) {
-				throw new Error(`Error al crear ${config.resourceName}`);
+			if (!result.success) {
+				throw new Error(
+					result.error || `Error al crear ${config.resourceName}`,
+				);
 			}
-
-			const result = (await response.json()) as { warning?: string; data?: T };
 
 			if (result.data) {
 				const newItems = [...items, { ...result.data, isSaving: false } as T];
@@ -486,7 +488,7 @@ export function CrudForm<T extends BaseItem>({
 								item={item}
 								index={i}
 								config={config}
-								onUpdate={updateItem}
+								onUpdate={handleFieldUpdate}
 								onDelete={deleteItem}
 							/>
 						))}

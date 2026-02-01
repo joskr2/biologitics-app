@@ -53,14 +53,14 @@ export function NavMain({
 		<SidebarGroup>
 			<SidebarGroupLabel>Secciones</SidebarGroupLabel>
 			<SidebarMenu>
-				{items.map((item: NavItem) => {
+				{items.map((item: NavItem, idx) => {
 					const sectionKey = getSectionKey(item.title);
 					const isActive = activeSection === sectionKey;
 
 					return (
-						<SidebarMenuItem key={item.title}>
+						<SidebarMenuItem key={`${item.title}-${idx}`}>
 							<SidebarMenuSub>
-								<SidebarMenuSubItem key={item.title}>
+								<SidebarMenuSubItem key={`${item.title}-${idx}`}>
 									<SidebarMenuSubButton
 										className={isActive ? "bg-accent" : ""}
 										onClick={() => onSectionChange?.(sectionKey)}

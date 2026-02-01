@@ -46,6 +46,14 @@ export function HeaderForm({ data, onChange }: HeaderFormProps) {
 		onChange({ ...data, navigation: newNav });
 	};
 
+	const toggleHeaderNav = (href: string) => {
+		const current = data.headerNavigation || [];
+		const newHeaderNav = current.includes(href)
+			? current.filter((h) => h !== href)
+			: [...current, href];
+		onChange({ ...data, headerNavigation: newHeaderNav });
+	};
+
 	return (
 		<Card>
 			<CardHeader>
@@ -164,6 +172,40 @@ export function HeaderForm({ data, onChange }: HeaderFormProps) {
 						>
 							+ Añadir Enlace
 						</Button>
+					</div>
+				</div>
+
+				<div className="space-y-3 pt-4 border-t">
+					<Label className="text-base font-medium">Enlaces en el Header</Label>
+					<p className="text-sm text-muted-foreground">
+						Selecciona qué enlaces aparecen en el menú del header.
+					</p>
+					<div className="grid grid-cols-2 gap-2">
+						{data.navigation.map((item) => {
+							const isSelected = (data.headerNavigation || []).includes(
+								item.href,
+							);
+							return (
+								<label
+									key={item.href}
+									className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-colors ${
+										isSelected
+											? "bg-primary/10 border-primary"
+											: "hover:bg-muted"
+									}`}
+								>
+									<input
+										type="checkbox"
+										checked={isSelected}
+										onChange={() => toggleHeaderNav(item.href)}
+										className="w-4 h-4 rounded border-gray-300"
+									/>
+									<span className="text-sm font-medium">
+										{item.label || item.href}
+									</span>
+								</label>
+							);
+						})}
 					</div>
 				</div>
 			</CardContent>

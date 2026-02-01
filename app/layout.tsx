@@ -2,15 +2,17 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
+import Link from "next/link";
 import {
 	LocalBusinessSchema,
 	OrganizationSchema,
 	WebSiteSchema,
 } from "@/components/seo/organization-schema";
+import { FooterWrapper } from "@/components/ui/footer-wrapper";
 import { HeaderWrapper } from "@/components/ui/header-wrapper";
 import { ThemeProvider } from "@/components/ui/theme-provider";
+import { ToastProvider } from "@/components/ui/toast";
 import siteContent from "@/config/site-content.json";
-import { FooterWrapper } from "@/components/ui/footer-wrapper";
 
 const roboto = Roboto({
 	subsets: ["latin"],
@@ -92,7 +94,6 @@ export default function RootLayout({
 	return (
 		<html lang="es" suppressHydrationWarning>
 			<head>
-				{/* SEO Structured Data */}
 				<OrganizationSchema metadata={metadata} />
 				<LocalBusinessSchema />
 				<WebSiteSchema />
@@ -107,9 +108,19 @@ export default function RootLayout({
 						enableSystem
 						disableTransitionOnChange
 					>
-						<HeaderWrapper />
-						{children}
-						<FooterWrapper />
+						<ToastProvider>
+							<Link
+								href="#productos"
+								className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+							>
+								Saltar al contenido principal
+							</Link>
+							<HeaderWrapper />
+							<main id="main-content" tabIndex={-1}>
+								{children}
+							</main>
+							<FooterWrapper />
+						</ToastProvider>
 					</ThemeProvider>
 				</Suspense>
 			</body>

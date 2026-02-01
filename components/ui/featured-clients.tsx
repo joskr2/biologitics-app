@@ -1,21 +1,15 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
-import { motion } from "motion/react";
+import { useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
-
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-} from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import { SectionContent } from "@/components/ui/section-content";
-import { RevealScale } from "@/components/ui/animated-section";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 import type { FeaturedClientsContent, ClientItem } from "@/config/site-content";
+
+import { SectionContent } from "@/components/ui/section-content";
+import { MobileCarousel } from "@/components/ui/mobile-carousel";
 
 const defaultData = siteContent.featuredClients;
 
@@ -23,15 +17,31 @@ interface FeaturedClientsProps {
 	data?: FeaturedClientsContent;
 }
 
-function ClientCard({ client }: Readonly<{ client: ClientItem }>) {
+function ClientCardMobile({ client }: Readonly<{ client: ClientItem }>) {
 	return (
-		<div className="group flex flex-col items-center justify-center p-6 bg-card rounded-xl border transition-all hover:shadow-md">
+		<div className="flex flex-col items-center justify-center p-4 bg-card rounded-xl border h-24">
+			<div className="relative h-10 w-full max-w-32">
+				<Image
+					src={client.logo}
+					alt={`Logo de ${client.name}`}
+					fill
+					sizes="(max-width: 640px) 50vw, 100vw"
+					className="object-contain grayscale opacity-70"
+				/>
+			</div>
+		</div>
+	);
+}
+
+function ClientCardDesktop({ client }: Readonly<{ client: ClientItem }>) {
+	return (
+		<div className="flex flex-col items-center justify-center p-6 bg-card rounded-xl border transition-all hover:shadow-md h-full">
 			<div className="relative h-16 w-full max-w-40 mb-3">
 				<Image
 					src={client.logo}
 					alt={`Logo de ${client.name}`}
 					fill
-					sizes="(max-width: 768px) 50vw, 20vw"
+					sizes="(max-width: 1024px) 20vw, 15vw"
 					className="object-contain grayscale opacity-70 transition-all duration-300 group-hover:grayscale-0 group-hover:opacity-100"
 				/>
 			</div>
@@ -42,75 +52,54 @@ function ClientCard({ client }: Readonly<{ client: ClientItem }>) {
 	);
 }
 
-function AutoScrollCarousel({ items }: { items: ClientItem[] }) {
-	const apiRef = useRef<{ scrollNext: () => void } | null>(null);
-	const intervalRef = useRef<NodeJS.Timeout | null>(null);
+function DesktopCarousel({
+	items,
+}: Readonly<{ items: ClientItem[] }>) {
+	const [emblaRef, api] = useEmblaCarousel({
+		loop: true,
+		align: "start",
+		slidesToScroll: 1,
+	});
 
-	const handleInit = useCallback((api: { scrollNext: () => void } | undefined) => {
-		if (api) apiRef.current = api;
-	}, []);
+	const scrollPrev = useCallback(() => {
+		api?.scrollPrev();
+	}, [api]);
 
-	const startInterval = useCallback(() => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(() => apiRef.current?.scrollNext(), 4000);
-	}, []);
-
-	const stopInterval = useCallback(() => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
-		}
-	}, []);
-
-	useEffect(() => {
-		startInterval();
-		return () => stopInterval();
-	}, [startInterval, stopInterval]);
-
-	if (items.length === 0) {
-		return (
-			<div className="py-12 text-center">
-				<p className="text-muted-foreground">No hay clientes disponibles.</p>
-			</div>
-		);
-	}
-
-	const showAsGrid = items.length <= 5;
-
-	if (showAsGrid) {
-		return (
-			<div
-				className={cn(
-					"grid gap-4",
-					items.length === 1
-						? "max-w-md mx-auto"
-						: items.length === 2
-							? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
-							: items.length <= 4
-								? "grid-cols-2 lg:grid-cols-4"
-								: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
-				)}
-			>
-				{items.map((client) => (
-					<RevealScale key={client.id} scale={0.94}>
-						<ClientCard client={client} />
-					</RevealScale>
-				))}
-			</div>
-		);
-	}
+	const scrollNext = useCallback(() => {
+		api?.scrollNext();
+	}, [api]);
 
 	return (
-		<div className="relative" onMouseEnter={stopInterval} onMouseLeave={startInterval}>
-			<Carousel opts={{ loop: true, align: "start", watchSlides: false }} setApi={handleInit}>
-				<CarouselContent className="-ml-2">
+		<div className="relative">
+			<div className="overflow-hidden" ref={emblaRef}>
+				<div className="flex" style={{ gap: "16px", marginLeft: "-16px" }}>
 					{items.map((client) => (
-						<CarouselItem key={client.id} className="pl-2 basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-							<ClientCard client={client} />
-						</CarouselItem>
+						<div
+							key={client.id}
+							className="min-w-0 shrink-0 grow-0 basis-1/5 pl-4"
+							style={{ flexBasis: "20%" }}
+						>
+							<ClientCardDesktop client={client} />
+						</div>
 					))}
-				</CarouselContent>
-			</Carousel>
+				</div>
+			</div>
+
+			{/* Navigation buttons */}
+			<button
+				onClick={scrollPrev}
+				className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 lg:-translate-x-6 p-2 rounded-full bg-muted hover:bg-muted/80 transition-colors z-10"
+				aria-label="Anterior"
+			>
+				<ChevronLeft className="w-5 h-5" />
+			</button>
+			<button
+				onClick={scrollNext}
+				className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 lg:translate-x-6 p-2 rounded-full bg-muted hover:bg-muted/80 transition-colors z-10"
+				aria-label="Siguiente"
+			>
+				<ChevronRight className="w-5 h-5" />
+			</button>
 		</div>
 	);
 }
@@ -119,32 +108,60 @@ export function FeaturedClients({
 	data,
 	title: propTitle,
 	subtitle: propSubtitle,
-	buttonText: propButtonText,
-	buttonHref: propButtonHref,
 	sectionId = "clientes",
+	animationDelay = 0,
 }: FeaturedClientsProps & {
 	title?: string;
 	subtitle?: string;
-	buttonText?: string;
-	buttonHref?: string;
 	sectionId?: string;
+	animationDelay?: number;
 } = {}) {
-	const { items, title, subtitle, buttonText, buttonHref } = { ...defaultData, ...data };
+	const { items, title, subtitle } = { ...defaultData, ...data };
 
 	return (
-		<SectionContent id={sectionId} title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="muted/30">
-			<AutoScrollCarousel items={items} />
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				whileInView={{ opacity: 1, y: 0 }}
-				viewport={{ once: true }}
-				transition={{ duration: 0.5, delay: 0.3 }}
-				className="mt-10 text-center"
-			>
-				<Button variant="default" size="lg">
-					<Link href={propButtonHref ?? buttonHref}>{propButtonText ?? buttonText}</Link>
-				</Button>
-			</motion.div>
+		<SectionContent
+			id={sectionId}
+			title={propTitle ?? title}
+			subtitle={propSubtitle ?? subtitle}
+			background="muted/30"
+			animationDelay={animationDelay}
+		>
+			{/* Mobile: Carousel */}
+			<div className="lg:hidden">
+				<MobileCarousel
+					items={items}
+					renderItem={(item) => <ClientCardMobile client={item as ClientItem} />}
+					slidesPerView={2}
+					gap={8}
+					showNavigation={false}
+				/>
+			</div>
+
+			{/* Desktop: Carousel or Grid */}
+			<div className="hidden lg:block">
+				{items.length === 0 ? (
+					<div className="py-12 text-center">
+						<p className="text-muted-foreground">No hay clientes disponibles.</p>
+					</div>
+				) : items.length > 5 ? (
+					<DesktopCarousel items={items} />
+				) : (
+					<div
+						className={cn(
+							"grid gap-4",
+							items.length === 1
+								? "max-w-md mx-auto"
+								: items.length === 2
+									? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
+									: "grid-cols-2 lg:grid-cols-5",
+						)}
+					>
+						{items.map((client) => (
+							<ClientCardDesktop key={client.id} client={client} />
+						))}
+					</div>
+				)}
+			</div>
 		</SectionContent>
 	);
 }

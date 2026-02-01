@@ -19,6 +19,8 @@ export interface HeaderContent {
 		dark: LogoContent;
 	};
 	navigation: NavItem[];
+	// Subset of navigation items to show in header (by href)
+	headerNavigation: string[];
 	cta: CtaButton;
 }
 
@@ -62,6 +64,7 @@ export interface ProductItem {
 	description: string;
 	image: string;
 	features: string[];
+	[key: string]: unknown;
 }
 
 export interface FeaturedProductsContent {
@@ -79,6 +82,7 @@ export interface BrandItem {
 	description: string;
 	bestSellers: FeatureItem[];
 	href: string;
+	[key: string]: unknown;
 }
 
 export interface FeaturedBrandsContent {
@@ -94,6 +98,7 @@ export interface ClientItem {
 	name: string;
 	logo: string;
 	type: string;
+	[key: string]: unknown;
 }
 
 export interface FeaturedClientsContent {
@@ -111,6 +116,7 @@ export interface TeamMember {
 	photo: string;
 	email: string;
 	phone: string;
+	[key: string]: unknown;
 }
 
 export interface FeaturedTeamContent {

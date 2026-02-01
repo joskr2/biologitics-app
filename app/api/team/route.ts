@@ -1,6 +1,8 @@
 import type { TeamMember } from "@/config/site-content";
+import { withAdminAuth } from "@/lib/api/auth";
 import { createRepository } from "@/lib/api/crud-repository";
 import { handleCreate, handleGetAll } from "@/lib/api/route-handlers";
+import { validations } from "@/lib/validations";
 
 const teamRepository = createRepository<TeamMember>({
 	sectionKey: "featuredTeam",
@@ -13,15 +15,7 @@ const teamRepository = createRepository<TeamMember>({
 			.replace(/[^a-z0-9-]/g, "");
 		return `${baseId}-${Date.now().toString(36)}`;
 	},
-	validateOnCreate: (data) => {
-		if (!data.name || !data.role || !data.email) {
-			return {
-				valid: false,
-				error: "Missing required fields: name, role, email",
-			};
-		}
-		return { valid: true };
-	},
+	validateOnCreate: (data) => validations.teamMember(data),
 });
 
 const handlerConfig = {
@@ -34,6 +28,6 @@ export async function GET() {
 	return handleGetAll<TeamMember>(handlerConfig);
 }
 
-export async function POST(request: Request) {
+export const POST = withAdminAuth(async (request: Request) => {
 	return handleCreate<TeamMember>(request, handlerConfig);
-}
+});

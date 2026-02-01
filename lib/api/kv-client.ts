@@ -28,15 +28,29 @@ export interface KVOperationResult<T> {
 	error?: string;
 }
 
+/**
+ * KVClient for managing site content with individual keys per section.
+ *
+ * Race Condition Mitigation:
+ * - Each section uses its own KV key (e.g., "featuredBrands:site-content")
+ * - This prevents concurrent writes to different sections from overwriting each other
+ * - Writes to the same section are still subject to race conditions, but:
+ *   a) The window is smaller (less data to merge)
+ *   b) Only that section is affected, not the entire site content
+ *   c) Individual section writes are less frequent than full-site writes
+ */
 export class KVClient {
 	private sectionKey: string;
 	private defaultItems: unknown[];
 	private cacheHeaders: CacheHeaders;
+	private kvKey: string; // Individual key for this section
 
 	constructor(config: KVClientConfig) {
 		this.sectionKey = config.sectionKey;
 		this.defaultItems = config.defaultItems;
 		this.cacheHeaders = config.cacheHeaders || {};
+		// Use individual key per section to prevent cross-section race conditions
+		this.kvKey = `${this.sectionKey}:site-content`;
 	}
 
 	private async getEnv(): Promise<KVEnv | null> {
@@ -55,20 +69,30 @@ export class KVClient {
 
 		if (env) {
 			const kv = env.BIOLOGISTICS;
-			const data = await kv.get("site-content", { type: "json" });
+			// Read from individual section key
+			const data = await kv.get(this.kvKey, { type: "json" });
 
-			if (data && typeof data === "object" && this.sectionKey in data) {
-				const section = data as Record<string, { items: T[] }>;
-				return section[this.sectionKey].items;
+			if (data && Array.isArray(data)) {
+				return data as T[];
 			}
 		}
 
-		const defaultSection = (
-			defaultData as unknown as Record<string, { items: T[] }>
-		)[this.sectionKey];
-		return defaultSection?.items || (this.defaultItems as T[]);
+		return this.defaultItems as T[];
 	}
 
+	/**
+	 * Atomic get-modify-put operation for the section.
+	 *
+	 * Note: Cloudflare KV doesn't support transactions. This implementation:
+	 * 1. Reads the current value from the section's individual key
+	 * 2. Merges with the new items
+	 * 3. Writes back to the same individual key
+	 *
+	 * Since each section has its own key, concurrent writes to different
+	 * sections are completely isolated. Writes to the same section may still
+	 * race, but this is acceptable for this use case as the impact is limited
+	 * to that single section.
+	 */
 	async put<T>(items: T[]): Promise<KVOperationResult<T>> {
 		const env = await this.getEnv();
 
@@ -81,32 +105,73 @@ export class KVClient {
 
 		try {
 			const kv = env.BIOLOGISTICS;
-			const data = await kv.get("site-content", { type: "json" });
 
-			if (data && typeof data === "object") {
-				const siteContent = data as Record<string, unknown>;
-				const updatedContent = {
-					...siteContent,
-					[this.sectionKey]: {
-						...(siteContent[this.sectionKey] as object),
-						items,
-					},
-				};
+			// Read current value from individual key
+			const existingData = await kv.get(this.kvKey, { type: "json" });
 
-				await kv.put("site-content", JSON.stringify(updatedContent));
+			let mergedItems: T[];
 
-				return { success: true, data: items[0] };
+			if (existingData && Array.isArray(existingData)) {
+				// Merge strategy: New items are added to existing list
+				// This preserves items that might have been added by other operations
+				const existingItems = existingData as T[];
+				const newItemIds = new Set(
+					items.map((item) => (item as { id: string }).id).filter(Boolean),
+				);
+
+				// Keep existing items that are not being replaced
+				const preservedItems = existingItems.filter((item) => {
+					const id = (item as { id: string }).id;
+					// Keep if it doesn't have an ID (edge case) or if it's not in the new items
+					return !id || !newItemIds.has(id);
+				});
+
+				mergedItems = [...preservedItems, ...items];
+			} else {
+				// No existing data, use new items
+				mergedItems = items;
 			}
 
-			return {
-				success: true,
-				warning: "KV data structure unexpected, data not persisted",
-			};
+			// Write to individual section key (isolated from other sections)
+			await kv.put(this.kvKey, JSON.stringify(mergedItems));
+
+			return { success: true, data: items[0] };
 		} catch (error) {
 			console.error(`KV put error for ${this.sectionKey}:`, error);
 			return {
 				success: false,
 				error: `Failed to save ${this.sectionKey}`,
+			};
+		}
+	}
+
+	/**
+	 * Atomically replace all items for this section.
+	 * Use this when you want to completely replace the section data.
+	 *
+	 * This is safer than merge when you have the complete current state,
+	 * as it avoids race conditions where you might be working with stale data.
+	 */
+	async replace<T>(items: T[]): Promise<KVOperationResult<T>> {
+		const env = await this.getEnv();
+
+		if (!env) {
+			return {
+				success: true,
+				warning: "KV not available, data not persisted",
+			};
+		}
+
+		try {
+			const kv = env.BIOLOGISTICS;
+			// Directly replace with no read-first (caller must ensure they have latest)
+			await kv.put(this.kvKey, JSON.stringify(items));
+			return { success: true, data: items[0] };
+		} catch (error) {
+			console.error(`KV replace error for ${this.sectionKey}:`, error);
+			return {
+				success: false,
+				error: `Failed to replace ${this.sectionKey}`,
 			};
 		}
 	}
@@ -128,6 +193,7 @@ export function createKVClient(config: KVClientConfig): KVClient {
 	return new KVClient(config);
 }
 
+// Individual KV clients per section - each uses its own isolated key
 export const brandsKV = createKVClient({
 	sectionKey: "featuredBrands",
 	defaultItems: (defaultData as { featuredBrands: { items: unknown[] } })

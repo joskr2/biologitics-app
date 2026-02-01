@@ -1,6 +1,8 @@
 import type { ClientItem } from "@/config/site-content";
+import { withAdminAuth } from "@/lib/api/auth";
 import { createRepository } from "@/lib/api/crud-repository";
 import { handleCreate, handleGetAll } from "@/lib/api/route-handlers";
+import { validations } from "@/lib/validations";
 
 const clientsRepository = createRepository<ClientItem>({
 	sectionKey: "featuredClients",
@@ -13,12 +15,7 @@ const clientsRepository = createRepository<ClientItem>({
 			.replace(/[^a-z0-9-]/g, "");
 		return `${baseId}-${Date.now().toString(36)}`;
 	},
-	validateOnCreate: (data) => {
-		if (!data.name || !data.logo) {
-			return { valid: false, error: "Missing required fields: name, logo" };
-		}
-		return { valid: true };
-	},
+	validateOnCreate: (data) => validations.client(data),
 });
 
 const handlerConfig = {
@@ -31,6 +28,6 @@ export async function GET() {
 	return handleGetAll<ClientItem>(handlerConfig);
 }
 
-export async function POST(request: Request) {
+export const POST = withAdminAuth(async (request: Request) => {
 	return handleCreate<ClientItem>(request, handlerConfig);
-}
+});

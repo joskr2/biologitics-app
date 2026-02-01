@@ -176,7 +176,7 @@ function Hero({ data }: HeroProps) {
 					<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 						{socialProof.map((item, index) => (
 							<motion.div
-								key={item.label}
+								key={`${item.label}-${index}`}
 								initial={{ opacity: 0, y: 20 }}
 								whileInView={{ opacity: 1, y: 0 }}
 								viewport={{ once: true }}

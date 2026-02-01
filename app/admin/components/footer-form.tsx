@@ -117,7 +117,7 @@ export function FooterForm({ data, onChange }: FooterFormProps) {
 					<Label>Redes Sociales</Label>
 					{data.socialLinks.map((link, i) => (
 						<div
-							key={link.name}
+							key={`${link.name}-${i}`}
 							className="border p-3 rounded-lg mt-2 space-y-2"
 						>
 							<Input

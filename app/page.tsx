@@ -36,11 +36,11 @@ export default async function Page() {
 
 			<main>
 				<Hero data={data.hero} />
-				<FeaturedProducts data={data.featuredProducts} />
-				<FeaturedBrands data={data.featuredBrands} />
-				<FeaturedClients data={data.featuredClients} />
-				<FeaturedTeam data={data.featuredTeam} />
-				<ContactForm />
+				<FeaturedProducts data={data.featuredProducts} animationDelay={0.1} />
+				<FeaturedBrands data={data.featuredBrands} animationDelay={0.2} />
+				<FeaturedClients data={data.featuredClients} animationDelay={0.3} />
+				<FeaturedTeam data={data.featuredTeam} animationDelay={0.4} />
+				<ContactForm animationDelay={0.5} />
 			</main>
 		</>
 	);

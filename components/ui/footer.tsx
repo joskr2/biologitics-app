@@ -64,9 +64,9 @@ function Footer({ data }: FooterProps) {
 							{company?.description}
 						</p>
 						<div className="flex gap-3">
-							{socialLinks.map((social) => (
+							{socialLinks.map((social, idx) => (
 								<Link
-									key={social.name}
+									key={`${social.name}-${idx}`}
 									href={social.href}
 									className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-800 transition-colors hover:bg-primary dark:hover:bg-primary"
 									aria-label={social.name}
@@ -89,12 +89,12 @@ function Footer({ data }: FooterProps) {
 					</div>
 
 					{/* Dynamic Columns */}
-					{columns.map((column) => (
-						<div key={column.title}>
+					{columns.map((column, colIdx) => (
+						<div key={`${column.title}-${colIdx}`}>
 							<h3 className="font-semibold text-lg mb-4">{column.title}</h3>
 							<ul className="space-y-2">
-								{column.links.map((link) => (
-									<li key={link.label}>
+								{column.links.map((link, linkIdx) => (
+									<li key={`${link.label}-${colIdx}-${linkIdx}`}>
 										<Link
 											href={link.href}
 											className="text-gray-500 dark:text-gray-400 text-sm transition-colors hover:text-primary dark:hover:text-primary"
@@ -146,9 +146,9 @@ function Footer({ data }: FooterProps) {
 							&copy; {currentYear} {company.name}. Todos los derechos reservados.
 						</p>
 						<div className="flex gap-6">
-							{legalLinks.map((link) => (
+							{legalLinks.map((link, idx) => (
 								<Link
-									key={link.label}
+									key={`${link.label}-${idx}`}
 									href={link.href}
 									className="transition-colors hover:text-primary dark:hover:text-primary"
 								>

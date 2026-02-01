@@ -60,8 +60,8 @@ const animations: Record<AnimationType, MotionProps> = {
 		viewport: { once: true },
 	},
 	"blur-in": {
-		initial: { opacity: 0, filter: "blur(10px)" },
-		whileInView: { opacity: 1, filter: "blur(0px)" },
+		initial: { opacity: 0, transform: "scale(0.95)", willChange: "opacity, transform" },
+		whileInView: { opacity: 1, transform: "scale(1)" },
 		viewport: { once: true },
 	},
 };
@@ -154,8 +154,8 @@ interface HeroTextProps {
 export function HeroText({ children, className, delay = 0 }: Readonly<HeroTextProps>) {
 	return (
 		<motion.div
-			initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
-			animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+			initial={{ opacity: 0, y: 20, transform: "scale(0.98)", willChange: "opacity, transform" }}
+			animate={{ opacity: 1, y: 0, transform: "scale(1)" }}
 			transition={{ duration: 0.8, delay, ease: "easeOut" }}
 			className={className}
 		>

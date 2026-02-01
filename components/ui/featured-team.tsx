@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { MailIcon, PhoneIcon } from "lucide-react";
 import Link from "next/link";
 
-import {
-	Carousel,
-	CarouselContent,
-	CarouselItem,
-} from "@/components/ui/carousel";
 import { SectionContent } from "@/components/ui/section-content";
 import { RevealScale } from "@/components/ui/animated-section";
+import { MobileCarousel } from "@/components/ui/mobile-carousel";
 import { cn } from "@/lib/utils";
 import siteContent from "@/config/site-content.json";
 import type { FeaturedTeamContent, TeamMember } from "@/config/site-content";
@@ -50,75 +45,20 @@ function TeamCard({ member }: Readonly<{ member: TeamMember }>) {
 	);
 }
 
-function AutoScrollCarousel({ items }: { items: TeamMember[] }) {
-	const apiRef = useRef<{ scrollNext: () => void } | null>(null);
-	const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-	const handleInit = useCallback((api: { scrollNext: () => void } | undefined) => {
-		if (api) apiRef.current = api;
-	}, []);
-
-	const startInterval = useCallback(() => {
-		if (intervalRef.current) clearInterval(intervalRef.current);
-		intervalRef.current = setInterval(() => apiRef.current?.scrollNext(), 4000);
-	}, []);
-
-	const stopInterval = useCallback(() => {
-		if (intervalRef.current) {
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
-		}
-	}, []);
-
-	useEffect(() => {
-		startInterval();
-		return () => stopInterval();
-	}, [startInterval, stopInterval]);
-
-	if (items.length === 0) {
-		return (
-			<div className="py-12 text-center">
-				<p className="text-muted-foreground">No hay miembros del equipo disponibles.</p>
-			</div>
-		);
-	}
-
-	const showAsGrid = items.length <= 5;
-
-	if (showAsGrid) {
-		return (
-			<div
-				className={cn(
-					"grid gap-4",
-					items.length === 1
-						? "max-w-md mx-auto"
-						: items.length === 2
-							? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
-							: items.length <= 4
-								? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-								: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-5",
-				)}
-			>
-				{items.map((member) => (
-					<RevealScale key={member.id} scale={0.92}>
-						<TeamCard member={member} />
-					</RevealScale>
-				))}
-			</div>
-		);
-	}
-
+function TeamCardMobile({ member }: Readonly<{ member: TeamMember }>) {
 	return (
-		<div className="relative" onMouseEnter={stopInterval} onMouseLeave={startInterval}>
-			<Carousel opts={{ loop: true, align: "start", watchSlides: false }} setApi={handleInit}>
-				<CarouselContent className="-ml-4">
-					{items.map((member) => (
-						<CarouselItem key={member.id} className="pl-4 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5">
-							<TeamCard member={member} />
-						</CarouselItem>
-					))}
-				</CarouselContent>
-			</Carousel>
+		<div className="flex flex-col items-center p-4 bg-card rounded-xl border h-full">
+			<div className="relative h-20 w-20 mb-3">
+				<Image
+					src={member.photo}
+					alt={`Foto de ${member.name}`}
+					fill
+					sizes="(max-width: 640px) 50vw, 100vw"
+					className="object-cover rounded-full"
+				/>
+			</div>
+			<h3 className="font-semibold text-sm text-center mb-1">{member.name}</h3>
+			<p className="text-xs text-primary text-center mb-2">{member.role}</p>
 		</div>
 	);
 }
@@ -128,16 +68,61 @@ export function FeaturedTeam({
 	title: propTitle,
 	subtitle: propSubtitle,
 	sectionId = "equipo",
+	animationDelay = 0,
 }: FeaturedTeamProps & {
 	title?: string;
 	subtitle?: string;
 	sectionId?: string;
+	animationDelay?: number;
 } = {}) {
 	const { items, title, subtitle } = { ...defaultData, ...data };
 
 	return (
-		<SectionContent id={sectionId} title={propTitle ?? title} subtitle={propSubtitle ?? subtitle} background="background">
-			<AutoScrollCarousel items={items} />
+		<SectionContent
+			id={sectionId}
+			title={propTitle ?? title}
+			subtitle={propSubtitle ?? subtitle}
+			background="background"
+			animationDelay={animationDelay}
+		>
+			{/* Mobile: Carousel */}
+			<div className="lg:hidden">
+				<MobileCarousel
+					items={items}
+					renderItem={(item) => <TeamCardMobile member={item as TeamMember} />}
+					slidesPerView={2}
+					gap={8}
+					showNavigation={false}
+				/>
+			</div>
+
+			{/* Desktop: Grid */}
+			<div className="hidden lg:block">
+				{items.length === 0 ? (
+					<div className="py-12 text-center">
+						<p className="text-muted-foreground">No hay miembros del equipo disponibles.</p>
+					</div>
+				) : (
+					<div
+						className={cn(
+							"grid gap-4",
+							items.length === 1
+								? "max-w-md mx-auto"
+								: items.length === 2
+									? "grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto"
+									: items.length <= 4
+										? "grid-cols-2 lg:grid-cols-4"
+										: "grid-cols-2 lg:grid-cols-5",
+						)}
+					>
+						{items.map((member) => (
+							<RevealScale key={member.id} scale={0.92}>
+								<TeamCard member={member} />
+							</RevealScale>
+						))}
+					</div>
+				)}
+			</div>
 		</SectionContent>
 	);
 }

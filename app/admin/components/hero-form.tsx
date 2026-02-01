@@ -181,7 +181,7 @@ export function HeroForm({ data, onChange, onValidate }: HeroFormProps) {
 				<div className="space-y-4">
 					<Label>Social Proof</Label>
 					{data.socialProof.map((item, i) => (
-						<div key={item.label} className="flex gap-2">
+						<div key={`${item.label}-${i}`} className="flex gap-2">
 							<Input
 								placeholder="Valor (ej: 500+)"
 								value={item.value}
