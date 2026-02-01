@@ -1,9 +1,9 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { NextResponse } from "next/server";
+import { cache } from "@/app/lib/db";
 import type { SiteContent } from "@/config/site-content";
 import { withAdminAuth } from "@/lib/api/auth";
 import defaultData from "../../../config/site-content.json";
-import { cache } from "@/app/lib/db";
 
 export async function GET() {
 	try {

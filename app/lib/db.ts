@@ -61,7 +61,7 @@ interface CacheEntry {
 	timestamp: number;
 }
 
-const cache = new Map<string, CacheEntry>();
+export const cache = new Map<string, CacheEntry>();
 const CACHE_TTL = 300000; // 5 minutes TTL for cache entries
 
 function isCacheValid(entry: CacheEntry): boolean {

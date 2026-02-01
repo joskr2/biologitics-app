@@ -21,7 +21,11 @@ export default function HomeLoading() {
 						<Skeleton className="h-8 w-48" />
 						<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 							{Array.from({ length: 6 }).map((_, i) => (
-								<CardSkeleton key={`skeleton-${i}`} showImage={true} lines={3} />
+								<CardSkeleton
+									key={`skeleton-card-section-${i}-${i * 13}`}
+									showImage={true}
+									lines={3}
+								/>
 							))}
 						</div>
 					</div>

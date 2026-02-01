@@ -13,7 +13,10 @@ export default function AdminLoading() {
 				{/* Dashboard cards skeleton */}
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 					{Array.from({ length: 4 }).map((_, i) => (
-						<div key={`admin-skeleton-${i}`} className="rounded-lg border p-6 space-y-4">
+						<div
+							key={`admin-skeleton-card-${i}-${i * 17}`}
+							className="rounded-lg border p-6 space-y-4"
+						>
 							<Skeleton className="h-4 w-24" />
 							<Skeleton className="h-8 w-16" />
 						</div>
