@@ -260,9 +260,7 @@ const ItemCard = memo(function ItemCard<T extends BaseItem>({
 					</div>
 					<div className="flex items-center gap-2">
 						<CollapsibleTrigger
-							variant="ghost"
-							size="icon-sm"
-							className="hover:bg-muted data-[open]:bg-muted"
+							className="hover:bg-muted data-open:bg-muted focus-visible:ring-ring/50 inline-flex h-7 w-7 items-center justify-center rounded-md transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-[3px]"
 							disabled={item.isSaving || item.isDeleting}
 						>
 							{isOpen ? (
@@ -449,18 +447,16 @@ export function CrudForm<T extends BaseItem>({
 					<div className="flex items-center justify-between">
 						<CardTitle>{config.resourceName}s</CardTitle>
 						<CollapsibleTrigger
-							variant="ghost"
-							size="sm"
-							className="hover:bg-muted data-[open]:bg-muted"
+							className="hover:bg-muted data-open:bg-muted focus-visible:ring-ring/50 inline-flex h-8 gap-1.5 rounded-md px-2.5 text-[0.8rem] transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-[3px]"
 						>
 							{isOpen ? (
 								<>
-									<ChevronUp className="size-4 mr-1" />
+									<ChevronUp className="size-4" />
 									Ocultar
 								</>
 							) : (
 								<>
-									<ChevronDown className="size-4 mr-1" />
+									<ChevronDown className="size-4" />
 									Mostrar
 								</>
 							)}
