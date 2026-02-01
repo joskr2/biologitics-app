@@ -6,11 +6,10 @@ import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
+	SidebarMenuButton,
 	SidebarMenuItem,
-	SidebarMenuSub,
-	SidebarMenuSubButton,
-	SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 interface NavItem {
 	title: string;
@@ -49,28 +48,38 @@ export function NavMain({
 		return keyMap[title] || title.toLowerCase().replace(/\s+/g, "");
 	};
 
+	const handleClick = (
+		e: React.MouseEvent<HTMLButtonElement>,
+		sectionKey: string,
+	) => {
+		e.preventDefault();
+		onSectionChange?.(sectionKey);
+	};
+
 	return (
 		<SidebarGroup>
 			<SidebarGroupLabel>Secciones</SidebarGroupLabel>
 			<SidebarMenu>
-				{items.map((item: NavItem, idx) => {
+				{items.map((item: NavItem) => {
 					const sectionKey = getSectionKey(item.title);
 					const isActive = activeSection === sectionKey;
 
 					return (
-						<SidebarMenuItem key={`${item.title}-${idx}`}>
-							<SidebarMenuSub>
-								<SidebarMenuSubItem key={`${item.title}-${idx}`}>
-									<SidebarMenuSubButton
-										className={isActive ? "bg-accent" : ""}
-										onClick={() => onSectionChange?.(sectionKey)}
-										style={{ cursor: "pointer" }}
-									>
-										{item.icon && <item.icon className="mr-2 h-4 w-4" />}
-										<span>{item.title}</span>
-									</SidebarMenuSubButton>
-								</SidebarMenuSubItem>
-							</SidebarMenuSub>
+						<SidebarMenuItem key={item.title}>
+							<SidebarMenuButton
+								isActive={isActive}
+								tooltip={item.title}
+								onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+									handleClick(e, sectionKey)
+								}
+								className={cn(
+									"cursor-pointer",
+									isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
+								)}
+							>
+								{item.icon && <item.icon className="size-4" />}
+								<span>{item.title}</span>
+							</SidebarMenuButton>
 						</SidebarMenuItem>
 					);
 				})}

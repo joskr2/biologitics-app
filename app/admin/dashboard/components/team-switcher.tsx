@@ -40,17 +40,25 @@ export function TeamSwitcher({
 		<SidebarMenu>
 			<SidebarMenuItem>
 				<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-					<DropdownMenuTrigger>
-						<div className="flex h-12 w-full items-center gap-2 rounded-md bg-sidebar-primary p-2 text-sidebar-primary-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer">
-							<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary-foreground/10">
-								<activeTeam.logo className="size-4" />
-							</div>
-							<div className="grid flex-1 text-left text-sm leading-tight">
-								<span className="truncate font-medium">{activeTeam.name}</span>
-								<span className="truncate text-xs">{activeTeam.plan}</span>
-							</div>
-							<ChevronsUpDown className="ml-auto opacity-70" />
+					<DropdownMenuTrigger
+						role="button"
+						tabIndex={0}
+						className="flex h-12 w-full items-center gap-2 rounded-md bg-primary/10 p-2 text-left cursor-pointer hover:bg-primary/20 transition-colors data-[state=open]:bg-primary/20 outline-none select-none"
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								e.preventDefault();
+								setIsOpen(true);
+							}
+						}}
+					>
+						<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary/20">
+							<activeTeam.logo className="size-4" />
 						</div>
+						<div className="grid flex-1 text-left text-sm leading-tight">
+							<span className="truncate font-medium">{activeTeam.name}</span>
+							<span className="truncate text-xs">{activeTeam.plan}</span>
+						</div>
+						<ChevronsUpDown className="ml-auto opacity-70" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent
 						className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
@@ -59,7 +67,7 @@ export function TeamSwitcher({
 						sideOffset={4}
 					>
 						<DropdownMenuGroup>
-							<DropdownMenuLabel className="text-muted-foreground text-xs">
+							<DropdownMenuLabel className="text-muted-foreground text-xs px-2">
 								Teams
 							</DropdownMenuLabel>
 							{teams.map((team, index) => (

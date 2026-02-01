@@ -39,7 +39,6 @@ interface DashboardProps {
 export default function Dashboard({ initialData }: DashboardProps) {
 	const [data, setData] = useState<SiteContent>(initialData);
 	const [activeSection, setActiveSection] = useState("header");
-	const [isCollapsed, setIsCollapsed] = useState(false);
 	const [heroValid, setHeroValid] = useState(true);
 	const [saveState, saveAction, isSaving] = useActionState(saveDashboardData, {
 		success: false,
@@ -90,19 +89,15 @@ export default function Dashboard({ initialData }: DashboardProps) {
 	const isSaveDisabled = isSaving || (activeSection === "hero" && !heroValid);
 
 	return (
-		<SidebarProvider defaultOpen={!isCollapsed}>
+		<SidebarProvider defaultOpen={true}>
 			<AppSidebar
 				activeSection={activeSection}
 				onSectionChange={setActiveSection}
-				onCollapse={setIsCollapsed}
 			/>
 			<SidebarInset className="z-0">
 				<header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white relative z-10">
 					<div className="flex items-center gap-2 px-4">
-						<SidebarTrigger
-							className="-ml-1"
-							onClick={() => setIsCollapsed(!isCollapsed)}
-						/>
+						<SidebarTrigger className="-ml-1" />
 						<Separator
 							orientation="vertical"
 							className="mr-2 data-[orientation=vertical]:h-4"

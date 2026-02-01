@@ -1,10 +1,26 @@
 "use client";
 
-import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
+import {
+	ChevronDown,
+	ChevronUp,
+	Loader2,
+	Plus,
+	Trash2,
+} from "lucide-react";
 import Image from "next/image";
 import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,7 +94,7 @@ const ItemCard = memo(function ItemCard<T extends BaseItem>({
 	onUpdate: (index: number, field: string, value: unknown) => void;
 	onDelete: (index: number, id: string) => Promise<void>;
 }) {
-	const [isExpanded, setIsExpanded] = useState(true);
+	const [isOpen, setIsOpen] = useState(true);
 
 	const itemRecord = item as Record<string, unknown>;
 
@@ -193,91 +209,93 @@ const ItemCard = memo(function ItemCard<T extends BaseItem>({
 	};
 
 	return (
-		<div className="border rounded-lg overflow-hidden">
-			<div className="flex items-center justify-between p-4 bg-muted/50">
-				<div className="flex items-center gap-3">
-					{config.fields.some((f) => f.type === "file") && (
-						<div className="w-16 h-12 rounded overflow-hidden bg-background relative">
+		<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+			<div className="border rounded-lg overflow-hidden">
+				<div className="flex items-center justify-between p-4 bg-muted/50">
+					<div className="flex items-center gap-3">
+						{config.fields.some((f) => f.type === "file") && (
+							<div className="w-16 h-12 rounded overflow-hidden bg-background relative">
+								{(() => {
+									const imgField = config.fields.find((f) => f.type === "file");
+									const imgUrl = imgField ? itemRecord[imgField.key] : null;
+									if (imgUrl) {
+										return (
+											<Image
+												src={String(imgUrl)}
+												alt={String(
+													itemRecord.name || itemRecord.title || "Item",
+												)}
+												fill
+												className="object-contain"
+											/>
+										);
+									}
+									return null;
+								})()}
+							</div>
+						)}
+						<div>
 							{(() => {
-								const imgField = config.fields.find((f) => f.type === "file");
-								const imgUrl = imgField ? itemRecord[imgField.key] : null;
-								if (imgUrl) {
-									return (
-										<Image
-											src={String(imgUrl)}
-											alt={String(
-												itemRecord.name || itemRecord.title || "Item",
-											)}
-											fill
-											className="object-contain"
+								const nameField = config.fields.find(
+									(f) => f.key === "name" || f.key === "title",
+								);
+								return (
+									<>
+										<Input
+											placeholder={nameField?.placeholder || config.resourceName}
+											value={String(itemRecord[nameField?.key || "name"] || "")}
+											onChange={(e) =>
+												onUpdate(index, nameField?.key || "name", e.target.value)
+											}
+											className="font-medium h-8"
+											disabled={item.isSaving}
 										/>
-									);
-								}
-								return null;
+										<p className="text-xs text-muted-foreground mt-0.5">
+											ID: {item.id}
+										</p>
+									</>
+								);
 							})()}
 						</div>
-					)}
-					<div>
-						{(() => {
-							const nameField = config.fields.find(
-								(f) => f.key === "name" || f.key === "title",
-							);
-							return (
-								<>
-									<Input
-										placeholder={nameField?.placeholder || config.resourceName}
-										value={String(itemRecord[nameField?.key || "name"] || "")}
-										onChange={(e) =>
-											onUpdate(index, nameField?.key || "name", e.target.value)
-										}
-										className="font-medium h-8"
-										disabled={item.isSaving}
-									/>
-									<p className="text-xs text-muted-foreground mt-0.5">
-										ID: {item.id}
-									</p>
-								</>
-							);
-						})()}
+					</div>
+					<div className="flex items-center gap-2">
+						<CollapsibleTrigger
+							variant="ghost"
+							size="icon-sm"
+							className="hover:bg-muted data-[open]:bg-muted"
+							disabled={item.isSaving || item.isDeleting}
+						>
+							{isOpen ? (
+								<ChevronUp className="size-4" />
+							) : (
+								<ChevronDown className="size-4" />
+							)}
+						</CollapsibleTrigger>
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={() => onDelete(index, item.id)}
+							disabled={item.isSaving || item.isDeleting}
+							className="text-destructive hover:text-destructive hover:bg-destructive/10"
+						>
+							{item.isDeleting ? (
+								<Loader2 className="size-4 animate-spin" />
+							) : (
+								<Trash2 className="size-4" />
+							)}
+						</Button>
 					</div>
 				</div>
-				<div className="flex items-center gap-2">
-					<Button
-						variant="ghost"
-						size="icon-sm"
-						onClick={() => setIsExpanded(!isExpanded)}
-						disabled={item.isSaving || item.isDeleting}
-					>
-						{isExpanded ? (
-							<ChevronUp className="size-4" />
-						) : (
-							<ChevronDown className="size-4" />
-						)}
-					</Button>
-					<Button
-						variant="ghost"
-						size="icon-sm"
-						onClick={() => onDelete(index, item.id)}
-						disabled={item.isSaving || item.isDeleting}
-						className="text-destructive hover:text-destructive hover:bg-destructive/10"
-					>
-						{item.isDeleting ? (
-							<Loader2 className="size-4 animate-spin" />
-						) : (
-							<Trash2 className="size-4" />
-						)}
-					</Button>
-				</div>
-			</div>
 
-			{isExpanded && (
-				<div className="p-4 space-y-4">
-					{config.fields
-						.filter((f) => f.key !== "name" && f.key !== "title")
-						.map(renderField)}
-				</div>
-			)}
-		</div>
+				<CollapsibleContent>
+					<div className="p-4 space-y-4">
+						{config.fields
+							.filter((f) => f.key !== "name" && f.key !== "title")
+							.map(renderField)}
+					</div>
+				</CollapsibleContent>
+			</div>
+		</Collapsible>
 	);
 });
 
@@ -300,7 +318,7 @@ export function CrudForm<T extends BaseItem>({
 	onChange: (d: unknown) => void;
 	config: CrudFormConfig<T>;
 }) {
-	const [isExpanded, setIsExpanded] = useState(true);
+	const [isOpen, setIsOpen] = useState(true);
 	const [items, setItems] = useState<T[]>(data.items as T[]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -425,90 +443,92 @@ export function CrudForm<T extends BaseItem>({
 	};
 
 	return (
-		<Card>
-			<CardHeader>
-				<div className="flex items-center justify-between">
-					<CardTitle>{config.resourceName}s</CardTitle>
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={() => setIsExpanded(!isExpanded)}
-					>
-						{isExpanded ? (
-							<>
-								<ChevronUp className="size-4 mr-1" />
-								Ocultar
-							</>
-						) : (
-							<>
-								<ChevronDown className="size-4 mr-1" />
-								Mostrar
-							</>
-						)}
-					</Button>
-				</div>
-			</CardHeader>
-			{isExpanded && (
-				<CardContent className="space-y-6">
-					{error && (
-						<div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
-							{error}
-						</div>
-					)}
-					{success && (
-						<div className="p-3 bg-green-50 border border-green-200 rounded text-green-700 text-sm">
-							{success}
-						</div>
-					)}
-					<div className="grid grid-cols-2 gap-4">
-						<div>
-							<Label>Título de la sección</Label>
-							<Input
-								value={data.title}
-								onChange={(e) => onChange({ ...data, title: e.target.value })}
-								placeholder="Título principal"
-							/>
-						</div>
-						<div>
-							<Label>Subtítulo</Label>
-							<Input
-								value={data.subtitle}
-								onChange={(e) =>
-									onChange({ ...data, subtitle: e.target.value })
-								}
-								placeholder="Descripción breve"
-							/>
-						</div>
+		<Collapsible open={isOpen} onOpenChange={setIsOpen}>
+			<Card>
+				<CardHeader>
+					<div className="flex items-center justify-between">
+						<CardTitle>{config.resourceName}s</CardTitle>
+						<CollapsibleTrigger
+							variant="ghost"
+							size="sm"
+							className="hover:bg-muted data-[open]:bg-muted"
+						>
+							{isOpen ? (
+								<>
+									<ChevronUp className="size-4 mr-1" />
+									Ocultar
+								</>
+							) : (
+								<>
+									<ChevronDown className="size-4 mr-1" />
+									Mostrar
+								</>
+							)}
+						</CollapsibleTrigger>
 					</div>
-
-					<div className="space-y-4">
-						{items.map((item, i) => (
-							<ItemCard
-								key={item.id}
-								item={item}
-								index={i}
-								config={config}
-								onUpdate={handleFieldUpdate}
-								onDelete={deleteItem}
-							/>
-						))}
-					</div>
-
-					<Button
-						variant="outline"
-						onClick={addItem}
-						disabled={loading}
-						className="w-full"
-					>
-						{loading ? (
-							<Loader2 className="size-4 mr-2 animate-spin" />
-						) : (
-							<Plus className="size-4 mr-2" />
+				</CardHeader>
+				<CollapsibleContent>
+					<CardContent className="space-y-6">
+						{error && (
+							<div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+								{error}
+							</div>
 						)}
-						Agregar Nuevo {config.resourceName}
-					</Button>
-				</CardContent>
-			)}
-		</Card>
+						{success && (
+							<div className="p-3 bg-green-50 border rounded text-green-700 text-sm">
+								{success}
+							</div>
+						)}
+						<div className="grid grid-cols-2 gap-4">
+							<div>
+								<Label>Título de la sección</Label>
+								<Input
+									value={data.title}
+									onChange={(e) => onChange({ ...data, title: e.target.value })}
+									placeholder="Título principal"
+								/>
+							</div>
+							<div>
+								<Label>Subtítulo</Label>
+								<Input
+									value={data.subtitle}
+									onChange={(e) =>
+										onChange({ ...data, subtitle: e.target.value })
+									}
+									placeholder="Descripción breve"
+								/>
+							</div>
+						</div>
+
+						<div className="space-y-4">
+							{items.map((item, i) => (
+								<ItemCard
+									key={item.id}
+									item={item}
+									index={i}
+									config={config}
+									onUpdate={handleFieldUpdate}
+									onDelete={deleteItem}
+								/>
+							))}
+						</div>
+
+						<Button
+							variant="outline"
+							onClick={addItem}
+							disabled={loading}
+							className="w-full"
+						>
+							{loading ? (
+								<Loader2 className="size-4 mr-2 animate-spin" />
+							) : (
+								<Plus className="size-4 mr-2" />
+							)}
+							Agregar Nuevo {config.resourceName}
+						</Button>
+					</CardContent>
+				</CollapsibleContent>
+			</Card>
+		</Collapsible>
 	);
 }

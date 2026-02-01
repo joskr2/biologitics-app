@@ -13,8 +13,21 @@ function DropdownMenuPortal({ ...props }: Readonly<MenuPrimitive.Portal.Props>) 
 	return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
-function DropdownMenuTrigger({ ...props }: Readonly<MenuPrimitive.Trigger.Props>) {
-	return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
+function DropdownMenuTrigger({
+	children,
+	asChild,
+	...props
+}: Readonly<MenuPrimitive.Trigger.Props> & {
+	children?: React.ReactNode;
+	asChild?: boolean;
+}) {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { asChild: _, ...rest } = props;
+	return (
+		<MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...rest}>
+			{children}
+		</MenuPrimitive.Trigger>
+	);
 }
 
 function DropdownMenuContent({

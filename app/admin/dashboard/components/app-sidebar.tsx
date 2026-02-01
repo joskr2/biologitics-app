@@ -13,7 +13,6 @@ import {
 	UserCog,
 	Users,
 } from "lucide-react";
-import { useEffect } from "react";
 import { logoutAction } from "@/app/actions/admin";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +24,7 @@ import {
 	useSidebar,
 } from "@/components/ui/sidebar";
 import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
 
 // Navigation items for admin
@@ -103,13 +103,11 @@ const data = {
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 	activeSection?: string;
 	onSectionChange?: (section: string) => void;
-	onCollapse?: (collapsed: boolean) => void;
 }
 
 export function AppSidebar({
 	activeSection,
 	onSectionChange,
-	onCollapse,
 	...props
 }: AppSidebarProps) {
 	const { state } = useSidebar();
@@ -118,13 +116,6 @@ export function AppSidebar({
 		await logoutAction();
 		window.location.reload();
 	};
-
-	// Notify parent when sidebar state changes
-	useEffect(() => {
-		if (onCollapse) {
-			onCollapse(state === "collapsed");
-		}
-	}, [state, onCollapse]);
 
 	return (
 		<Sidebar collapsible="icon" {...props}>
@@ -139,16 +130,19 @@ export function AppSidebar({
 				/>
 			</SidebarContent>
 			<SidebarFooter>
-				<div className="px-3 py-2">
+				{state === "expanded" ? (
+					<NavUser user={data.user} />
+				) : (
 					<Button
 						variant="ghost"
-						className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground"
+						size="icon-sm"
 						onClick={handleLogout}
+						className="w-full justify-center"
+						tooltip="Cerrar Sesión"
 					>
-						<LogOut className="h-4 w-4" />
-						Cerrar Sesión
+						<LogOut className="size-4" />
 					</Button>
-				</div>
+				)}
 			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>
