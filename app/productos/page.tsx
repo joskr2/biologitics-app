@@ -94,15 +94,13 @@ export default function ProductsPage() {
 												</ul>
 
 												{/* CTA */}
-												{/* <Button
+												<Button
 												variant="outline"
 												className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors flex flex-row"
 											>
-												<Link href={`/productos/${product.id}`}>
 													Ver Detalles
-												</Link>
 												<ArrowRight className="size-4 ml-2 group-hover:translate-x-1 transition-transform" />
-											</Button> */}
+											</Button>
 											</div>
 										</Link>
 									</article>
