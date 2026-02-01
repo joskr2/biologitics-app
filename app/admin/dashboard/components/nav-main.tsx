@@ -74,7 +74,8 @@ export function NavMain({
 								}
 								className={cn(
 									"cursor-pointer",
-									isActive && "bg-sidebar-accent text-sidebar-accent-foreground",
+									isActive &&
+										"bg-sidebar-accent text-sidebar-accent-foreground",
 								)}
 							>
 								{item.icon && <item.icon className="size-4" />}

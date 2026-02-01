@@ -1,21 +1,10 @@
 "use client";
 
-import {
-	ChevronDown,
-	ChevronUp,
-	Loader2,
-	Plus,
-	Trash2,
-} from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { memo, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -242,10 +231,16 @@ const ItemCard = memo(function ItemCard<T extends BaseItem>({
 								return (
 									<>
 										<Input
-											placeholder={nameField?.placeholder || config.resourceName}
+											placeholder={
+												nameField?.placeholder || config.resourceName
+											}
 											value={String(itemRecord[nameField?.key || "name"] || "")}
 											onChange={(e) =>
-												onUpdate(index, nameField?.key || "name", e.target.value)
+												onUpdate(
+													index,
+													nameField?.key || "name",
+													e.target.value,
+												)
 											}
 											className="font-medium h-8"
 											disabled={item.isSaving}
@@ -446,9 +441,7 @@ export function CrudForm<T extends BaseItem>({
 				<CardHeader>
 					<div className="flex items-center justify-between">
 						<CardTitle>{config.resourceName}s</CardTitle>
-						<CollapsibleTrigger
-							className="hover:bg-muted data-open:bg-muted focus-visible:ring-ring/50 inline-flex h-8 gap-1.5 rounded-md px-2.5 text-[0.8rem] transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-[3px]"
-						>
+						<CollapsibleTrigger className="hover:bg-muted data-open:bg-muted focus-visible:ring-ring/50 inline-flex h-8 gap-1.5 rounded-md px-2.5 text-[0.8rem] transition-all disabled:pointer-events-none disabled:opacity-50 outline-none focus-visible:ring-[3px]">
 							{isOpen ? (
 								<>
 									<ChevronUp className="size-4" />
